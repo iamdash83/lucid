@@ -49,6 +49,12 @@ function import($module) {
 		return false;
 	}
 }
+//for debugging
+function desktop_errorHandler($exception) {
+	internal_error("generic_err", $exception->getMessage());
+}
+set_exception_handler("desktop_errorHandler");
+
 //sessions and cookies
 function get_basepath() {
 	$curpath = explode("/", $_SERVER['REQUEST_URI']);
@@ -60,6 +66,15 @@ function get_basepath() {
 	array_pop($curpath);
 	return implode("/", $curpath) . "/";
 }
+/*
+import("lib.session");
+$session_class = new session_manager();
+session_set_save_handler(array(&$session_class, 'open'),
+                         array(&$session_class, 'close'),
+                         array(&$session_class, 'read'),
+                         array(&$session_class, 'write'),
+                         array(&$session_class, 'destroy'),
+                         array(&$session_class, 'gc'));*/
 $sesPath = $GLOBALS['path']."/../tmp/sessions/";
 if(!is_dir($sesPath)) mkdir($sesPath, 777);
 if(is_writable($sesPath)) session_save_path($sesPath);
@@ -72,11 +87,8 @@ ini_set("session.gc_maxlifetime",$time);
 session_start();
 
 
-//for debugging
-function desktop_errorHandler($exception) {
-	internal_error("generic_err", $exception->getMessage());
-}
-set_exception_handler("desktop_errorHandler");
+
+
 //test session token
 $omit_backends = array(
     "core.bootstrap.check.getToken",
