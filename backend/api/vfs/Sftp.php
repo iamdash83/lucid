@@ -12,7 +12,7 @@ class SftpFs extends BaseFs {
 	var $_link;
 	var $path = ".";
 	function _startup() {
-		$this->_link = ssh2_connect($this->hostname, $this->port ? $this->port : 22);
+		$this->_link = @ssh2_connect($this->hostname, $this->port ? $this->port : 22);
 		if(!is_null($this->username)) $login = @ssh2_auth_password($this->_link, $this->username, $this->password);
 		else $login = @ssh2_auth_none($this->_link, "anonymous");
 		if((!$this->_link) || is_array($this->_link) || (!$login)) internal_error(!$login ? "remote_authentication_failed" : "remote_connection_failed");
