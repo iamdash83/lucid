@@ -7,8 +7,7 @@
 */
 
 
-	class Session extends Base
-	{
+	class Session extends Base {
         var $session_id = array('type' => 'text', 'unique' => true);
         var $user_id = array('type' => 'text');
         var $date_created = array('type' => 'timestamp');
