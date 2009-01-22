@@ -118,6 +118,7 @@
 			if($p != FALSE) {
 				if($p->has_permission("core.user.auth.login")) {
 					$p->login();
+                    $_SESSION['remember'] = (isset($_POST['remember']) && $_POST['remember'] == "on");
 					$out = new intOutput("ok");
 				}
 				else {
@@ -136,6 +137,9 @@
 		{
 			$user = $User->get_current();
 			$user->logged = 0;
+            if($_SESSION['remember'] === false){
+                $user->logout();
+            }
             $user->save();
 			$out = new intOutput("ok");
 		}

@@ -15,6 +15,10 @@
 			<label for='${id}_windowActNew'> New window</label>&nbsp;&nbsp;&nbsp;
 			<input type='radio' dojoAttachPoint="currentRadioNode" name='windowAct' dojoType="dijit.form.RadioButton" id='${id}_windowActCurrent' value='current' />
 			<label for='${id}_windowActCurrent'> Current window</label>
+        </div>
+        <div>
+            <input type='checkbox' dojoAttachPoint="rememberNode" name='remember' dojoType="dijit.form.CheckBox" id='${id}_remember' />
+			<label for='${id}_remember'> Remember me</label>
 		</div>
 		<input type='submit' name='submit' dojoType="dijit.form.Button" dojoAttachPoint="submitNode" value='Login' label="Login" />
 		<div>
