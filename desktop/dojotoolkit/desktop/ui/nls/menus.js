@@ -11,7 +11,7 @@
 	"office": "Office",
 	"system": "System",
 	"preferences": "Preferences",
-	"about": "About Psych Desktop",
+	"about": "About Lucid Desktop",
 	"logOut": "Log Out",
 	"appearance": "Appearance",
 	"accountInfo": "Account Information",

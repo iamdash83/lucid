@@ -48,8 +48,8 @@ dojo.declare("desktop.apps.FeedReader", desktop.apps._App, {
 						children: [
 							{
 								id: 1,
-								label: "Psych Desktop",
-								title: "Psych Desktop",
+								label: "Lucid Desktop",
+								title: "Lucid Desktop",
 								url: "http://www.psychdesktop.net/rss.xml",
 								category: false
 							},

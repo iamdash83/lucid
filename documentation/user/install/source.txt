@@ -30,7 +30,7 @@ For write access (developers only, you need a password):
 
 Building
 ========
-Unless you plan on installing Psych Desktop locally, you should build it. This compresses the javascript that is sent to the client so the desktop will load faster.
+Unless you plan on installing Lucid Desktop locally, you should build it. This compresses the javascript that is sent to the client so the desktop will load faster.
 From a terminal, navigate to the ``/desktop/dojotoolkit/util/buildscripts/`` directory. Then run this command (for windows run build.bat instead of build.sh):
 
 .. code-block:: bash

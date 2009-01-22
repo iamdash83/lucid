@@ -11,7 +11,7 @@ dojo.declare("desktop.ui.Credits", dijit._Widget, {
 	startup: function(){
 
 		var head = document.createElement("h2");
-		desktop.textContent(head, "Psych Desktop");
+		desktop.textContent(head, "Lucid Desktop");
 		this.domNode.appendChild(head);
 		
 		var version = document.createElement("b");

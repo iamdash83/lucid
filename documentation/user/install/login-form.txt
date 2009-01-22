@@ -63,7 +63,7 @@ Copy the following code into an HTML file, and upload it to your installation pa
     <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
     <html>
         <head>
-            <title>Psych Desktop - Login</title>
+            <title>Lucid Desktop - Login</title>
             <script type="text/javascript" src="./desktop/dojotoolkit/release/dojo/dojo/dojo.js"></script>
             <script type="text/javascript">
                 dojo.require("desktop.login.Form");
