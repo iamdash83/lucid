@@ -108,9 +108,9 @@
 			return $this->_result;
 		}
 		
-		function __deconstruct()
+		function __destruct()
 		{
-			if($this->_result) $this->_result->free();
+			if(is_object($this->_result)) $this->_result->free();
 			$this->_link = null;
 		}
 		
@@ -260,13 +260,13 @@
 			}
 			$this->_query($query); 
 			$list = array();
-			foreach($this->_result as $line)
+			$results = false;
+            foreach($this->_result as $line)
 			{
 				array_push($list, $this->_makeModel($line));
-				$results = TRUE;
+				$results = true;
 			}
-			if(!isset($results)) { return false; }
-			else { return $list; }
+            return $results ? $list : false;
 		}
 		function all()
 		{

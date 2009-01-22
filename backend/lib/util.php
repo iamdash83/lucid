@@ -66,19 +66,27 @@ function get_basepath() {
 	array_pop($curpath);
 	return implode("/", $curpath) . "/";
 }
-/*
+
+if(!array_key_exists('installing', $GLOBALS)){
+
+import("configuration");
+import("lib.MDB2");
+import("models.base");
 import("lib.session");
+
 $session_class = new session_manager();
 session_set_save_handler(array(&$session_class, 'open'),
                          array(&$session_class, 'close'),
                          array(&$session_class, 'read'),
                          array(&$session_class, 'write'),
                          array(&$session_class, 'destroy'),
-                         array(&$session_class, 'gc'));*/
+                         array(&$session_class, 'gc'));
+}
+/*
 $sesPath = $GLOBALS['path']."/../tmp/sessions/";
 if(!is_dir($sesPath)) mkdir($sesPath, 777);
 if(is_writable($sesPath)) session_save_path($sesPath);
-
+*/
 
 $time = 60*60*24*365;
 session_name('desktop_session');
