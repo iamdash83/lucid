@@ -210,7 +210,9 @@
 		}
 		function _getFilter($name) {
 			foreach(array(
-				"__not" => "!="
+				"__not" => "!=",
+                "__gte" => ">=",
+                "__lte" => "<=",
 			) as $search=>$act) {
 				$p=explode($search, $name);
 				if($p[0] != $name) {

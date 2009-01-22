@@ -6,7 +6,6 @@
 	Licensed under the Academic Free License version 2.1 or above.
 */
 
-
 	class Session extends Base
 	{
         var $session_id = array('type' => 'text', 'unique' => true);
