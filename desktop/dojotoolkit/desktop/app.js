@@ -25,6 +25,7 @@ desktop.app = {
         });
 		desktop.xhr({
 			backend: "core.app.fetch.list",
+            sync: true,
 			load: dojo.hitch(this, function(data, ioArgs){
 				this.appList = data;
 				var style = document.createElement("style");
