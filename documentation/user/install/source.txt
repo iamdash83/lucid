@@ -18,7 +18,7 @@ To check out a copy, run this command:
 
 .. code-block:: bash
     
-    git clone git@github.com:psychcf/lucid.git lucid
+    git clone git://github.com/psychcf/lucid.git lucid
 
 Building
 ========
