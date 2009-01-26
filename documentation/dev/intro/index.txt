@@ -9,3 +9,4 @@ Getting Started
     
     application-tutorial
     application-structure
+    getting-started

@@ -6,6 +6,9 @@ Developer Documentation
 
 Getting Started
 ===============
+:ref:`Getting Started <dev-intro-getting-started>`
+    Quick blurbs about how to get started with developing themes or applications.
+
 :ref:`Application Tutorial <dev-intro-application-tutorial>`
     Learn how to write applications for Lucid
 
