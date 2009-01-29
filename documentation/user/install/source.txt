@@ -29,6 +29,12 @@ From a terminal, navigate to the ``/desktop/dojotoolkit/util/buildscripts/`` dir
     
     ./build.sh profile=desktop action=release mini=true
 
+If you want to prevent the buildscripts from making un-necesary ammounts of optimizing of non-existant translations, you can add the following to the command (it saves a significant ammount of disk space):
+
+.. code-block:: bash
+
+   localeList="en-gb,en-us,es-es,fr-fr"
+
 Then, copy all contents of ``/desktop/dojotoolkit/release/dojo/`` to ``/desktop/dojotoolkit/``, and delete the release directory.
 
 If you want to make updating in the future easier, you can edit the paths of the ``<script>`` tags on both ``index.html`` and ``desktop/index.html`` to point to the javascript files in the release directory. Also fix the paths in ``desktop/dojotoolkit/desktop/login/Form.js``.
