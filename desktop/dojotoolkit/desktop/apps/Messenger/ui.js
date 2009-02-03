@@ -15,9 +15,10 @@ dojo.extend(desktop.apps.Messenger, {
     removeBuddyButton: null,
     unameUi: {},
     makeBuddyListWin: function(){
+		var strings = dojo.i18n.getLocalization("desktop.apps.Messenger", "messenger");
         if(this.buddyListWin && !this.buddyListWin.closed) return this.BuddyListWin;
         var win = this.buddyListWin = new desktop.widget.Window({
-            title: "Contact List",
+            title: strings.contactList,
             iconClass: this.iconClass,
             width: "220px",
             height: "400px",
@@ -33,7 +34,7 @@ dojo.extend(desktop.apps.Messenger, {
         });
         
         var addButton = new dijit.form.Button({
-            label: "Add User",
+            label: strings.addUser,
             iconClass: "icon-16-actions-list-add",
             onClick: dojo.hitch(this, "drawAddBuddyDialog"),
             getIconClass: function(item, opened){
@@ -43,7 +44,7 @@ dojo.extend(desktop.apps.Messenger, {
         toolbar.addChild(addButton);
         
         var removeButton = this.removeBuddyButton = new dijit.form.Button({
-            label: "Remove User",
+            label: strings.removeUser,
             iconClass: "icon-16-actions-list-remove",
             disabled: true,
             onClick: dojo.hitch(this, function(){
@@ -60,7 +61,7 @@ dojo.extend(desktop.apps.Messenger, {
 
         var model = new dijit.tree.ForestStoreModel({
             store: store,
-            rootLabel: "Contacts"
+            rootLabel: strings.contacts
         });
 
         var tree = new dijit.Tree({
@@ -221,13 +222,14 @@ dojo.extend(desktop.apps.Messenger, {
         return div;
     },
     drawAddBuddyDialog: function(){
+		var strings = dojo.i18n.getLocalization("desktop.apps.Messenger", "messenger");
         var win = new desktop.widget.Window({
-            title: "Add Buddy",
+            title: strings.addUser,
             width: "350px",
             height: "200px"
         });
         
-        var form = new desktop.apps.Messenger.widget.AddBuddyForm({
+        form = new desktop.apps.Messenger.widget.AddBuddyForm({
             onSubmit: dojo.hitch(this, function(){
                 var values = form.getValues();
                 desktop.user.get({

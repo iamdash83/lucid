@@ -19,8 +19,9 @@ dojo.extend(desktop.apps.Messenger, {
         return store;
     },
     addBuddy: function(info){
+		var strings = dojo.i18n.getLocalization("desktop.apps.Messenger", "messenger");
         if(!info.exists){
-            return desktop.dialog.notify({type: "error", message: "User specified does not exist!"});
+            return desktop.dialog.notify({type: "error", message: strings.noUser});
         }
         this.buddyStore.newItem({
             id: info.id,
