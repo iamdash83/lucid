@@ -153,7 +153,7 @@ dojo.declare("desktop.login.Form", dijit.form.Form, {
 								this.errorNode.innerHTML = "Logged in. Window open.";
 							}
 							else {
-								this.errorNode.innerHTML = "Your popup blocker is blocking the Psych Desktop window.";
+								this.errorNode.innerHTML = "Your popup blocker is blocking the Lucid Desktop window.";
 								this.submitNode.setDisabled(false);
 							}
 						}
@@ -165,7 +165,7 @@ dojo.declare("desktop.login.Form", dijit.form.Form, {
 					}
 					else if(data == "4" || data == "5" || data == "6")
 					{
-						this.errorNode.innerHTML = "A database error occured. Check Psych Desktop is installed correctly or contact the Administrator.";
+						this.errorNode.innerHTML = "A database error occured. Check Lucid Desktop is installed correctly or contact the Administrator.";
 						this.submitNode.setDisabled(false);
 					}
 					else if(data == "7")

@@ -76,9 +76,11 @@ dojo.provide("desktop.apps.Contacts.import");
                         if(type != ""){
                             // ok, now break out each part of the address
                             var parts = value.split(";");
-                            var addrKeys = ["pobox", "address", "city", "state", "zip", "country"];
+                            var addrKeys = ["pobox", "", "address", "city", "state", "zip", "country"];
                             for(var i in parts){
-                                store.setValue(item, addrKeys[i]+"-"+type, parts[i]);
+                                if(addrKeys[i] == "") continue;
+                                if(parts[i] != "")
+                                    vcard[addrKeys[i]+"-"+type] = parts[i];
                             }
                         }
                     }
@@ -91,7 +93,7 @@ dojo.provide("desktop.apps.Contacts.import");
                             type = parseType(params);
                         }
                         if(type != ""){
-                            store.setValue(item, "phone-"+type, value);
+                            vcard["phone-"+type] = value;
                         }
                     }
                     else if(keys[key]){
@@ -99,7 +101,6 @@ dojo.provide("desktop.apps.Contacts.import");
                         lastKey = keys[key];
                     }
                 });
-                console.log(vcards);
                 dojo.forEach(vcards, dojo.hitch(store, "newItem"));
                 store.save();
             }, onError);

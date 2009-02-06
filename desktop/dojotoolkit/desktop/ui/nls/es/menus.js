@@ -10,7 +10,7 @@
 	"multimedia": "Multimedia",
 	"office": "Oficina",
 	"preferences": "Preferencias",
-	"about": "Acerca de Psych Desktop",
+	"about": "Acerca de Lucid Desktop",
 	"logOut": "Cerrar sesión",
 	"appearance": "Apariencia",
 	"accountInfo": "Información de la cuenta",

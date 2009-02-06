@@ -1,4 +1,6 @@
 dojo.provide("desktop._base");
+dojo.require("desktop.rpc");
+dojo.require("desktop.connection");
 dojo.require("desktop.admin");
 dojo.require("desktop.app");
 dojo.require("desktop.config");

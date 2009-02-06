@@ -19,8 +19,9 @@ dojo.extend(desktop.apps.Messenger, {
         return store;
     },
     addBuddy: function(info){
+		var strings = dojo.i18n.getLocalization("desktop.apps.Messenger", "messenger");
         if(!info.exists){
-            return desktop.dialog.notify({type: "error", message: "User specified does not exist!"});
+            return desktop.dialog.notify({type: "error", message: strings.noUser});
         }
         this.buddyStore.newItem({
             id: info.id,
@@ -33,11 +34,24 @@ dojo.extend(desktop.apps.Messenger, {
         var store = this.buddyStore;
         store.fetch({
             query: {id: "*"},
-            onItem: function(item){
+            onComplete: function(items){
+                var params = [];
+                dojo.forEach(items, function(item){
+                    params.push({
+                        id: store.getValue(item, "id")
+                    });
+                }, this);
                 desktop.user.get({
-                    id: store.getValue(item, "id"),
-                    onComplete: function(info){
-                        store.setValue(item, "logged", !!parseInt(info.logged));
+                    users: params,
+                    onComplete: function(users){
+                        dojo.forEach(users, function(user){
+                            store.fetch({
+                                query: {id: user.id},
+                                onItem: function(item){
+                                    store.setValue(item, "logged", !!parseInt(user.logged));
+                                }
+                            });
+                        }, this);
                     }
                 });
             }

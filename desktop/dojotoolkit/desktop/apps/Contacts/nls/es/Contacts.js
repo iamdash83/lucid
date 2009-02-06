@@ -1,11 +1,25 @@
 ({
-    "newContact": " Nuevo Contacto",
+    "newContact": "Nuevo Contacto",
     "removeContact": "Eliminar Contacto",
+    "contact": "Contacto",
     "name": "Nombre",
     "email": "Correo Electrónico",
-    "phone": "Número de teléfono",
+    "phone": "Número de Teléfono",
     "address": "Dirección",
+    "pobox": "Apartado de Correos",
+    "city": "Ciudad",
+    "state": "Estado/Provincia",
+    "country": "País",
+    "zip": "Código Postal",
+    "fax": "Fax",
+    "homephone": "Teléfono de Casa",
+    "mobilephone": "Teléfono Celular",
+    "workphone": "Teléfono del Trabajo",
     "import": "Importar",
     "export": "Exportar",
-    "editContact": "Edición de contacto %s"
+    "editContact": "Edición de Contacto %s",
+    "work": "Trabajo",
+    "home": "Casa",
+    "save": "Guardar",
+    "cancel": "Cancelar"
 })

@@ -1,7 +1,7 @@
 dojo.provide("desktop.apps.Messenger._base");
 dojo.requireLocalization("desktop", "apps");
 dojo.requireLocalization("desktop", "messages");
-dojo.requireLocalization("desktop.apps.Messenger", "Strings");
+dojo.requireLocalization("desktop.apps.Messenger", "messenger");
 
 dojo.declare("desktop.apps.Messenger", desktop.apps._App, {
 	init: function(args){
