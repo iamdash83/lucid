@@ -41,7 +41,7 @@ dojo.declare("desktop.login.Form", dijit.form.Form, {
 		dojo.xhrGet({
 			url: dojo.baseUrl + "../../../backend/core/bootstrap.php?section=check&action=loggedin",
 			load: dojo.hitch(this, function(data){
-				if(data == 0){
+				if(data == 0 && data != ''){
 					if(this.autoRedirect){
 						if(dojo.cookie("desktopWindowPref") == "current"){
 							this.errorNode.innerHTML = "You are already logged in. Redirecting to desktop...";
