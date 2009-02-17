@@ -115,7 +115,7 @@ class LucidHTMLTranslator(sphinx.htmlwriter.SmartyPantsHTMLTranslator):
             old_ids = node.get('ids', [])
             node['ids'] = ['s-' + i for i in old_ids]
             sphinx.htmlwriter.SmartyPantsHTMLTranslator.visit_section(self, node)
-            node['ids'] = old_ids
+            #node['ids'] = old_ids
 
 
 def monkeypatch_pickle_builder():
