@@ -49,13 +49,13 @@ class BaseFs {
 			
 			//deffer password lookups until after we have everything else
 			
-			if($userInfo[1]) $this->password = $userInfo[1];
+			if(isset($userInfo[1])) $this->password = $userInfo[1];
 			else {
 				$entries = $Auth->filter(array(
-					appid => 0, //$info["appid"],
-					server => get_class($this) . "://" . $this->hostname . ":" . $this->port,
-					username => $this->username,
-					userid => $user->id
+					"appid" => 0, //$info["appid"],
+					"server" => get_class($this) . "://" . $this->hostname . ":" . $this->port,
+					"username" => $this->username,
+					"userid" => $user->id
 				));
 				if(isset($entries[0])) {
 					$blowfish = Crypt_Blowfish::factory("ecb");
@@ -70,10 +70,10 @@ class BaseFs {
 				if($info["remember"] == "forever") {
 					//remember the password
 					$entries = $Auth->filter(array(
-						appid => 0, //$info["appid"],
-						server => get_class($this) . "://" . $this->hostname . ":" . $this->port,
-						username => $this->username,
-						userid => $user->id
+						"appid" => 0, //$info["appid"],
+						"server" => get_class($this) . "://" . $this->hostname . ":" . $this->port,
+						"username" => $this->username,
+						"userid" => $user->id
 					));
 					//get encryption stuff going
 					$blowfish = Crypt_Blowfish::factory("ecb");
@@ -83,11 +83,11 @@ class BaseFs {
 					{
 						//create
 						$entry = new $Auth(array(
-							appid => 0, //$info["appid"],
-							server => get_class($this) . "://" . $this->hostname . ":" . $this->port,
-							username => $this->username,
-							userid => $user->id,
-							password => $blowfish->encrypt($info["password"]),
+							"appid" => 0, //$info["appid"],
+							"server" => get_class($this) . "://" . $this->hostname . ":" . $this->port,
+							"username" => $this->username,
+							"userid" => $user->id,
+							"password" => $blowfish->encrypt($info["password"]),
 						));
 					}
 					else {

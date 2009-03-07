@@ -31,33 +31,8 @@ dojo.declare("desktop.login.Form", dijit.form.Form, {
 		this.newWindowLabelNode.innerHTML = this.nls.NewWindow;
 		this.currentWindowLabelNode.innerHTML= this.nls.CurrentWindow;
 		this.registerNode.innerHTML = this.nls.Register;
-		this.resetPasswordNode.innerHTML = this.nls.ResetPassword;
-
-		// HOW THE HECK do we change a button label??? I tried everything
-		// below.
-		//console.log("submit.innerHTML = "+this.submitNode.innerHTML);
-		//console.log("submit.textContent = "+this.submitNode.textContent);
-		//console.log("submit.value = "+this.submitNode.value);
-		//console.log("submit.label = "+this.submitNode.label);
-		//this.submitNode.innerHTML = this.nls.Login;
-		//this.submitNode.textContent = this.nls.Login;
-		//this.submitNode.value = this.nls.Login;
-		//this.submitNode.label = this.nls.Login;
-		//console.log("submit.innerHTML = "+this.submitNode.innerHTML);
-		//console.log("submit.textContent = "+this.submitNode.textContent);
-		//console.log("submit.value = "+this.submitNode.value);
-		//console.log("submit.label = "+this.submitNode.label);
-
-		// console shows that data is localized but the display does not show it
-
-		// looking at the generated code with Web Developper, I see
-		// the Login label under a deep span id=submit_label and 
-		// dojoAttachPoint="containerNode"... same attach point as the form !!
-		// I ***must*** be missing something here.
-		
-		// this works but feels like a hack!!
-		// I should have been able to use submit.innerHTML, value or even label
-		dojo.byId('submit_label').innerHTML = this.nls.Login;
+		this.resetPasswordNode.attr("label", this.nls.ResetPassword;
+        this.submitNode.attr("label", this.nls.Login);
 
 
 		this.inherited(arguments);
@@ -80,7 +55,7 @@ dojo.declare("desktop.login.Form", dijit.form.Form, {
 		dojo.xhrGet({
 			url: dojo.baseUrl + "../../../backend/core/bootstrap.php?section=check&action=loggedin",
 			load: dojo.hitch(this, function(data){
-				if(data == 0){
+				if(data == 0 && data != ''){
 					if(this.autoRedirect){
 						if(dojo.cookie("desktopWindowPref") == "current"){
 							//this.errorNode.innerHTML = "You are already logged in. Redirecting to desktop...";

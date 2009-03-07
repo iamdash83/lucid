@@ -1,5 +1,5 @@
 ({
-	"helpHeader": "--Console de Psych Desktop--\nVous pouvez utiliser du javascript dans cette console.\nVous pouvez aussi utiliser ces commandes :\n",
+	"helpHeader": "--Console de Lucid Desktop--\nVous pouvez utiliser du javascript dans cette console.\nVous pouvez aussi utiliser ces commandes :\n",
 	"reloadHelp": "recharger le bureau sans vous déconnecter",
 	"lsHelp": "lister les fichiers dans [dir]",
 	"catHelp": "lire le fichier [file] et l'afficher dans la console",
@@ -11,7 +11,7 @@
 	"killHelp": "terminer une instance/pid",
 	"clearHelp": "effacer l'écran",
 	"echoHelp": "Affiche le texte dans la console",
-	"logoutHelp": "vous déconnecte du Psych Desktop",
+	"logoutHelp": "vous déconnecte du Lucid Desktop",
 	"instance": "instance",
 	"file": "fichier",
 	"dir": "répertoire",

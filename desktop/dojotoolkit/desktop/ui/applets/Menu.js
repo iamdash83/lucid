@@ -178,7 +178,6 @@ dojo.declare("desktop.ui.applets.Menu", desktop.ui.Applet, {
 			if(!(cat == "Preferences" || cat == "Administration"))
 				menu.addChild(category);
 		}
-		menu.domNode.style.display="none";
 		menu.startup();
 		this._drawButton();
 	}

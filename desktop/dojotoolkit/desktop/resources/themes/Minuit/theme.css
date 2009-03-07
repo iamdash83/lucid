@@ -1,5 +1,10 @@
 /* TODO: there's alot of things in this that should be in /desktop.css instead of here... */
 
+/* General */
+body {
+    color: #000;
+}
+
 /******************** Taskbar ********************/
 .desktopPanel * {
 	color: #fff;

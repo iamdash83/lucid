@@ -19,9 +19,10 @@ dojo.extend(desktop.apps.Messenger, {
         this.playSend();
     },
     checkSent: function(id, uid){
+		var strings = dojo.i18n.getLocalization("desktop.apps.Messenger", "messenger");
 	    desktop.crosstalk.exists(id, dojo.hitch(this, function(notsent){
 		    if(notsent){
-			    this.pushMsg(uid, "System: User is offline or is experiencing network difficulites. Message will be sent when user is back online.");
+			    this.pushMsg(uid, strings.userOffline);
     		}
 	    }));
     },

@@ -33,6 +33,9 @@ dojo.declare("desktop.widget.Window", [dijit.layout.BorderContainer, dijit._Temp
     //  shown: Boolean
     //      Is the window shown?
     shown: false,
+    //  main: Boolean?
+    //      Is this the main window for this application?
+    main: false,
 	//	iconClass: String?
 	//		the class to give the icon node
 	iconClass: "",
@@ -643,6 +646,7 @@ dojo.declare("desktop.widget.Window", [dijit.layout.BorderContainer, dijit._Temp
             if(typeof wid != "undefined" && typeof wid.resize == "function")
                 wid.resize();
         });
+        this.onResize();
 	},
 	_onResize: function(e){
 		//	summary:
