@@ -5,6 +5,18 @@
         <link href="./index-media/style.css" rel="stylesheet" type="text/css" />
         <script type="text/javascript" src="./desktop/dojotoolkit/dojo/dojo.js"></script>
         <script type="text/javascript">
+				var djConfig = {
+					usePlainJson: true
+				};
+
+				(function(){
+					var matches = document.cookie.match(new RegExp("(?:^|; )desktopLocale=([^;]*)"));
+					//console.log("cookie="+matches[1]);
+					var cookie = matches ? decodeURIComponent(matches[1]) : false;
+					if (cookie !== false && cookie != "NONE") 
+						djConfig.locale = cookie;
+				})();
+
             dojo.require("desktop.login.Form");
         </script>
         <link href="./desktop/dojotoolkit/dojo/resources/dojo.css" rel="stylesheet" type="text/css" />

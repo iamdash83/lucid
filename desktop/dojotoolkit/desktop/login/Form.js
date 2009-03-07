@@ -10,6 +10,7 @@ dojo.require("dijit.form.TextBox");
 dojo.require("dijit.form.CheckBox");
 dojo.require("dojox.validate.web");
 dojo.require("dojo.cookie");
+dojo.requireLocalization("desktop.login", "login");
 
 dojo.declare("desktop.login.Form", dijit.form.Form, {
 	templateString: null,
@@ -18,9 +19,47 @@ dojo.declare("desktop.login.Form", dijit.form.Form, {
 	widgetsInTemplate: true,
 	preload: true,
 	autoRedirect: false,
-    focusOnLoad: false,
-	label: "Desktop Login",
+   focusOnLoad: false,
 	postCreate: function(){
+		// summary:
+		// 	Intializes the form, loads l10n, etc.
+
+		this.nls = dojo.i18n.getLocalization("desktop.login", "login", djConfig.locale);
+		this.desktopMessageNode.innerHTML = this.nls.DesktopLogin;
+		this.usernameLabelNode.innerHTML = this.nls.Username;
+		this.passwordLabelNode.innerHTML = this.nls.Password;
+		this.newWindowLabelNode.innerHTML = this.nls.NewWindow;
+		this.currentWindowLabelNode.innerHTML= this.nls.CurrentWindow;
+		this.registerNode.innerHTML = this.nls.Register;
+		this.resetPasswordNode.innerHTML = this.nls.ResetPassword;
+
+		// HOW THE HECK do we change a button label??? I tried everything
+		// below.
+		//console.log("submit.innerHTML = "+this.submitNode.innerHTML);
+		//console.log("submit.textContent = "+this.submitNode.textContent);
+		//console.log("submit.value = "+this.submitNode.value);
+		//console.log("submit.label = "+this.submitNode.label);
+		//this.submitNode.innerHTML = this.nls.Login;
+		//this.submitNode.textContent = this.nls.Login;
+		//this.submitNode.value = this.nls.Login;
+		//this.submitNode.label = this.nls.Login;
+		//console.log("submit.innerHTML = "+this.submitNode.innerHTML);
+		//console.log("submit.textContent = "+this.submitNode.textContent);
+		//console.log("submit.value = "+this.submitNode.value);
+		//console.log("submit.label = "+this.submitNode.label);
+
+		// console shows that data is localized but the display does not show it
+
+		// looking at the generated code with Web Developper, I see
+		// the Login label under a deep span id=submit_label and 
+		// dojoAttachPoint="containerNode"... same attach point as the form !!
+		// I ***must*** be missing something here.
+		
+		// this works but feels like a hack!!
+		// I should have been able to use submit.innerHTML, value or even label
+		dojo.byId('submit_label').innerHTML = this.nls.Login;
+
+
 		this.inherited(arguments);
 		if(this.preloadDesktop){
 			var ontype = dojo.connect(this.domNode, "onkeydown", this, function(){
@@ -44,12 +83,14 @@ dojo.declare("desktop.login.Form", dijit.form.Form, {
 				if(data == 0){
 					if(this.autoRedirect){
 						if(dojo.cookie("desktopWindowPref") == "current"){
-							this.errorNode.innerHTML = "You are already logged in. Redirecting to desktop...";
+							//this.errorNode.innerHTML = "You are already logged in. Redirecting to desktop...";
+							this.errorNode.innerHtml = this.nls.LoggedInRedirect;
 							this.submitNode.setDisabled(true);
 							window.location = dojo.baseUrl+"../../index.html";
 						}
 						else if(winClosed){
-							this.errorNode.innerHTML = "You are already logged in. <a href='" + dojo.baseUrl + "../../index.html'>Click here</a> to open the desktop.";
+							//this.errorNode.innerHTML = "You are already logged in. <a href='" + dojo.baseUrl + "../../index.html'>Click here</a> to open the desktop.";
+							this.errorNode.innerHTML = this.nls.LoggedInClickToOpen;
 							dojo.query("a", this.errorNode).forEach(function(elem){
 								elem.href="javascript:void(0);";
 								dojo.connect(elem, "onclick", this, "onLinkClick");
@@ -57,12 +98,14 @@ dojo.declare("desktop.login.Form", dijit.form.Form, {
 						}
 						else {
 							if (this._popUp()){
-								this.errorNode.innerHTML = "You are already logged in. Window opened.";
+								//this.errorNode.innerHTML = "You are already logged in. Window opened.";
+								this.errorNode.innerHTML = this.nls.LoggedInWindowOpened;
 								this.submitNode.setDisabled(true);
 								this._winCheck();
 							}
 							else {
-								this.errorNode.innerHTML = "Your popup blocker is blocking the window. <a href='" + dojo.baseUrl + "../../index.html'>Click here</a> to try again.";
+								//this.errorNode.innerHTML = "Your popup blocker is blocking the window. <a href='" + dojo.baseUrl + "../../index.html'>Click here</a> to try again.";
+								this.errorNode.innerHTML = this.nls.PopupBlocker;
 								dojo.query("a", this.errorNode).forEach(function(elem){
 									elem.href="javascript:void(0);";
 									dojo.connect(elem, "onclick", this, "onLinkClick");
@@ -71,7 +114,8 @@ dojo.declare("desktop.login.Form", dijit.form.Form, {
 						}
 					}
 					else 
-						this.errorNode.innerHTML = "You are already logged in. <a href='" + dojo.baseUrl + "../../index.html'>Click here</a> to continue to the desktop.";
+						//this.errorNode.innerHTML = "You are already logged in. <a href='" + dojo.baseUrl + "../../index.html'>Click here</a> to continue to the desktop.";
+						this.errorNode.innerHTML = this.nls.LoggedInClick;
 						dojo.query("a", this.errorNode).forEach(function(elem){
 							elem.href="javascript:void(0);";
 							dojo.connect(elem, "onclick", this, "onLinkClick");
@@ -94,7 +138,8 @@ dojo.declare("desktop.login.Form", dijit.form.Form, {
 			if (this._popUp()){
 			}
 			else {
-				this.errorNode.innerHTML = "Your popup blocker is blocking the window. <a href='" + dojo.baseUrl + "../../index.html'>Click here</a> to try again.";
+				//this.errorNode.innerHTML = "Your popup blocker is blocking the window. <a href='" + dojo.baseUrl + "../../index.html'>Click here</a> to try again.";
+				this.errorNode.innerHTML = this.nls.PopupBlocker;
 				dojo.query("a", this.errorNode).forEach(function(elem){
 					elem.href="javascript:void(0);";
 					dojo.connect(elem, "onclick", this, "onLinkClick");
@@ -133,7 +178,8 @@ dojo.declare("desktop.login.Form", dijit.form.Form, {
 		this.submitNode.disabled=true;
 		if(contents.username && contents.password)
 		{
-		this.errorNode.innerHTML = "Logging in...";
+			//this.errorNode.innerHTML = "Logging in...";
+			this.errorNode.innerHTML = this.nls.LoggingIn;
 			dojo.xhrPost({
 				url: dojo.baseUrl+"../../../backend/core/user.php?section=auth&action=login",
 				content: contents,
@@ -142,7 +188,8 @@ dojo.declare("desktop.login.Form", dijit.form.Form, {
 					if(data == "0")
 					{
 						if(contents.windowAct == "current"){
-							this.errorNode.innerHTML = "Logged in. Redirecting to desktop...";
+							//this.errorNode.innerHTML = "Logged in. Redirecting to desktop...";
+							this.errorNode.innerHTML = this.nls.LoggedInRedirect;
 							window.location = dojo.baseUrl+"../../index.html";
 						}
 						else {
@@ -150,32 +197,38 @@ dojo.declare("desktop.login.Form", dijit.form.Form, {
 								this._winCheck();
 								this.domNode.username.value = "";
 								this.domNode.password.value = "";
-								this.errorNode.innerHTML = "Logged in. Window open.";
+								//this.errorNode.innerHTML = "Logged in. Window open.";
+								this.errorNode.innerHTML = this.nls.LoggedInWindowOpened;
 							}
 							else {
-								this.errorNode.innerHTML = "Your popup blocker is blocking the Psych Desktop window.";
+								//this.errorNode.innerHTML = "Your popup blocker is blocking the Psych Desktop window.";
+								this.errorNode.innerHTML = this.nls.PopupBlockerBlockingDesktop;
 								this.submitNode.setDisabled(false);
 							}
 						}
 					}
 					else if(data == "1")
 					{
-						this.errorNode.innerHTML = "Incorrect username or password.";
+						//this.errorNode.innerHTML = "Incorrect username or password.";
+						this.errorNode.innerHTML = this.nls.IncorrectUserPass;
 						this.submitNode.setDisabled(false);
 					}
 					else if(data == "4" || data == "5" || data == "6")
 					{
-						this.errorNode.innerHTML = "A database error occured. Check Psych Desktop is installed correctly or contact the Administrator.";
+						//this.errorNode.innerHTML = "A database error occured. Check Psych Desktop is installed correctly or contact the Administrator.";
+						this.errorNode.innerHTML = this.nls.DatabaseErrorCheckInstall;
 						this.submitNode.setDisabled(false);
 					}
 					else if(data == "7")
 					{
-						this.errorNode.innerHTML = "You do not have permission to login. Contact the Administrator.";
+						//this.errorNode.innerHTML = "You do not have permission to login. Contact the Administrator.";
+						this.errorNode.innerHTML = this.nls.NoPermissionLogin;
 						this.submitNode.setDisabled(false);
 					}
 					else
 					{
-						this.errorNode.innerHTML = "Unknown Error occured. Check your installation.";
+						//this.errorNode.innerHTML = "Unknown Error occured. Check your installation.";
+						this.errorNode.innerHTML = this.nls.UnknownError;
 						this.submitNode.setDisabled(false);
 					}
 				})
@@ -183,7 +236,8 @@ dojo.declare("desktop.login.Form", dijit.form.Form, {
 		}
 		else
 		{
-			this.errorNode.innerHTML = "Please provide both a username and a password";
+			//this.errorNode.innerHTML = "Please provide both a username and a password";
+			this.errorNode.innerHTML = this.nls.ProvideUserPass;
 			this.submitNode.setDisabled(false);
 		}
 		return false;
@@ -209,6 +263,14 @@ dojo.declare("desktop.login._RegisterDialog", dijit.Dialog, {
 	templatePath: dojo.moduleUrl("desktop.login", "RegisterDialog.html"),
 	parentForm: null,
 	postCreate: function(){
+		this.nls = dojo.i18n.getLocalization("desktop.login", "login");
+		this.titleNode.innerHTML = this.nls.Register;
+		this.usernameLabelNode.innerHTML = this.nls.Username;
+		this.emailLabelNode.innerHTML = this.nls.Email;
+		this.passwordLabelNode.innerHTML = this.nls.Password;
+		this.confPasswordLabelNode.innerHTML = this.nls.ConfirmPassword;
+		this.submitNode.value = this.nls.Submit;
+
 		this.inherited(arguments);
 		new dijit.form.TextBox({name: "username"}, this.usernameInputNode);
 		new dijit.form.TextBox({name: "email"}, this.emailInputNode);
@@ -223,17 +285,20 @@ dojo.declare("desktop.login._RegisterDialog", dijit.Dialog, {
 		if(contents.username && contents.email && contents.password && contents.confPassword)
 		{
 			if(contents.username.indexOf("..") != -1){
-				this.errorNode.innerHTML = "Username cannot contain two consecutive '.'s";
+				//this.errorNode.innerHTML = "Username cannot contain two consecutive '.'s";
+				this.errorNode.innerHTML = nls.UsernameNo2Dots;
 				this.submitNode.disabled=false;
 				return;
 			}
 			if(contents.username.indexOf("/") != -1){
-				this.errorNode.innerHTML = "Username cannot contain any slashes";
+				//this.errorNode.innerHTML = "Username cannot contain any slashes";
+				this.errorNode.innerHTML = nls.UsernameNoSlashes;
 				this.submitNode.disabled=false;
 				return;
 			}
 			if(contents.username.indexOf("\\") != -1){
-				this.errorNode.innerHTML = "Username cannot contain any slashes";
+				//this.errorNode.innerHTML = "Username cannot contain any slashes";
+				this.errorNode.innerHTML = nls.UsernameNoSlashes;
 				this.submitNode.disabled=false;
 				return;
 			}
@@ -249,36 +314,42 @@ dojo.declare("desktop.login._RegisterDialog", dijit.Dialog, {
 							if(data == "User registration disabled")
 							{
 								this.hide();
-								this.parentForm.errorNode.innerHTML = "Public registations are disabled";
+								//this.parentForm.errorNode.innerHTML = "Public registations are disabled";
+								this.parentForm.errorNode.innerHTML = nls.PublicRegisterDisabled;
 							}
 							if(data == "1")
 							{
-								this.errorNode.innerHTML = "Username already exists";
+								//this.errorNode.innerHTML = "Username already exists";
+								this.errorNode.innerHTML = nls.UsernameExists;
 								this.submitNode.disabled=false;
 							}
 							else if(data == "0")
 							{
 								this.hide();
-								this.parentForm.errorNode.innerHTML = "You may now log in";
+								//this.parentForm.errorNode.innerHTML = "You may now log in";
+								this.parentForm.errorNode.innerHTML = nls.MayLog;
 							}
 						})
 					});
 				}
 				else
 				{
-					this.errorNode.innerHTML = "Please enter a valid email";
+					//this.errorNode.innerHTML = "Please enter a valid email";
+					this.errorNode.innerHTML = nls.EnterValidEmail;
 					this.submitNode.disabled=false;
 				}
 			}
 			else
 			{
-				this.errorNode.innerHTML = "Two passwords don't match";
+				//this.errorNode.innerHTML = "Two passwords don't match";
+				this.errorNode.innerHTML = nls.PassMismatch;
 				this.submitNode.disabled=false;
 			}
 		}
 		else
 		{
-			this.errorNode.innerHTML = "Please fill in all fields";
+			//this.errorNode.innerHTML = "Please fill in all fields";
+			this.errorNode.innerHTML = nls.FillAllFields;
 			this.submitNode.disabled=false;
 		}
 		return false;
@@ -291,6 +362,12 @@ dojo.declare("desktop.login._ResetPassDialog", dijit.Dialog, {
 	templatePath: dojo.moduleUrl("desktop.login", "ResetPassDialog.html"),
 	parentForm: null,
 	postCreate: function(){
+		this.nls = dojo.i18n.getLocalization("desktop.login", "login");
+		this.titleNode.innerHTML = this.nls.ResetPassword;
+		this.userInputLabelNode.innerHTML = this.nls.Username;
+		this.emailInputLabelNode.innerHTML = this.nls.Email;
+		this.submitNode.value = this.nls.Submit;
+
 		this.inherited(arguments);
 		new dijit.form.TextBox({name: "username"}, this.userInputNode);
 		new dijit.form.TextBox({name: "email"}, this.emailInputNode);
@@ -310,31 +387,36 @@ dojo.declare("desktop.login._ResetPassDialog", dijit.Dialog, {
 					load: dojo.hitch(this, function(data, ioArgs){
 						if(data == "2")
 						{
-							this.errorNode.innerHTML = "Email on file and username don't match";
+							//this.errorNode.innerHTML = "Email on file and username don't match";
+							this.errorNode.innerHTML = this.nls.EmailUserMismatch;
 							this.submitNode.disabled=false;
 						}
 						else if(data == "1")
 						{
-							this.errorNode.innerHTML = "No such user";
+							//this.errorNode.innerHTML = "No such user";
+							this.errorNode.innerHTML = nls.NoSuchUser;
 							this.submitNode.disabled=false;
 						}
 						else if(data == "0")
 						{
 							this.hide();
-							this.parentForm.errorNode.innerHTML = "A new password has been sent"
+							//this.parentForm.errorNode.innerHTML = "A new password has been sent"
+							this.parentForm.errorNode.innerHTML = nls.NewPassSent;
 						}
 					})
 				});
 			}
 			else
 			{
-				this.errorNode.innerHTML = "Please enter a valid email";
+				//this.errorNode.innerHTML = "Please enter a valid email";
+				this.errorNode.innerHTML = nls.EnterValidEmail;
 				this.submitNode.disabled=false;
 			}
 		}
 		else
 		{
-			this.errorNode.innerHTML = "Please fill out all fields";
+			//this.errorNode.innerHTML = "Please fill out all fields";
+			this.errorNode.innerHTML = nls.FillAllFields;
 			this.submitNode.disabled=false;
 		}
 		return false;
