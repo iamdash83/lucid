@@ -31,7 +31,8 @@ dojo.declare("desktop.login.Form", dijit.form.Form, {
 		this.newWindowLabelNode.innerHTML = this.nls.NewWindow;
 		this.currentWindowLabelNode.innerHTML= this.nls.CurrentWindow;
 		this.registerNode.innerHTML = this.nls.Register;
-		this.resetPasswordNode.attr("label", this.nls.ResetPassword;
+		this.resetPasswordNode.innerHTML = this.nls.ResetPassword;
+        this.rememberLabelNode.innerHTML = this.nls.RememberMe;
         this.submitNode.attr("label", this.nls.Login);
 
 
