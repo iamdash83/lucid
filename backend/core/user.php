@@ -164,7 +164,7 @@
                             . "Username: " . $p->username . "\n"
                             . "New Password: " . $pass . "\n"
                             . "\n\nLog in with this password, then change your password from System > Account Information. Thanks!";
-					mail($p->email, "Psych Desktop Password Reset", $message, "From: Psych Desktop Account Service");
+					mail($p->email, "Lucid Desktop Password Reset", $message, "From: Lucid Desktop Account Service");
                     $p->save();
 					$out = new intOutput("ok");
 				}

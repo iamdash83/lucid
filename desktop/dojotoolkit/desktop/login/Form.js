@@ -370,14 +370,14 @@ dojo.declare("desktop.login._ResetPassDialog", dijit.Dialog, {
 						else if(data == "1")
 						{
 							//this.errorNode.innerHTML = "No such user";
-							this.errorNode.innerHTML = nls.NoSuchUser;
+							this.errorNode.innerHTML = this.nls.NoSuchUser;
 							this.submitNode.disabled=false;
 						}
 						else if(data == "0")
 						{
 							this.hide();
 							//this.parentForm.errorNode.innerHTML = "A new password has been sent"
-							this.parentForm.errorNode.innerHTML = nls.NewPassSent;
+							this.parentForm.errorNode.innerHTML = this.nls.NewPassSent;
 						}
 					})
 				});
@@ -385,14 +385,14 @@ dojo.declare("desktop.login._ResetPassDialog", dijit.Dialog, {
 			else
 			{
 				//this.errorNode.innerHTML = "Please enter a valid email";
-				this.errorNode.innerHTML = nls.EnterValidEmail;
+				this.errorNode.innerHTML = this.nls.EnterValidEmail;
 				this.submitNode.disabled=false;
 			}
 		}
 		else
 		{
 			//this.errorNode.innerHTML = "Please fill out all fields";
-			this.errorNode.innerHTML = nls.FillAllFields;
+			this.errorNode.innerHTML = this.nls.FillAllFields;
 			this.submitNode.disabled=false;
 		}
 		return false;
