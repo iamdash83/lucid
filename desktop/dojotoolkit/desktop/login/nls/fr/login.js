@@ -1,7 +1,7 @@
 ({
 	"ConfirmPassword": "Confirmer votre mot de passe",
 	"CurrentWindow": "Fenêtre actuelle",
-	"DatabaseErrorCheckInstall": "Une erreur a eu lieu. Svp, veuillez vérifier l'installation de Psych Desktop ou contactez votre administrateur.",
+	"DatabaseErrorCheckInstall": "Une erreur a eu lieu. Svp, veuillez vérifier l'installation de Lucid Desktop ou contactez votre administrateur.",
 	"DesktopLogin": "Connexion",
 	"Email": "Courriel",
 	"EmailUserMismatch": "Le courriel enregistré et le nom d'utilisateur ne correspondent pas",
@@ -22,7 +22,7 @@
 	"NoSuchUser": "Utilisateur inconnu",
 	"PassMismatch": "Les deux mots de passe ne correspondent pas",
 	"Password": "Mot de passe",
-	"PopupBlockerBlockingDesktop": "Votre bloqueur de fenêtre empêche l'affichage de la fenêtre de Psych Desktop.",
+	"PopupBlockerBlockingDesktop": "Votre bloqueur de fenêtre empêche l'affichage de la fenêtre de Lucid Desktop.",
 	"PopupBlocker": "Votre bloqueur de fenêtre empêche l'affichage de la fenêtre. <a href='" + dojo.baseUrl + "../../index.html'>Cliquer ici</a> pour réessayer.",
 	"ProvideUserPass": "Svp, veuillez saisir votre nom d'utilisateur et votre mot de passe",
 	"PublicRegisterDisabled": "Les enregistrements publiques sont désactivés",
