@@ -194,7 +194,7 @@
 			}
 			else
 			{
-				$out = new intOutput("generic_err");
+				die('User registration disabled');
 			}
 		}
 		if($_GET['action'] == "public")
