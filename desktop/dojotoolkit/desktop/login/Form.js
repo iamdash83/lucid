@@ -262,19 +262,19 @@ dojo.declare("desktop.login._RegisterDialog", dijit.Dialog, {
 		{
 			if(contents.username.indexOf("..") != -1){
 				//this.errorNode.innerHTML = "Username cannot contain two consecutive '.'s";
-				this.errorNode.innerHTML = nls.UsernameNo2Dots;
+				this.errorNode.innerHTML = this.nls.UsernameNo2Dots;
 				this.submitNode.disabled=false;
 				return;
 			}
 			if(contents.username.indexOf("/") != -1){
 				//this.errorNode.innerHTML = "Username cannot contain any slashes";
-				this.errorNode.innerHTML = nls.UsernameNoSlashes;
+				this.errorNode.innerHTML = this.nls.UsernameNoSlashes;
 				this.submitNode.disabled=false;
 				return;
 			}
 			if(contents.username.indexOf("\\") != -1){
 				//this.errorNode.innerHTML = "Username cannot contain any slashes";
-				this.errorNode.innerHTML = nls.UsernameNoSlashes;
+				this.errorNode.innerHTML = this.nls.UsernameNoSlashes;
 				this.submitNode.disabled=false;
 				return;
 			}
@@ -291,19 +291,19 @@ dojo.declare("desktop.login._RegisterDialog", dijit.Dialog, {
 							{
 								this.hide();
 								//this.parentForm.errorNode.innerHTML = "Public registations are disabled";
-								this.parentForm.errorNode.innerHTML = nls.PublicRegisterDisabled;
+								this.parentForm.errorNode.innerHTML = this.nls.PublicRegisterDisabled;
 							}
 							if(data == "1")
 							{
 								//this.errorNode.innerHTML = "Username already exists";
-								this.errorNode.innerHTML = nls.UsernameExists;
+								this.errorNode.innerHTML = this.nls.UsernameExists;
 								this.submitNode.disabled=false;
 							}
 							else if(data == "0")
 							{
 								this.hide();
 								//this.parentForm.errorNode.innerHTML = "You may now log in";
-								this.parentForm.errorNode.innerHTML = nls.MayLog;
+								this.parentForm.errorNode.innerHTML = this.nls.MayLog;
 							}
 						})
 					});
@@ -311,21 +311,21 @@ dojo.declare("desktop.login._RegisterDialog", dijit.Dialog, {
 				else
 				{
 					//this.errorNode.innerHTML = "Please enter a valid email";
-					this.errorNode.innerHTML = nls.EnterValidEmail;
+					this.errorNode.innerHTML = this.nls.EnterValidEmail;
 					this.submitNode.disabled=false;
 				}
 			}
 			else
 			{
 				//this.errorNode.innerHTML = "Two passwords don't match";
-				this.errorNode.innerHTML = nls.PassMismatch;
+				this.errorNode.innerHTML = this.nls.PassMismatch;
 				this.submitNode.disabled=false;
 			}
 		}
 		else
 		{
 			//this.errorNode.innerHTML = "Please fill in all fields";
-			this.errorNode.innerHTML = nls.FillAllFields;
+			this.errorNode.innerHTML = this.nls.FillAllFields;
 			this.submitNode.disabled=false;
 		}
 		return false;
