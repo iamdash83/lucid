@@ -104,6 +104,7 @@ dojo.declare(
 			"double-quote": true,
 			"context-separator": true
 		},
+        _eventsAttached: false,
         postCreate: function(){
 			var self = this;
 			if(this.resizeTo){
