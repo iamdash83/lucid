@@ -1342,7 +1342,7 @@ dojo.declare(
                 if(this._eventsAttached){
                     return;
                 }
-                var node = this.tArea; //document;
+                var node = document.body; //this.tArea; //document;
                 this._eventHandlers.push(dojo.connect(node, "onkeypress", this, "keyPressHandler"));
                 this._eventHandlers.push(dojo.connect(node, "onkeyup", this, "keyUpHandler"));
                 this._eventHandlers.push(dojo.connect(this.domNode, "onscroll", this, "scrollHandler"));
@@ -1352,11 +1352,10 @@ dojo.declare(
             if(!this._eventsAttached){
 	            return;
             }
-                for(var i = 0; i < this._eventHandlers.length; i++){
-                    dojo.disconnect(this._eventHandlers[i]);
-                }
-                this._eventHandlers.length = 0;
-            this._eventsAttached = false;
+                dojo.forEach(this._eventHandlers, function(evt){
+                    dojo.disconnect(evt);
+                });
+                this._eventsAttached = false;
             },
         _hideCaret: function(){
 	        dojo.style(
