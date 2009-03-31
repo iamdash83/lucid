@@ -1338,16 +1338,50 @@ dojo.declare(
             this.height = dojo.coords(this.domNode).h;
         },
         attachEvents: function(){
-            var node = document;
-            this._eventHandlers.push(dojo.connect(node, "onkeypress", this, "keyPressHandler"));
-            this._eventHandlers.push(dojo.connect(node, "onkeyup", this, "keyUpHandler"));
-            this._eventHandlers.push(dojo.connect(this.domNode, "onscroll", this, "scrollHandler"));
-        },
+                if(this._eventsAttached){
+                    return;
+                }
+                var node = this.tArea; //document;
+                this._eventHandlers.push(dojo.connect(node, "onkeypress", this, "keyPressHandler"));
+                this._eventHandlers.push(dojo.connect(node, "onkeyup", this, "keyUpHandler"));
+                this._eventHandlers.push(dojo.connect(this.domNode, "onscroll", this, "scrollHandler"));
+                this._eventsAttached = true;
+            },
         detachEvents: function(){
-            for(var i = 0; i < this._eventHandlers.length; i++){
-                dojo.disconnect(this._eventHandlers[i]);
+            if(!this._eventsAttached){
+	            return;
             }
-            this._eventHandlers.length = 0;
+                for(var i = 0; i < this._eventHandlers.length; i++){
+                    dojo.disconnect(this._eventHandlers[i]);
+                }
+                this._eventHandlers.length = 0;
+            this._eventsAttached = false;
+            },
+        _hideCaret: function(){
+	        dojo.style(
+		        this.caret,
+		        {
+			        display: "none"
+		        }
+	        );
+        },
+        _showCaret: function(){
+	        dojo.style(
+		        this.caret,
+		        {
+			        display: "block"
+		        }
+	        );
+        },
+        onFocus: function(){
+            this.attachEvents();
+            this.inherited(arguments);
+            this._showCaret();
+        },
+        onBlur: function(){
+            this.detachEvents();  
+            this.inherited(arguments);
+            this._hideCaret();
         },
         setCaretPositionAtPointer: function(e){
             var evt = dojo.fixEvent(e),
