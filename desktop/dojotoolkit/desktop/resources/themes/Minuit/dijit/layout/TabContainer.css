@@ -46,40 +46,50 @@
 }
 
 .dijit .dijitTab .dijitClosable .closeImage {
-	/* Inline-block */
-	display:-moz-inline-box;		/* FF2 */
-	display:inline-block;			/* webkit and FF3 */
-	#zoom: 1; /* set hasLayout:true to mimic inline-block */
-	#display:inline; /* don't use .dj_ie since that increases the priority */
-	vertical-align:top;
+	background: url("../images/tabClose.png") no-repeat right top;
 	width: 12px;
 	height: 12px;
-	font-size: 5px;
-	padding: 0;
-	margin: 0;
-	background: url("../images/tabClose.png") no-repeat right top;
 }
 
 .dijit .dijitTab .dijitTabButtonSpacer {
+	/* make sure tabs w/close button and w/out close button are same height, even w/small (<12px) font */
 	height: 12px;
 	width: 1px;
 }
 
-.dj_ie6 .dijitTab .dijitClosable .closeImage {
-	background-image:url("../images/tabClose.gif");
+/* Nested Tabs */
+.dijit .dijitTabContainerTabListNested .dijitTab {
+	background: none;
+	border: none;
+	top: 0px;		/* to override top: 1px/-1px for normal tabs */ 
+}
+.dijit .dijitTabContainerTabListNested .dijitTab .dijitTabContent {
+}
+.dijit .dijitTabContainerTabListNested .dijitTabHover .dijitTabContent .tabLabel {
+	text-decoration: underline;
+}
+.dijit .dijitTabContainerTabListNested .dijitTabChecked .dijitTabContent .tabLabel {
+	text-decoration: underline;
+	font-weight: bold;
+	/*background:#f3f3f3;*/
+}
+.dijit .dijitTabContainer .dijitTabPaneWrapperNested {
+	border: none;	/* prevent double border */
 }
 
-.dijit .dijitTabCloseButton .dijitClosable .closeImage {
+/* Close button */
+
+.dijit .dijitTab .closeImage {
 	background-image : url("../images/tabClose.png");
 }
-.dj_ie6 .dijit .dijitTabCloseButton .dijitClosable .closeImage {
+.dj_ie6 .dijit .dijitTab .closeImage {
 	background-image : url("../images/tabClose.gif");
 }
 
-.dijit .dijitTabCloseButtonHover .dijitClosable .closeImage {
+.dijit .dijitTab .closeButton-hover .closeImage {
 	background-image : url("../images/tabCloseHover.png");
 }
-.dj_ie6 .dijit .dijitTabCloseButtonHover .dijitClosable .closeImage {
+.dj_ie6 .dijit .dijitTab .closeButton-hover .closeImage {
 	background-image : url("../images/tabCloseHover.gif");
 }
 

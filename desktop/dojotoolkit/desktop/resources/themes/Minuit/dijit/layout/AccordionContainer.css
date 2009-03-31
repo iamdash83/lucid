@@ -1,31 +1,11 @@
 /* Accordion */
 
 .dijit .dijitAccordionContainer {
-	border-color: #ccc;	
-}
-
-/* nested classes */
-
-.dijit .dijitTabContainer-dijitAccordionContainer {
-    border: none;
-}
-
-.dijit .dijitAccordionContainer-dijitAccordionContainer {
-    border: none;
-    background-color: #fff;
-}
-
-.dijit .dijitSplitContainer-dijitAccordionContainer,
-.dijit .dijitBorderContainer-dijitAccordionContainer {
-    border: 1px #ccc solid;
-    background-color: #fff;
+	border-color: #ccc;
+	background-color: #fff;
 }
 
 /* common */
-
-.dijit .dijitAccordionPane {
-	background-color: #e7e7e7;
-}
 
 .dijit .dijitAccordionTitle {
 	background:#fafafa url("../images/titleBar.png") repeat-x bottom left;
@@ -45,8 +25,4 @@
 	border-bottom: 1px solid #bfbfbf;
 	padding: 4px 4px 4px 8px;
 	cursor: default;
-}
-
-.dijit .dijitAccordionBody {
-	background: #fff;
 }

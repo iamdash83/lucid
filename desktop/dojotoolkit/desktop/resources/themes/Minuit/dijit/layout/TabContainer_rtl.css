@@ -33,6 +33,6 @@
 	margin-left:0px;
 }
 
-.dj_ie .dijit .dijitTab .dijitTabInnerDiv{
-	width : 1%;
+.dj_ie-rtl .dijit .dijitTab .dijitTabInnerDiv {
+	width : 1% !important;
 }

@@ -101,17 +101,18 @@ dojo.provide("dojox.html.metrics");
 		fs.width = "5em";
 		fs.height = "10em";
 		fs.top = "-10000px";
+		f.src = dojo.config["dojoBlankHtmlUrl"] || dojo.moduleUrl("dojo", "resources/blank.html");
 		dojo.body().appendChild(f);
 
 		if(dojo.isIE){
 			f.onreadystatechange = function(){
 				if(f.contentWindow.document.readyState == "complete"){
-					f.onresize = Function('window.parent.'+dojox._scopeName+'.html.metrics._fontresize()');
+                    f.onresize = f.contentWindow.parent[dojox._scopeName].html.metrics._fontresize;
 				}
 			};
 		}else{
 			f.onload = function(){
-				f.contentWindow.onresize = Function('window.parent.'+dojox._scopeName+'.html.metrics._fontresize()');
+                f.contentWindow.onresize = f.contentWindow.parent[dojox._scopeName].html.metrics._fontresize;
 			};
 		}
 		dhm.initOnFontResize = function(){};
@@ -121,6 +122,19 @@ dojo.provide("dojox.html.metrics");
 	dhm._fontresize = function(){
 		dhm.onFontResize();
 	}
+
+	dojo.addOnUnload(function(){
+		// destroy our font resize iframe if we have one
+		var f = dhm._fontResizeNode;
+		if(f){
+			if(dojo.isIE && f.onresize){
+				f.onresize = null;
+			}else if(f.contentWindow && f.contentWindow.onresize){
+				f.contentWindow.onresize = null;
+			}
+			dhm._fontResizeNode = null;
+		}
+	});
 
 	dojo.addOnLoad(function(){
 		// getScrollbar metrics node

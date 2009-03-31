@@ -1,22 +1,27 @@
-.dijit .dijitTitlePane .dijitTitlePaneTitle {
+.dijit .dijitTitlePaneTitle {
 	background: #cccccc;
 	background:#fff url("images/titleBar.png") repeat-x bottom left;
 	border:1px solid #bfbfbf;
-	padding:4px 4px 2px 4px;
+	padding:3px 4px;
 	cursor: pointer;
+}
+.dijit .dijitTitlePaneTitle-hover  {
+	background: #f8fafd url("images/accordionItemHover.gif") bottom repeat-x;
+}
+
+.dijit .dijitTitlePaneTitle * {
+	vertical-align: middle;
 }
 
 .dijit .dijitTitlePane .dijitArrowNode {
 	cursor: pointer;
 	background-image: url('images/spriteArrows.png');
 	background-repeat: no-repeat;
-	font-size: 1px;
 	height: 7px;
 	width: 7px;
 }
 .dj_ie6 .dijit .dijitTitlePane .dijitArrowNode {
 	background-image: url('images/spriteArrows.gif');
-	vertical-align: middle;
 }
 
 .dijit .dijitTitlePane .dijitOpen .dijitArrowNode {
@@ -31,10 +36,18 @@
 }
 
 .dijit .dijitTitlePane .dijitArrowNodeInner {
-	visibility:hidden;
+	display:none;
 }
+
 .dijit_a11y .dijitTitlePane .dijitArrowNodeInner {
-	visibility:visible;
+	display:inline !important;
+	font-family:monospace;
+	cursor: pointer;
+	padding-bottom:.2em;
+}
+
+.dijit_a11y .dijitTitlePane .dijitArrowNode {
+	display:none;
 }
 
 .dijit .dijitTitlePaneContentOuter {

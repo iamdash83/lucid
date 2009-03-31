@@ -50,10 +50,10 @@
 .dijit .dijitTextAreaDisabled {
 	color: gray;
 }
-.dj_safari .dijit .dijitTextBoxDisabled,
-.dj_safari .dijit .dijitComboBoxDisabled,
-.dj_safari .dijit .dijitSpinnerDisabled,
-.dj_safari .dijit .dijitTextareaDisabled {
+.dj_webkit .dijit .dijitTextBoxDisabled,
+.dj_webkit .dijit .dijitComboBoxDisabled,
+.dj_webkit .dijit .dijitSpinnerDisabled,
+.dj_webkit .dijit .dijitTextAreaDisabled {
 	color: #eee;
 }
 
@@ -75,15 +75,20 @@
 
 .dijit .dijitTextBoxFocused,
 .dijit .dijitComboBoxFocused,
-.dijit .dijitSpinnerFocused,
+.dijit .dijitSpinnerFocused, .tundra .dijitSpinnerUpArrowActive, .tundra .dijitSpinnerDownArrowActive,
 .dijit .dijitTextAreaFocused {
 	/* input field when focused (ie: typing affects it) */
 	border-color:#406b9b;
 }
-.dijit .dijitComboBoxFocused .dijitButtonNode, .dijit .dijitSpinnerFocused .dijitButtonNode {
+.dijit .dijitComboBoxFocused .dijitButtonNode,
+.dijit .dijitSpinnerFocused .dijitButtonNode,
+.dijit .dijitSpinnerUpArrowActive .dijitButtonNode,
+.dijit .dijitSpinnerDownArrowActive .dijitButtonNode {
 	border-left-color:#366dba;
 }
-.dijit .dijitSpinnerFocused .dijitDownArrowButton {
+.dijit .dijitSpinnerFocused .dijitDownArrowButton,
+.dijit .dijitSpinnerUpArrowActive .dijitDownArrowButton,
+.dijit .dijitSpinnerDownArrowActive .dijitDownArrowButton {
 	border-top-color:#366dba;
 }
 

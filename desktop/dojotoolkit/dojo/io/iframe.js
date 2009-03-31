@@ -78,7 +78,7 @@ dojo.io.iframe = {
 		window[fname] = cframe;
 	
 		with(cframe.style){
-			if(dojo.isSafari < 3){
+			if(!(dojo.isSafari < 3)){
 				//We can't change the src in Safari 2.0.3 if absolute position. Bizarro.
 				position = "absolute";
 			}
@@ -102,7 +102,7 @@ dojo.io.iframe = {
 		//		changing the location of the iframe.
 		try{
 			if(!replace){
-				if(dojo.isSafari){
+				if(dojo.isWebKit){
 					iframe.location = src;
 				}else{
 					frames[iframe.name].location = src;
@@ -110,7 +110,8 @@ dojo.io.iframe = {
 			}else{
 				// Fun with DOM 0 incompatibilities!
 				var idoc;
-				if(dojo.isIE || dojo.isSafari > 2){
+				//WebKit > 521 corresponds with Safari 3, which started with 522 WebKit version.
+				if(dojo.isIE || dojo.isWebKit > 521){
 					idoc = iframe.contentWindow.document;
 				}else if(dojo.isSafari){
 					idoc = iframe.document;
@@ -130,7 +131,7 @@ dojo.io.iframe = {
 				}
 			}
 		}catch(e){ 
-			console.debug("dojo.io.iframe.setSrc: ", e); 
+			console.log("dojo.io.iframe.setSrc: ", e); 
 		}
 	},
 
@@ -186,30 +187,13 @@ dojo.io.iframe = {
 								dojo.query("a", dii._frame.contentWindow.document.documentElement).orphan();
 								var xmlText=(dii._frame.contentWindow.document).documentElement.innerText;
 								xmlText=xmlText.replace(/>\s+</g, "><");
-
-								//	do the manual "find the prefix".
-								if(!this._ieXmlDom){
-									for(var i=0, a=["MSXML2", "Microsoft", "MSXML", "MSXML3"], l=a.length; i<l; i++){
-										try{
-											var test=new ActiveXObject(a[i]+".XmlDom");
-											this._ieXmlDom=a[i]+".XmlDom";
-											break;
-										} catch(e){ /* squash it */}
-									}
-									
-									//	recheck to make sure we have XML support.
-									if(!this._ieXmlDom){
-										throw new Error("dojo.io.iframe.send (return handler): your copy of Internet Explorer does not support XML documents.");
-									}
-								}
-
-								//	create the document manually
-								var _xml=new ActiveXObject(this._ieXmlDom);
-								_xml.async=false;
-								_xml.loadXML(xmlText);
-								value=_xml;
+								xmlText=dojo.trim(xmlText);
+								//Reusing some code in base dojo for handling XML content.  Simpler and keeps
+								//Core from duplicating the effort needed to locate the XML Parser on IE.
+								var fauxXhr = { responseText: xmlText };
+								value = dojo._contentHandlers["xml"](fauxXhr); // DOMDocument
 							}
-						} else {
+						}else{
 							value = ifd.getElementsByTagName("textarea")[0].value; //text
 							if(handleAs == "json"){
 								value = dojo.fromJson(value); //json
@@ -289,21 +273,32 @@ dojo.io.iframe = {
 				if(content){
 					// if we have things in content, we need to add them to the form
 					// before submission
-					for(var x in content){
-						if(!fn[x]){
-							var tn;
-							if(dojo.isIE){
-								tn = dojo.doc.createElement("<input type='hidden' name='"+x+"'>");
-							}else{
-								tn = dojo.doc.createElement("input");
-								tn.type = "hidden";
-								tn.name = x;
-							}
-							tn.value = content[x];
-							fn.appendChild(tn);
-							ioArgs._contentToClean.push(x);
+					var pHandler = function(name, value) {
+						var tn;
+						if(dojo.isIE){
+							tn = dojo.doc.createElement("<input type='hidden' name='"+name+"'>");
 						}else{
-							fn[x].value = content[x];
+							tn = dojo.doc.createElement("input");
+							tn.type = "hidden";
+							tn.name = name;
+						}
+						tn.value = value;
+						fn.appendChild(tn);
+						ioArgs._contentToClean.push(name);
+					};
+					for(var x in content){
+						var val = content[x];
+						if(dojo.isArray(val) && val.length > 1){
+							var i;
+							for (i = 0; i < val.length; i++) {
+								pHandler(x,val[i]);
+							}
+						}else{
+							if(!fn[x]){
+								pHandler(x,val);
+							}else{
+								fn[x].value = val;
+							}
 						}
 					}
 				}
@@ -368,12 +363,12 @@ dojo.io.iframe = {
 					for(var j = 0; j < fNode.childNodes.length; j++){
 						var chNode = fNode.childNodes[j];
 						if(chNode.name == key){
-							dojo._destroyElement(chNode);
+							dojo.destroy(chNode);
 							break;
 						}
 					}
 				}else{
-					dojo._destroyElement(fNode[key]);
+					dojo.destroy(fNode[key]);
 					fNode[key] = null;
 				}
 			}

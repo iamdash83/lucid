@@ -1,20 +1,7 @@
 
 /* Tree */
 .dijitRtl .dijit .dijitTreeContainer .dijitTreeNode {
-    background-image : url('images/i_rtl.gif');
-    background-position : top right;
-    margin-left: auto;
-    margin-right: 19px;
-}
-
-.dijitRtl .dijit .dijitTreeContainer .dijitTreeIsRoot {
-	margin-left: auto;
-    margin-right: 0;
-    background-image: none;
-}
-
-.dijitRtl .dijit .dijitTreeContainer .dijitTreeIsLast {
-    background-image: url('images/i_half_rtl.gif');
+    background-image : none;
 }
 
 .dijitRtl .dijit .dijitTreeContainer .dijitTreeExpandoOpened {
@@ -26,5 +13,5 @@
 }
 
 .dijitRtl .dijit .dijitTreeContainer .dijitTreeExpandoLeaf {
-	background-image: url('images/treeExpand_leaf_rtl.gif');
+	background-image: none;
 }

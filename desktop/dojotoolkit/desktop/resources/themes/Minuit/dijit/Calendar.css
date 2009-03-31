@@ -12,9 +12,8 @@
 	background-image: url("images/spriteRoundedIconsSmall.gif");
 }
 
-.dijit .dijitCalendarIncreaseInner,
-.dijit .dijitCalendarDecreaseInner {
-	visibility:hidden;
+.dijit .dijitA11ySideArrow {
+	display: none;
 }
 
 .dijit .dijitCalendarDecrease {
@@ -100,10 +99,9 @@
 	background-color:#bbbbbc !important;
 }
 
-.dijit .dijitCalendarCurrentDate {
-	/* cell for today's date */
-	text-decoration:underline;
-	font-weight:bold;
+.dijit .dijitCalendarDisabledDate {
+	cursor:default !important;
+	text-decoration:line-through !important;
 }
 
 .dijit .dijitCalendarCurrentDate {

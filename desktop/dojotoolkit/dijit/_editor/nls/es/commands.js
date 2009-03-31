@@ -39,7 +39,6 @@
 	'fontName': 'Nombre de font',
 	'tabIndent': 'Sangrado de tabulación',
 	/* Error messages */
-	'systemShortcutFF': 'La acción "${0}" sólo está disponible en Mozilla Firefox mediante un atajo de teclado. Utilice ${1}.',
 	'systemShortcut': 'La acción "${0}" sólo está disponible en su navegador mediante un atajo de teclado. Utilice ${1}.',
 	'ctrlKey':'Control+${0}'
 })
