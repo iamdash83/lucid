@@ -165,7 +165,7 @@ dojo.declare("desktop.login.Form", dijit.form.Form, {
 					{
 						if(contents.windowAct == "current"){
 							//this.errorNode.innerHTML = "Logged in. Redirecting to desktop...";
-							this.errorNode.innerHTML = this.nls.LoggedInRedirect;
+							this.errorNode.innerHTML = this.nls.LoggedInRedirecting;
 							window.location = dojo.baseUrl+"../../index.html";
 						}
 						else {
