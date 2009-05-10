@@ -8,5 +8,6 @@
 	"maturity": "Stable",
 	"category": "Office",
 	"filetypes": [],
+	"icon": "icon-16-actions-list-add",
 	"compatible": ["1.0.0"]
 }
