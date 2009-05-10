@@ -431,18 +431,11 @@ dojo.declare("desktop.apps.KatanaIDE", desktop.apps._App, {
 	saveMeta: function(){
 		var ideLocale = dojo.i18n.getLocalization("desktop.apps.KatanaIDE", "ide");
 		var data = {};
-		var noSave = false;
 		for(var key in this.metaUi){
 			if(this.metaUi[key].getValue() == "") 
-				noSave = true;
 			data[key] = this.metaUi[key].getValue();
 		}
-		if(noSave)
-			desktop.dialog.alert({title: app["Katana IDE"], message: ideLocale.saveFail});
-		else {
-			desktop.app.save(data);
-			desktop.dialog.alert({title: app["Katana IDE"], message: ideLocale.saveSuccess});
-		}
+		desktop.app.save(data);
 	},
 	setMeta: function(info){
 		for(var key in this.metaUi){
@@ -517,6 +510,7 @@ dojo.declare("desktop.apps.KatanaIDE", desktop.apps._App, {
 			maturity: "Alpha",
 			category: "Accessories"
 		}, info);
+		this.setMeta(this.appInfo[info.sysname]);
 		var defaultContent = "dojo"+".provide(\"desktop.apps."+info.sysname+"\");\r\n\r\n"
 								+"dojo.declare(\"desktop.apps."+info.sysname+"\", desktop.apps._App, {\r\n"
 								+"	init: function(args){\r\n"
