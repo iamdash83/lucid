@@ -23,7 +23,7 @@ dojo.declare("desktop.apps.KatanaIDE", desktop.apps._App, {
 			data: {
 				identifier: "key",
 				items: [
-					{key: "useEditorLite", value: false}
+					{key: "useEditorLite", value: true}
 				]
 			}
 		});
