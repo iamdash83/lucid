@@ -91,6 +91,8 @@
 				foreach(array("sysname", "name", "author", "email", "maturity", "category", "version", "icon", "filetypes", 'compatible') as $key) {
 					$item[$key] = $v->$key;
 				}
+				if($item['category'] == $null)
+					$item['category'] = "Uncategorized";
 				array_push($list, $item);
 			}
 			$out->set($list);
