@@ -168,11 +168,12 @@ dojo.declare("desktop.apps.FileBrowser", desktop.apps._App, {
 		    uploadOnChange: true,
             selectMultipleFiles: true
 		});
+		/*
         if(dojox.embed.Flash.available > 9){
             //fix button (workaround)
             this.fixButton();
             dojo.connect(this.uploader, "_connectInput", this, "fixButton");
-        }
+        }*/
         this.doUploaderConnects();
 	},
 	
