@@ -35,6 +35,13 @@ install = new function() {
 			}
 		}
 		install.currentPage = page;
+		if(page.title == "Pre-Install" && install.type == "reset") {
+			dijit.byId("previous").setDisabled(false);
+			dijit.byId("previous").onClick = function(e) {
+				dijit.byId("wizard").selectChild("installtype-choose");
+				this.onClick = function(e) { dijit.byId('wizard').back(); }
+			};
+		}
 		if(page.title == "Permissions" || 
 		   page.title == "Installation Type" ||
 		   page.title == "Database" ||
@@ -50,6 +57,14 @@ install = new function() {
 			install.doInstall();
 		}
 		if(page.title == "Installation Type") {
+			if(install.type == "reset") {
+				 dijit.byId("next").setDisabled(false);
+				 dijit.byId("next").onClick = function(e) {
+					dijit.byId("wizard").selectChild("config-check");
+					this.onClick = function(e) { dijit.byId('wizard').forward(); }
+				};
+				install.typeWasChecked = true;
+			}
 			if(install.typeWasChecked == true)  dijit.byId("next").setDisabled(false);
 		}
 		if(page.title == "Admin Setup") {
@@ -194,6 +209,7 @@ install = new function() {
 			};
 		}
 		install.typeWasChecked = true;
+		install.type = "clean";
 	}
 	this.onResetRadioClick = function(e) {
 		if(!this.checked) {
@@ -204,6 +220,7 @@ install = new function() {
 				this.onClick = function(e) { dijit.byId('wizard').forward(); }
 			};
 		}
+		install.type = "reset";
 	}
 	this.doInstall = function()
 	{
