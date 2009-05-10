@@ -429,11 +429,20 @@ dojo.declare("desktop.apps.KatanaIDE", desktop.apps._App, {
 		return dialog;
 	},
 	saveMeta: function(){
+		var ideLocale = dojo.i18n.getLocalization("desktop.apps.KatanaIDE", "ide");
 		var data = {};
+		var noSave = false;
 		for(var key in this.metaUi){
+			if(this.metaUi[key].getValue() == "") 
+				noSave = true;
 			data[key] = this.metaUi[key].getValue();
 		}
-		desktop.app.save(data);
+		if(noSave)
+			desktop.dialog.alert({title: app["Katana IDE"], message: ideLocale.saveFail});
+		else {
+			desktop.app.save(data);
+			desktop.dialog.alert({title: app["Katana IDE"], message: ideLocale.saveSuccess});
+		}
 	},
 	setMeta: function(info){
 		for(var key in this.metaUi){
