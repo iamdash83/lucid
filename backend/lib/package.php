@@ -121,11 +121,11 @@ class package {
 		$app->save();
 	}
 	function _install_theme($info, $path) {
-		$newpath = $GLOBALS['path']."/../desktop/themes/".strtolower($info['name']);
+		$newpath = $GLOBALS['path']."/../desktop/dojotoolkit/desktop/resources/themes/".strtolower($info['name']);
 		@mkdir($newpath, 0777);
 		package::_recursive_copy($path."/".strtolower($info['name']), $newpath);
 		copy($path."/meta.json", $newpath."/meta.json");
-		return array("/desktop/themes/".strtolower($info['name']));
+		return array("/desktop/dojotoolkit/desktop/resources/themes/".strtolower($info['name']));
 	}
 	function _install_translation($info, $path) {
 		function rsearch($path) {
