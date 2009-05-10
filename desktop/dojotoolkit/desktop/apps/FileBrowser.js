@@ -163,6 +163,7 @@ dojo.declare("desktop.apps.FileBrowser", desktop.apps._App, {
 	    this.uploader = new dojox.form.FileUploader({
 		    button: this.upbutton,
 		    degradable: true,
+			force: "html",
 		    //uploadUrl: desktop.xhr("api.fs.io.upload")+"&path="+encodeURIComponent(this.fileArea.path),
             uploadUrl: desktop.xhr("api.fs.io.upload")+"?path="+encodeURIComponent(this.fileArea.path),
 		    uploadOnChange: true,
