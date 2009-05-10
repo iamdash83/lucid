@@ -5,6 +5,7 @@
 
 	Licensed under the Academic Free License version 2.1 or above.
 */
+set_time_limit(0); //Allow long operations + long file uploads >30 seconds.
 require("../lib/includes.php");
 import("api.vfs.Base");
 import("models.user");
