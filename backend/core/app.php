@@ -88,12 +88,20 @@
 					if($continue) continue;
 				}
 				$item = array();
+				$errornous = false;
 				foreach(array("sysname", "name", "author", "email", "maturity", "category", "version", "icon", "filetypes", 'compatible') as $key) {
 					$item[$key] = $v->$key;
 				}
+				if($item['sysname'] == $null || $item['name'] == $null)
+					$errornous = true;
 				if($item['category'] == $null)
 					$item['category'] = "Uncategorized";
-				array_push($list, $item);
+				if(!$errornous)
+					array_push($list, $item);
+				else {
+					$app = $App->get($v->id);
+					$app->delete();
+				}
 			}
 			$out->set($list);
 		}
