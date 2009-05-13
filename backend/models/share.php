@@ -32,7 +32,7 @@
 		}
 		
 		function frag_fs() {
-			_deltree($GLOBALS['path'] . "/../public/".$this->shareName."/");
+			_deltree($GLOBALS['path'] . "/../public/".$this->name."/");
 		}
 	}
 	global $Share;
