@@ -15,9 +15,10 @@
 	{
 		if ($_GET['action'] == "new") {
 			$current = $User->get_current();
-			$data = Zend_Json::Decode($_GET['data']);
+			$data = Zend_Json::Decode($_POST['data']);
 			$name = $data['name'];
 			$groups = $data['groups'];
+			if(!$name || !$groups) internal_error("generic_err");
 			//User haz adminz?
 			if(!$current->has_permission("core.administration"))
 				internal_error("permission_denied");
@@ -33,7 +34,7 @@
 			internal_error("ok");
 		}
 		elseif ($_GET['action'] == "delete") {
-			$data = Zend_Json::Decode($_GET['data']);
+			$data = Zend_Json::Decode($_POST['data']);
 			$current = $User->get_current();
 			$name = $data['name'];
 			if(!$name) {
