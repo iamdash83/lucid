@@ -23,6 +23,7 @@ dojo.require("desktop.apps.AdminPanel.apps");
 dojo.require("desktop.apps.AdminPanel.groups");
 dojo.require("desktop.apps.AdminPanel.permissions");
 dojo.require("desktop.apps.AdminPanel.quota");
+dojo.require("desktop.apps.AdminPanel.shares");
 dojo.require("desktop.apps.AdminPanel.themes");
 dojo.require("desktop.apps.AdminPanel.users");
 

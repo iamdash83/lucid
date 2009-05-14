@@ -63,5 +63,9 @@
 	"unlimited": "Unlimited",
 	"compatible": "Compatibility",
 	"notCompatible": "Package incompatible",
-	"notCompatibleText": "The package you have installed may be incompatible with this version of Lucid. Please check the provider's site for an up-to-date version."
+	"notCompatibleText": "The package you have installed may be incompatible with this version of Lucid. Please check the provider's site for an up-to-date version.",
+	"shares": "Shares",
+	"createNewShare": "Create new share", 
+	"addRemoveGroup": "Add/Remove group to share with",
+	"enterGroup": "Enter group name:"
 })

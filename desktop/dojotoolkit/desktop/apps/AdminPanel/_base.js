@@ -43,6 +43,10 @@ dojo.declare("desktop.apps.AdminPanel", desktop.apps._App, {
 			       iconClass: "icon-16-apps-system-users",
 			       onClick: dojo.hitch(this, this.groups)});
 				menu.addChild(item);
+				var item = new dijit.MenuItem({label: sys.shares,
+			       iconClass: "icon-16-apps-system-users",
+			       onClick: dojo.hitch(this, this.shares)});
+				menu.addChild(item);
 				var item = new dijit.MenuItem({label: sys.permissions,
 			       iconClass: "icon-16-apps-system-users",
 			       onClick: dojo.hitch(this, this.permissions)});

@@ -49,7 +49,7 @@ class ShareFs extends BaseFs {
 			die ($GLOBALS['path'] . "/../public/" . ($path ? $path : ""));*/
 			return $GLOBALS['path'] . "/../public/" . ($path ? $path : "");
 		}
-		else internal_error("generic_err");
+		else return $GLOBALS['path'] . "/../public/" . ($path ? $path : "");
 	}
 	function _getRealPath($path) {
 		return $this->_basePath($path);

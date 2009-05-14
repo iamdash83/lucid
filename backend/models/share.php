@@ -1,4 +1,4 @@
-<?php 
+<?php
 /*
 	Copyright (c) 2004-2008, The Dojo Foundation & Lucid Contributors
 	All Rights Reserved.
@@ -10,6 +10,7 @@
 	class Share extends Base
 	{
 		var $name = array('type' => 'text');
+		var $description = array('type' => 'text');
 		var $groups = array('type' => 'array');
 		
 		function _deltree( $f ){
@@ -37,4 +38,3 @@
 	}
 	global $Share;
 	$Share = new Share();
-?>
