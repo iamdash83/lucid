@@ -8,5 +8,6 @@
 	"maturity": "Stable",
 	"category": "Multimedia",
 	"filetypes": ["audio/*"],
+	"icon": "icon-16-actions-media-playback-start",
 	"compatible": ["1.0.0"]
 }

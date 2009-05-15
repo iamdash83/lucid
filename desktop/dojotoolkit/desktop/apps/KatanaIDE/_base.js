@@ -23,7 +23,7 @@ dojo.declare("desktop.apps.KatanaIDE", desktop.apps._App, {
 			data: {
 				identifier: "key",
 				items: [
-					{key: "useEditorLite", value: false}
+					{key: "useEditorLite", value: true}
 				]
 			}
 		});
@@ -429,8 +429,10 @@ dojo.declare("desktop.apps.KatanaIDE", desktop.apps._App, {
 		return dialog;
 	},
 	saveMeta: function(){
+		var ideLocale = dojo.i18n.getLocalization("desktop.apps.KatanaIDE", "ide");
 		var data = {};
 		for(var key in this.metaUi){
+			if(this.metaUi[key].getValue() == "") 
 			data[key] = this.metaUi[key].getValue();
 		}
 		desktop.app.save(data);
@@ -508,6 +510,7 @@ dojo.declare("desktop.apps.KatanaIDE", desktop.apps._App, {
 			maturity: "Alpha",
 			category: "Accessories"
 		}, info);
+		this.setMeta(this.appInfo[info.sysname]);
 		var defaultContent = "dojo"+".provide(\"desktop.apps."+info.sysname+"\");\r\n\r\n"
 								+"dojo.declare(\"desktop.apps."+info.sysname+"\", desktop.apps._App, {\r\n"
 								+"	init: function(args){\r\n"

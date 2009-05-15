@@ -34,6 +34,104 @@
 				$p->append("total", $total);
 			}
 		}
+		if($_GET['section'] == "shares") {
+			if($_GET['action'] == "list") {
+				import("models.share");
+				$list = $Share->all();
+				$out = array();
+				foreach($list as $group) {
+					array_push($out, array(
+						"id" => $group->id,
+						"name" => $group->name,
+						"description" => $group->description,
+						"groups" => $group->groups
+					));
+				}
+				$output = new jsonOutput($out);
+			}	
+			if($_GET['action'] == "add") {
+				import("models.share");
+				if(strlen($_POST['name'] > 16))
+					internal_error("generic_err");
+				$p = new $Share(array(
+					"name" => str_replace(' ', '', $_POST['name']),
+					"description" => $_POST['description'],
+					"groups" => array()
+				));
+				$p->save();
+				$p->create_fs();
+				$out = new jsonOutput(array(
+					"id" => $p->id
+				));
+			}
+			if($_GET['action'] == "set") {
+				import("lib.Json.Json");
+				import("models.share");
+				$p = $Share->get($_POST['id']);
+				foreach(array("description", "groups") as $key) {
+					if(!isset($_POST[$key])) continue;
+					if($key == "groups") $p->$key = Zend_Json::decode($_POST[$key]);
+					else $p->$key = $_POST[$key];
+				}
+				$p->save();
+				$out = new intOutput("ok");
+			}
+			if($_GET['action'] == "delete") {
+				import("models.share");
+				$p = $Share->get($_POST['id']);
+				$p->frag_fs();
+				$p->delete();
+				$out = new intOutput("ok");
+			}
+			if($_GET['action'] == "addGroup") {
+				import("models.share");
+				import("models.group");
+				$share = $Share->get($_POST['shareid']);
+				$group = $_POST['groupname'];
+				foreach($share->groups as $g) {
+					if($g == $groupname) {
+						$out = new intOutput("ok");
+						die();
+					}
+				}
+				array_push($share->groups, $group);
+				$share->save();
+				$out = new intOutput("ok");
+			}
+			if($_GET['action'] == "removeGroup") {
+				import("models.share");
+				import("models.group");
+				$groupname = $_POST['groupname'];
+				$share = $Share->get($_POST['shareid']);
+				foreach($share->groups as $k => $g) {
+					if($g == $groupname) {
+						array_splice($share->groups, $k, 1);
+					}
+				}
+				$share->save();
+				$out = new intOutput("ok");
+			}
+			if($_GET['action'] == "getGroups") {
+				import("models.share");
+				import("models.group");
+				$shares = $Share->get($_POST['id']);
+				$array = array();
+				foreach($share->groups as $group) {
+					array_push($group, $array);
+				}
+				$final = array();
+				foreach($array as $shit) {
+					$item = array();
+					$cur = $Group->filter("name", $shit);
+					$cur = $cur[0];
+					foreach(array("id", "name", "description") as $key) {
+						$item[$key] = $cur->$key;
+					}
+					array_push($final, $item);
+				}	
+				$out = new jsonOutput($final);
+			}
+		}
 		if($_GET['section'] == "permissions") {
 			if($_GET['action'] == "list") {
 				import("models.permission");

@@ -32,6 +32,137 @@ desktop.admin = {
 			handleAs: "json"
 		}); // dojo.Deferred
 	},
+	shares: {
+		//	summary:
+		//		Share management
+		list: function(/*Function*/onComplete, /*Function?*/onError){
+			//	summary:
+			//		List the permissions on the system
+			//  onComplete:
+			//		a callback function to pass the results to.
+			//		The callback will get a single array of values as it's first argument.
+			//		Each slot in the array will be a desktop.admin.permissions._listArgs object with the permission's information
+            //	onError:
+            //	    if there was a problem, then this will be called
+			return desktop.xhr({
+				backend: "core.administration.shares.list",
+				load: onComplete,
+                error: onError,
+				handleAs: "json"
+			}) // dojo.Deferred
+		},
+		add: function(/*desktop.admin.shares._listArgs*/args){
+			//	summary:
+			//		Creates a new share
+			var d = new dojo.Deferred();
+			if(args.onComplete) d.addCallback(args.onComplete);
+			if(args.onError) d.addErrback(args.onError);
+			desktop.xhr({
+				backend: "core.administration.shares.add",
+				content: args,
+				load: function(data){
+					d.callback(data.id);
+				},
+				error: dojo.hitch(d, "errback"),
+				handleAs: "json"
+			})
+			return d; // dojo.Deferred
+		},
+		remove: function(/*Integer*/id, /*Function?*/onComplete, /*Function?*/onError){
+			//	summary:
+			//		Remove a share from the system
+            var d = new dojo.Deferred();
+            if(onComplete) d.addCallback(onComplete);
+            if(onError) d.addErrback(onError);
+			desktop.xhr({
+				backend: "core.administration.shares.delete",
+				content: {
+					id: id
+				},
+				load: function(data){
+					d[data == "0" ? "callback" : "errback"]();
+				},
+                error: dojo.hitch(d, "onError")
+			});
+            return d; //dojo.Deferred
+		},
+		set: function(/*desktop.admin.shares._listArgs*/args){
+			//	summary:
+			//		Set share information
+            var d = new dojo.Deferred();
+			if(args.onComplete) d.addCallback(args.onComplete);
+            if(args.onError) d.addErrback(args.onError);
+			if(typeof args.groups != "undefined") args.groups = dojo.toJson(args.groups);
+			desktop.xhr({
+				backend: "core.administration.shares.set",
+				content: args,
+				load: function(data){
+					d[data == "0" ? "callback" : "errback"]();
+				},
+                error: dojo.hitch(d, "errback")
+			})
+            return d; // dojo.Deferred
+		},
+		getGroups: function(/*Integer*/id, /*Function*/onComplete, /*Function?*/onError){
+			//	summary:
+			//		Get the groups of a share
+			//	id:
+			//		the id of the group to get the members of
+			//	onComplete:
+			//		callback function. First argument is an array of the users. See desktop.user.get for the attributes of each object in the array.
+            //	onError:
+            //	    if there was an error, this will be called
+			return desktop.xhr({
+				backend: "core.administration.shares.getGroups",
+				content: {
+					id: id
+				},
+				load: onComplete,
+                error: onError,
+				handleAs: "json"
+			}); // dojo.Deferred
+		},
+		addGroup: function(/*Int*/id, /*String*/name, /*Function?*/onComplete, /*Function?*/onError){
+			//	summary:
+			//		adds a group to a share
+			//  id:
+			//		the share id
+			//	name:
+			//		the group nane
+			//	onComplete:
+			//		a callback for once the operation has been completed
+            //	onError:
+            //	    if there was a problem, this will be called
+			return desktop.xhr({
+				backend: "core.administration.shares.addGroup",
+				content: {
+					shareid: id,
+					groupname: name
+				},
+				load: onComplete,
+                error: onError
+			}); // dojo.Deferred
+		},
+		removeGroup: function(/*Integer*/id, /*Str*/name, /*Function?*/onComplete, onError){
+			//	summary:
+			//		removes a group from a share
+			//	id:
+			//		the share ID
+			//	name:
+			//		the group name
+			//	callback:
+			//		a callback for once the operation has been completed
+			return desktop.xhr({
+				backend: "core.administration.shares.removeGroup",
+				content: {
+					shareid: id,
+					groupname: name
+				},
+				load: onComplete,
+                error: onError
+			}); // dojo.Deferred
+		}
+	},
 	permissions: {
 		//	summary:
 		//		Permission/group management
