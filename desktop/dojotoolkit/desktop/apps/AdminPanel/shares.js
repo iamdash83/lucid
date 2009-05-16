@@ -65,7 +65,7 @@ dojo.extend(desktop.apps.AdminPanel, {
 				},
 				{
 					label: sys.addRemoveGroup,
-					onClick: dojo.hitch(this, "groupMemberDialog")
+					onClick: dojo.hitch(this, "shareMemberDialog")
 				},
 			], function(item){
 				var menuItem = new dijit.MenuItem(item);
@@ -143,7 +143,7 @@ dojo.extend(desktop.apps.AdminPanel, {
 		
 		return dialog;
 	},
-	groupMemberDialog: function(group){
+	shareMemberDialog: function(group){
 		var sys = dojo.i18n.getLocalization("desktop", "system");
 		var cmn = dojo.i18n.getLocalization("desktop", "common");
 		var row = this._groupGrid.getItem(this.__rowIndex);
