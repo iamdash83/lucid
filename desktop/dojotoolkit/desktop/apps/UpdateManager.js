@@ -13,7 +13,7 @@ dojo.declare("desktop.apps.UpdateManager", desktop.apps._App, {
         if(desktop.admin.isAdmin){
             desktop.xhr({
                 xsite: true,
-                url: "http://www.lucid-desktop.org/download/latest.json",
+                url: "http://www.lucid-desktop.org/download/version.json",
                 load: dojo.hitch(this, "checkVersion"),
                 error: dojo.hitch(this, "handleError"),
                 handleAs: "json"
