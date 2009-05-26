@@ -122,7 +122,9 @@ class BaseFs {
 	}
 	function listPath($path=false) {
 		if($path == false) $path = $this->path;
-		return $this->_listPath($path);
+		$list = $this->_listPath($path);
+		if($list != -1) return $list;
+		else internal_error("not_found");
 	}
 	function _listPath($path) {
 		return array();

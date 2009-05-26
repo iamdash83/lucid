@@ -410,6 +410,7 @@ desktop.filesystem = {
 		if(typeof code != "number")
 			return callback(code);
 		if(!code) code=-1;
+		var oldcode = code;
 		err = Error(desktop._errorCodes[code]);
 		code = err.message;
 		var nf = dojo.i18n.getLocalization("desktop.widget", "filearea");

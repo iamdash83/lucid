@@ -124,9 +124,9 @@ class FileFs extends BaseFs {
 		return $r;
 	}
 	function _listPath($path) {
-	    $dir = opendir($this->_basePath($path));
+	    $dir = @opendir($this->_basePath($path));
 		if(!$dir){
-			return false;
+			return -1; //Cheap shot
 		} else {
 			$arr = array();
 			while(($file = readdir($dir)) !== false){

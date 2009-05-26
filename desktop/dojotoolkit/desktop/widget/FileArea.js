@@ -379,6 +379,21 @@ dojo.declare("desktop.widget.FileArea", dijit.layout._LayoutWidget, {
 			this.menu._openMyself(e);
 		}
 	},
+	_findError: function(/*Int*/errorCode){
+		//	summary:
+		//		provides error string based upon the errorCode
+		//	errorCode:
+		//		code of the error
+		var nf = dojo.i18n.getLocalization("desktop.widget", "filearea");
+		var err = Error(desktop._errorCodes[errorCode]);
+		var msg = err.message;
+		if(msg == "not_found")
+			return nf.nosuchResource;
+		else if(msg == "permission_denied")
+			return nf.permissionDenied;
+		else
+			return nf.unknownError;
+	},
 	refresh: function(/*String?*/id, /*String?*/targetid){
 		//	summary:
 		//		refreshes the area
@@ -424,6 +439,10 @@ dojo.declare("desktop.widget.FileArea", dijit.layout._LayoutWidget, {
 			}, this);
 			//invoke a layout so that everything is positioned correctly
 			this.layout();
+			this._loadEnd();
+		}), dojo.hitch(this, function(err){
+			var errorString = this._findError(parseInt(err.message));
+			desktop.dialog.alert({title: "Lucid Desktop", message: errorString});
 			this._loadEnd();
 		}));
 	},

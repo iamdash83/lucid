@@ -24,5 +24,8 @@
 	"cancel": "Cancel",
 	"uploading": "Uploading %s file(s)...",
 	"uploadingComplete": "Upload complete",
-    "openWith": "Open With..."
+    	"openWith": "Open With...",
+	"nosuchResource": "No such resource! Check the path and try again.",
+	"permissionDenied": "You do not have permission to access this resource.",
+	"unknownError": "An unknown error occured while trying to access the resource."
 })
