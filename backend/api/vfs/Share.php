@@ -55,6 +55,7 @@ class ShareFs extends BaseFs {
 		return $this->_basePath($path);
 	}
 	function _getFileInfo($file, $realPath=false) {
+		$authCheck = $this->_basePath($file); //Will perform permissions check if it has the path.
 		$r = array();
 		$r['path'] = $file; //TODO: this is it's real path, get it's vfs path?
 		$f = ($realPath ? "" : $this->_basePath()) . $file;
@@ -78,9 +79,9 @@ class ShareFs extends BaseFs {
 		return $r;
 	}
 	function _listPath($path) {
-	    $dir = opendir($this->_basePath($path));
+	    $dir = @opendir($this->_basePath($path));
 		if(!$dir){
-			return false;
+			return -1;
 		} else {
 			$arr = array();
 			while(($file = readdir($dir)) !== false){
