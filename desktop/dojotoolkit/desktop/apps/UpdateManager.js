@@ -111,7 +111,7 @@ dojo.declare("desktop.apps.UpdateManager", desktop.apps._App, {
         if(isNewer){
             this.header.setContent("<h1>"+nls.updatesFound.replace("%s", version)+"</h1>");
             this.center.setContent(nls.instructions
-                                   +"<br /><a href=\"%s\">%s</a>".replace(/\%s/g, "http://www.lucid-desktop.org/downloads/"+version+"/")
+                                   +"<br /><a href=\"%s\">%s</a>".replace(/\%s/g, "http://www.lucid-desktop.org/download/"+version+"/")
                                    +"<br /><br />"+nls.currentVersion.replace("%s", desktop.version));
             dojo.query("a", this.center.domNode).forEach(function(node){
     			dojo.connect(node, "onclick", node, function(e){
