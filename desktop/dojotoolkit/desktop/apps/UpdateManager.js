@@ -76,6 +76,8 @@ dojo.declare("desktop.apps.UpdateManager", desktop.apps._App, {
         };
     },
     isNewer: function(current, latest){
+      if(current.patch == "dev")
+	current.patch = latest.patch;
        return (current.major < latest.major
             || current.minor < latest.minor
             || (current.patch < latest.patch || (current.patch == latest.patch && current.flag != latest.flag)));
