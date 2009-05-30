@@ -96,6 +96,9 @@
 				"members":{
 					"type":"array",
 					"default":[]
+					},
+				"name":{
+					"type":"string"
 					}
 				},
 			"description":"A way of organizing users"
@@ -116,6 +119,26 @@
 				"size":{
 					"type":"integer",
 					"default":0
+					}
+				}
+			}
+		},
+	{
+		"name":"Share",
+		"extends":"Object",
+		"schema":{
+			"extends":{"$ref":"../Class/Object"},
+			"prototype":{
+				},
+			"properties":{
+				"name":{
+					"type":"string"
+					},
+				"description":{
+					"type":"string"
+					},
+				"groups":{
+					"type":"array"
 					}
 				}
 			}
