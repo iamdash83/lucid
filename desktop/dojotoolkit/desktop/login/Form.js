@@ -156,7 +156,7 @@ dojo.declare("desktop.login.Form", dijit.form.Form, {
 		if(contents.username && contents.password)
 		{
 			//this.errorNode.innerHTML = "Logging in...";
-			this.errorNode.innerHTML = this.nls.LoggingIn;
+			this.errorNode.innerHTML = this.nls.LoggingIn;/*
 			dojo.xhrPost({
 				url: dojo.baseUrl+"../../../backend/core/user.php?section=auth&action=login",
 				content: contents,
@@ -209,7 +209,32 @@ dojo.declare("desktop.login.Form", dijit.form.Form, {
 						this.submitNode.setDisabled(false);
 					}
 				})
-			});
+			});*/
+			dojo.xhrPost({
+				url: "/Class/User",
+				postData: dojo.toJson({
+				    method: "authenticate",
+				    id:"login",
+				    params:[contents.username, contents.password]
+				}),
+				handleAs: "json",
+				load: dojo.hitch(this, function(response){
+				    if(response.error != null){
+					//most likely that YOU'RE DOING IT WRONG
+					this.errorNode.innerHTML = this.nls.IncorrectUserPass;
+					this.submitNode.disabled=false;
+				    }
+				    else{
+					//I don't think it's even possible to implament other errors.
+					this.errorNode.innerHTML = this.nls.LoggedInRedirecting;
+					//window.location = dojo.baseUrl+"../../index.html";
+				    }
+				}),
+				error: dojo.hitch(this, function(){
+				    this.errorNode.innerHTML = this.nls.DatabaseErrorCheckInstall;
+								this.submitNode.disabled=false;
+				})
+			    });
 		}
 		else
 		{
@@ -302,6 +327,7 @@ dojo.declare("desktop.login._RegisterDialog", dijit.Dialog, {
                                     query: {name: contents.username},
                                     onItem: dojo.hitch(this, function(item){
                                         store.setValue(item, "email", contents.email);
+					//server side shit, wtf?
                                         store.save();
                                         this.hide();
                                         this.parentForm.errorNode.innerHTML = this.nls.MayLog;
