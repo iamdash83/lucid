@@ -38,7 +38,8 @@
 				"owner":{
 					"type":"object"
 					}
-				}
+				},
+			"instances":{"$ref":"../Keyring/"}
 			}
 		},
 	{
@@ -62,7 +63,8 @@
 					"type":"object",
 					"description":"The application that uses this key"
 					}
-				}
+				},
+			"instances":{"$ref":"../Key/"}
 			}
 		},
 	{
@@ -82,7 +84,8 @@
 						}
 					}
 				},
-			"description":"User configuration"
+			"description":"User configuration",
+			"instances":{"$ref":"../Configuration/"}
 			}
 		},
 	{
@@ -101,7 +104,8 @@
 					"type":"string"
 					}
 				},
-			"description":"A way of organizing users"
+			"description":"A way of organizing users",
+			"instances":{"$ref":"../Group/"}
 			}
 		},
 	{
@@ -120,7 +124,8 @@
 					"type":"integer",
 					"default":0
 					}
-				}
+				},
+			"instances":{"$ref":"../Quota/"}
 			}
 		},
 	{
@@ -140,7 +145,9 @@
 				"groups":{
 					"type":"array"
 					}
-				}
+				},
+			"instances":{"$ref":"../Share/"},
+			"description":"For sharing files in the context of groups"
 			}
 		}]
 }
