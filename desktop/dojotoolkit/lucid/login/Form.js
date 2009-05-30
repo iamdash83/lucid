@@ -54,10 +54,16 @@ dojo.declare("lucid.login.Form", dijit.form.Form, {
 		this.setRadioButton();
 	},
 	checkForLogin: function(winClosed){
-		dojo.xhrGet({
-			url: dojo.baseUrl + "../../../backend/core/bootstrap.php?section=check&action=loggedin",
+	      dojo.xhrPost({
+                        url: "/Class/User",
+                        postData: dojo.toJson({
+                            method: "getCurrentUser",
+                            id:"isAuthenticated",
+                            params:[null, null]
+                        }),
+                        handleAs: "json",
 			load: dojo.hitch(this, function(data){
-				if(data == 0 && data != ''){
+				if(data.error == null) {
 					if(this.autoRedirect){
 						if(dojo.cookie("desktopWindowPref") == "current"){
 							//this.errorNode.innerHTML = "You are already logged in. Redirecting to lucid...";
@@ -227,7 +233,7 @@ dojo.declare("lucid.login.Form", dijit.form.Form, {
 				    else{
 					//I don't think it's even possible to implament other errors.
 					this.errorNode.innerHTML = this.nls.LoggedInRedirecting;
-					//window.location = dojo.baseUrl+"../../index.html";
+					window.location = dojo.baseUrl+"../../index.html";
 				    }
 				}),
 				error: dojo.hitch(this, function(){
