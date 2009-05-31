@@ -10,8 +10,8 @@ dojo.require("dijit.form.TextBox");
 dojo.require("dijit.form.CheckBox");
 dojo.require("dojox.validate.web");
 dojo.require("dojo.cookie");
-dojo.requireLocalization("lucid.login", "login");
 dojo.require("dojox.data.PersevereStore");
+dojo.requireLocalization("lucid.login", "login");
 
 dojo.declare("lucid.login.Form", dijit.form.Form, {
 	templateString: null,
