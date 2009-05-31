@@ -44,7 +44,10 @@ dojo.require("dojox.uuid.generateTimeBasedUuid");
 	}
 	dojo.addOnLoad(function(){
 		desktop.xhr({
-			backend: "core.bootstrap.check.loggedin",
+			class: "User",
+			method: "getCurrentUser",
+			id: "isAuthenticated",
+			handleAs: "json",
 			load: function(data, ioArgs){
 				if(data == "0")
 				{
@@ -118,28 +121,27 @@ dojo.require("dojox.uuid.generateTimeBasedUuid");
     	//		When you give a string such as "api.fs.io.read", you will get the backend's url returned.
 	    //		You can also give an object as you would in dojo's XHR methods. However there are two extra params.
     	//		backend - a backend string as described above
-	    //		xsite - when true, it makes the call using the server-side proxy (so you can make cross-domain reques
-    	var backend = function(str){
-	    	var mod=str.split(".");
+	    //		xsite - when true, it makes the call using the server-side proxy (so you can make cross-domain requests)
+      
+    	var class = function(str){
 		    //TODO: put in something so we can switch to python backends when desired
-    		var url = "../backend";
-	    	for(var i=0; i <= mod.length-3; i++)
-		    {
-    			url += "/"+mod[i];
-	    	}
-		    url += ".php?section="+escape(mod[mod.length-2]);
-    		url += "&action="+escape(mod[mod.length-1]);
+    		var url = "../Class/"+str;
     
             // WORKAROUND, see #159 for more info
-            if(str == "api.fs.io.upload")
+            /*if(str == "api.fs.io.upload")
                 return "../backend/api/fs_uploader_workaround.php?vars="+dojo.cookie("desktop_session");
-    
+    */
 	    	return url;
     	}
 	    if(dojo.isString(args)){
 		    //if we just need to get a module url, pass a string
     		return backend(args);
 	    }
+	if(args.id && args.method) {
+	  if(!args.params) args.params = [null, null];
+	  delete args.content;
+	  args.postData = dojo.toJson({method: args.method, id: args.id, params: args.params});
+	 }
     	if(args.xsite){
 	    	if(!dojo.isObject(args.content)) args.content = {};
 		    var xsiteArgs = {
@@ -159,8 +161,8 @@ dojo.require("dojox.uuid.generateTimeBasedUuid");
     		delete args.auth;
 	    	args.url = "../backend/api/xsite.php";
     	}
-	    else if(args.backend){
-    		args.url = backend(args.backend);
+	    else if(args.class){
+    		args.url = class(args.class);
 	    }
     	else if(args.app){
 	    	args.url = "../apps/"+args.app+"/"+args.url;
@@ -186,7 +188,7 @@ dojo.require("dojox.uuid.generateTimeBasedUuid");
 	    }), true);
     	df.canceler = dojo.hitch(xhr, "cancel");
 	    return df;
-    }
+    }/*
     dojo.xhrPost({
         url: "../backend/core/bootstrap.php?section=check&action=getToken",
         sync: true,
@@ -194,7 +196,7 @@ dojo.require("dojox.uuid.generateTimeBasedUuid");
             token = data.token;
         },
         handleAs: "json"
-    });
+    });*/
     
 
     var getCurrentApp = function(){
