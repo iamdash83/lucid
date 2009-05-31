@@ -55,7 +55,7 @@
 		{
 			if(isset($_POST['filename'])) {
 				$_POST['filename'] = str_replace("..", "", $_POST['filename']);
-				$file = $GLOBALS['path']."/../desktop/dojotoolkit/desktop/apps/".$_POST['filename'];
+				$file = $GLOBALS['path']."/../desktop/dojotoolkit/lucid/apps/".$_POST['filename'];
 				$content = file_get_contents($file);
 				$out = new jsonOutput(array(
 					"contents" => $content
@@ -64,8 +64,8 @@
 			else {
 				$_POST['sysname'] = str_replace("..", "", $_POST['sysname']);
 				$files=array();
-				$files[$_POST['sysname']] = jsSearch($GLOBALS['path']."/../desktop/dojotoolkit/desktop/apps/".$_POST['sysname'],
-									$GLOBALS['path']."/../desktop/dojotoolkit/desktop/apps/");
+				$files[$_POST['sysname']] = jsSearch($GLOBALS['path']."/../desktop/dojotoolkit/lucid/apps/".$_POST['sysname'],
+									$GLOBALS['path']."/../desktop/dojotoolkit/lucid/apps/");
 				$files[] = $_POST['sysname'].".js";
 				$out = new jsonOutput($files);
 			}
@@ -92,9 +92,9 @@
 				foreach(array("sysname", "name", "author", "email", "maturity", "category", "version", "icon", "filetypes", 'compatible') as $key) {
 					$item[$key] = $v->$key;
 				}
-				if($item['sysname'] == $null || $item['name'] == $null)
+				if($item['sysname'] == null || $item['name'] == null)
 					$errornous = true;
-				if($item['category'] == $null)
+				if($item['category'] == null)
 					$item['category'] = "Uncategorized";
 				if(!$errornous)
 					array_push($list, $item);
@@ -117,9 +117,9 @@
 					$item[$key] = $v->$key;
 				}
 				$item["files"] = array();
-				if(is_dir($GLOBALS['path']."/../desktop/dojotoolkit/desktop/apps/".$item['sysname']))
-					$item["files"][$v->sysname] = jsSearch($GLOBALS['path']."/../desktop/dojotoolkit/desktop/apps/".$v->sysname,
-												$GLOBALS['path']."/../desktop/dojotoolkit/desktop/apps/");
+				if(is_dir($GLOBALS['path']."/../desktop/dojotoolkit/lucid/apps/".$item['sysname']))
+					$item["files"][$v->sysname] = jsSearch($GLOBALS['path']."/../desktop/dojotoolkit/lucid/apps/".$v->sysname,
+												$GLOBALS['path']."/../desktop/dojotoolkit/lucid/apps/");
 				$item["files"][] = $v->sysname.".js";
 				array_push($list, $item);
 			}
@@ -149,7 +149,7 @@
 			//}
 			if(isset($_POST['filename'])) {
 				$_POST['filename'] = str_replace("..", "", $_POST['filename']);
-				file_put_contents($GLOBALS['path']."/../desktop/dojotoolkit/desktop/apps/".$_POST['filename'], $_POST['content']);
+				file_put_contents($GLOBALS['path']."/../desktop/dojotoolkit/lucid/apps/".$_POST['filename'], $_POST['content']);
 			}
 			$out = new jsonOutput(array("status" => "ok"));
 			if($app) $out->append("sysname", $app->sysname);
@@ -159,7 +159,7 @@
 			$user = $User->get_current();
 			if(!$user->has_permission("core.app.write")) internal_error("permission_denied");
 			$_POST['dirname'] = str_replace("..", "", $_POST['dirname']);
-			mkdir($GLOBALS['path']."/../desktop/dojotoolkit/desktop/apps/".$_POST['dirname'], 0777);
+			mkdir($GLOBALS['path']."/../desktop/dojotoolkit/lucid/apps/".$_POST['dirname'], 0777);
 			$out = new intOutput("ok");
 		}
 		if($_GET['action'] == "remove") {
@@ -187,8 +187,8 @@
 				$_POST['sysname'] = str_replace("..", "", $_POST['sysname']);
 				foreach(array(
 					$GLOBALS['path']."/../apps/".$_POST['sysname'],
-					$GLOBALS['path']."/../desktop/dojotoolkit/desktop/apps/".$_POST['sysname'],
-					$GLOBALS['path']."/../desktop/dojotoolkit/desktop/apps/".$_POST['sysname'].".js"
+					$GLOBALS['path']."/../desktop/dojotoolkit/lucid/apps/".$_POST['sysname'],
+					$GLOBALS['path']."/../desktop/dojotoolkit/lucid/apps/".$_POST['sysname'].".js"
 				) as $dir) {
 					if(is_dir($dir)) rmdir_recurse($dir);
 					else if(is_file($dir)) unlink($dir);
@@ -205,7 +205,7 @@
 				
 				//if it's all good, delete it.
 				$_POST['filePath'] = str_replace("..", "", $_POST['filePath']);
-				$dir = $GLOBALS['path']."/../desktop/dojotoolkit/desktop/apps/".$_POST['filePath'];
+				$dir = $GLOBALS['path']."/../desktop/dojotoolkit/lucid/apps/".$_POST['filePath'];
 				if(is_dir($dir)) rmdir_recurse($dir);
 				else if(is_file($dir)) unlink($dir);
 			}
@@ -248,9 +248,9 @@
 				return true;
 		    }
 			
-			$_POST['origName'] = $GLOBALS['path']."/../desktop/dojotoolkit/desktop/apps/"
+			$_POST['origName'] = $GLOBALS['path']."/../desktop/dojotoolkit/lucid/apps/"
 				. str_replace("..", "", $_POST['origName']);
-			$_POST['newName'] = $GLOBALS['path']."/../desktop/dojotoolkit/desktop/apps/" 
+			$_POST['newName'] = $GLOBALS['path']."/../desktop/dojotoolkit/lucid/apps/" 
 				. str_replace("..", "", $_POST['newName']);
 			$out = new intOutput(recursive_rename($_POST['origName'], $_POST['newName']) ? "ok":"generic_err");
 		}

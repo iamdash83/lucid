@@ -1,10 +1,10 @@
 .. _dev-ref-crosstalk:
 
 =================
-desktop.crosstalk
+lucid.crosstalk
 =================
 
-.. module:: desktop.crosstalk
+.. module:: lucid.crosstalk
     :synopsis: Communicate between two instances of an app, regardless of user
 
 Lucid's crosstalk system is similar to D-Bus; it provides a simple way for two application instances to communicate with one another. Lucid's adaptation adds the ability to send and recieve messages between two different users as well. The api is influenced from Dojo's ``dojo.subscribe`` and ``dojo.publish`` methods.
@@ -44,14 +44,14 @@ Subscribing to topics is pretty simple:
 
 .. code-block:: javascript
 
-    this.myTopicSubscription = desktop.crosstalk.subscribe("myTopic", dojo.hitch(this, "myTopicHandler"), this.sysname);
+    this.myTopicSubscription = lucid.crosstalk.subscribe("myTopic", dojo.hitch(this, "myTopicHandler"), this.sysname);
 
 The dispacher will pass a single argument to the handler function, that will contain the message. Messages are always objects, their keys being specified by the application that sent it.
 
 .. code-block:: javascript
 
     myTopicHandler: function(msg){
-        desktop.dialog.notify(msg.someKey);
+        lucid.dialog.notify(msg.someKey);
     },
 
 Messages also have a ``_crosstalk`` property, that has information about where the message came from:
@@ -74,7 +74,7 @@ Unsubscribing from a topic will tell the dispacher to stop sending messages to t
 
 .. code-block:: javascript
 
-   desktop.crosstalk.unsubscribe(this.myTopicSubscription);
+   lucid.crosstalk.unsubscribe(this.myTopicSubscription);
 
 Publishing messages to topics
 =============================
@@ -91,7 +91,7 @@ To publish messages to a specific user, all you need to do is speicfy the userid
         foo: "bar"
     };
     var userid = 5;
-    desktop.crosstalk.publish("myTopic", message, userid, this.sysname);
+    lucid.crosstalk.publish("myTopic", message, userid, this.sysname);
 
 Publishing messages between two instances
 -----------------------------------------
@@ -104,7 +104,7 @@ To publish a message between two instances of an app being run by the same user,
        foo: "bar"
    };
    var instance = 2;
-   desktop.crosstalk.publish("myTopic", message, null, this.sysname, instance);
+   lucid.crosstalk.publish("myTopic", message, null, this.sysname, instance);
 
 Checking if a message is on the database
 ----------------------------------------
@@ -117,13 +117,13 @@ This feature is handy if you want to check if the message has been sent to the u
        foo: "bar"
    };
    var instance = 2;
-   desktop.crosstalk.publish("myTopic", message, null, this.sysname, instance, dojo.hitch(this, function(id) {
+   lucid.crosstalk.publish("myTopic", message, null, this.sysname, instance, dojo.hitch(this, function(id) {
 	setTimeout(dojo.hitch(this, function() {
-		desktop.crosstalk.exists(id, dojo.hitch(this, function(exists) {
+		lucid.crosstalk.exists(id, dojo.hitch(this, function(exists) {
 			if(exists) alert('event exists! message not yet sent');
 			else alert('event doesn't exist! message sent!');
 		}));
-	}), (desktop.config.crosstalkPing * 2));
+	}), (lucid.config.crosstalkPing * 2));
    }));
 
 Cancelling an event
@@ -137,15 +137,15 @@ This is handy if you want an event sent to the user, but if the user isn't logge
        foo: "bar"
    };
    var instance = 2;
-   desktop.crosstalk.publish("myTopic", message, null, this.sysname, instance, dojo.hitch(this, function(id) {
+   lucid.crosstalk.publish("myTopic", message, null, this.sysname, instance, dojo.hitch(this, function(id) {
 	setTimeout(dojo.hitch(this, function() {
-		desktop.crosstalk.exists(id, dojo.hitch(this, function(exists) {
+		lucid.crosstalk.exists(id, dojo.hitch(this, function(exists) {
 			if(exists){
-				desktop.crosstalk.cancel(id);
+				lucid.crosstalk.cancel(id);
 			}
 			else alert('event doesn't exist! message sent!');
 		}));
-	}), (desktop.config.crosstalkPing * 2));
+	}), (lucid.config.crosstalkPing * 2));
    }));
 
 

@@ -1,10 +1,10 @@
 .. _dev-ref-registry:
 
 ================
-desktop.Registry
+lucid.Registry
 ================
 
-.. module:: desktop.Registry
+.. module:: lucid.Registry
     :synopsis: Use the registry to store application data
 
 Lucid's registry is basically a persistant dojo.data store that apps can use to store data. This can be used to store application settings, and other data. For example, I cold use the Registry to store contacts in a contacts application.
@@ -15,7 +15,7 @@ To create a registry, we need to specify our application's name, the store's nam
 
 .. code-block:: javascript
 
-   var store = new desktop.Registry({
+   var store = new lucid.Registry({
        name: "contacts",
        appname: this.sysname,
        data: {
@@ -54,7 +54,7 @@ To see if a store exists, use the ``exists`` method. It takes three arguments: t
 .. code-block:: javascript
 
     store.exists(function(e) {
-        desktop.dialog.notify(e ? "Store exists" : "Store doesn't exist");
+        lucid.dialog.notify(e ? "Store exists" : "Store doesn't exist");
     });
 
 Dropping a store
@@ -64,5 +64,5 @@ If you want to delete the store's contents on the server, use the ``drop`` metho
 .. code-block:: javascript
 
     store.drop(function(e) {
-       desktop.dialog.notify("dropped the store!");
+       lucid.dialog.notify("dropped the store!");
     });

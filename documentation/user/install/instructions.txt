@@ -39,4 +39,4 @@ The desktop is now ready for action. Log in with the username/password you gave 
 
 Where to go from here
 =====================
-If you'd like to display the login form on your website, take a look at :ref:`Embedding the Login Form <user-install-login-form>`. Also, you can take a look at the :ref:`user documentation <user-index>` to learn more about the desktop.
+If you'd like to display the login form on your website, take a look at :ref:`Embedding the Login Form <user-install-login-form>`. Also, you can take a look at the :ref:`user documentation <user-index>` to learn more about the lucid.

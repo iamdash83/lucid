@@ -171,8 +171,8 @@
 			"../files/",
 			"../public/",
 			"../tmp/",
-			"../desktop/dojotoolkit/desktop/resources/themes/",
-			"../desktop/dojotoolkit/desktop/apps/"
+			"../desktop/dojotoolkit/lucid/resources/themes/",
+			"../desktop/dojotoolkit/lucid/apps/"
 		);
 		$out = new jsonOutput();
 		foreach($dirs as $dir)

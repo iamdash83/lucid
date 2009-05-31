@@ -1,10 +1,10 @@
 .. _dev-ref-filesystem:
 
 ==================
-desktop.filesystem
+lucid.filesystem
 ==================
 
-.. module:: desktop.filesystem
+.. module:: lucid.filesystem
     :synopsis: Read and write to files
 
 Lucid's filesystem provides an easy way to read and write to the server. You can also read and write to remote servers as well.
@@ -22,7 +22,7 @@ To list a directory, use the ``listDirectory`` method:
 
 .. code-block:: javascript
 
-   desktop.filesystem.listDirectory("file://", function(files) {
+   lucid.filesystem.listDirectory("file://", function(files) {
        dojo.forEach(files, function(file) {
            console.log(file.name);
        });
@@ -53,7 +53,7 @@ The ``info`` method can be used to get information about a file. It returns only
 
 .. code-block:: javascript
 
-    desktop.filesystem.info("file://something.txt", function(info) {
+    lucid.filesystem.info("file://something.txt", function(info) {
        console.log(info.name);
     }, function(e) {
         console.error("something bad happened");
@@ -65,7 +65,7 @@ Use the ``readFileContents`` method to get a file's contents.
 
 .. code-block:: javascript
 
-   desktop.filesystem.readFileContents("file://something.txt", function(content) {
+   lucid.filesystem.readFileContents("file://something.txt", function(content) {
        console.log("file contents: "+content);
    }, function(e) {
        console.error("something bad happened");
@@ -80,7 +80,7 @@ Use the ``createDirectory`` method to make a new directory. If the directory alr
 
 .. code-block:: javascript
 
-    desktop.filesystem.createDirectory("file://folderName/", function(){
+    lucid.filesystem.createDirectory("file://folderName/", function(){
         console.log("file created!");
     }, function(e){
         console.error("something bad happened");
@@ -92,7 +92,7 @@ Use the ``remove`` method to remove a file or directory. In the case of a direct
 
 .. code-block:: javascript
 
-   desktop.filesystem.remove("file://something.txt", function(){
+   lucid.filesystem.remove("file://something.txt", function(){
        console.log("file deleted!");
    }, function(e){
        console.error("something bad happened");
@@ -104,7 +104,7 @@ To copy a file or directory, use the ``copy`` method. In the case of a directory
 
 .. code-block:: javascript
 
-   desktop.filesystem.copy("file://someFile.txt", "file://someFolder/someFile.txt", function(){
+   lucid.filesystem.copy("file://someFile.txt", "file://someFolder/someFile.txt", function(){
        console.log("copied file!");
     }, function(e){
        console.error("something bad happened");
@@ -117,13 +117,13 @@ To rename or move files or directories, use the ``move`` method. The first argum
 .. code-block:: javascript
 
    // example of renaming a file
-   desktop.filesystem.move("file://someDir/someFile.txt", "newName.txt", function(){
+   lucid.filesystem.move("file://someDir/someFile.txt", "newName.txt", function(){
        console.log("file renamed!");
    }, function(e){
        console.log("something bad happened");
    });
    // example of moving a file
-   desktop.filesystem.move("file://someDir/someFile.txt", "file://someFile.txt" /* You can add the onComplete and onError callbacks here as well */);
+   lucid.filesystem.move("file://someDir/someFile.txt", "file://someFile.txt" /* You can add the onComplete and onError callbacks here as well */);
 
 Writing to files
 ----------------
@@ -131,7 +131,7 @@ To write to a file, use the ``writeFileContents`` method.
 
 .. code-block:: javascript
 
-   desktop.filesystem.writeFileContents("file://someFile.txt", "here are some\ncontents of the new file", function(){
+   lucid.filesystem.writeFileContents("file://someFile.txt", "here are some\ncontents of the new file", function(){
        console.log("file contents written!");
    }, function(e){
        console.error("something bad happened");
@@ -145,13 +145,13 @@ You can allow the user to download a file off of the filesystem using the ``down
 
 .. code-block:: javascript
 
-   desktop.filesystem.download("file://someFile.txt");
+   lucid.filesystem.download("file://someFile.txt");
 
 If it's a directory, it will be downloaded as a zip file. You can specify the archive format with a second argument. You can also use this argument to download a file as an archive. The value provided can be either ``"zip"``, ``"gzip"``, or ``"bzip"``.
 
 .. code-block:: javascript
 
-   desktop.filesystem.download("file://someFile.txt", "gzip");
+   lucid.filesystem.download("file://someFile.txt", "gzip");
 
 Embedding files
 ---------------
@@ -159,7 +159,7 @@ You can use the ``embed`` method to get a URL that can be used to embed the file
 
 .. code-block:: javascript
 
-   var path = desktop.filesystem.embed("file://someFile.txt");
+   var path = lucid.filesystem.embed("file://someFile.txt");
 
 Quota checking
 --------------
@@ -167,7 +167,7 @@ You can check a quota by using the ``getQuota`` method. If this is a remote file
 
 .. code-block:: javascript
 
-   desktop.filesystem.getQuota("file://", function(quota){
+   lucid.filesystem.getQuota("file://", function(quota){
         console.log("used: "+quota.used+" remaining: "+quota.remaining+" total: "+quota.total);
    }, function(e){
         console.log("something bad happened");

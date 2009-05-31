@@ -2,121 +2,121 @@ dependencies ={
     layers:  [
 		//CORE
         {
-        	name: "../desktop/desktop.js",
-        	dependencies: ["desktop.desktop"]
+        	name: "../lucid/lucid.js",
+        	dependencies: ["lucid.lucid"]
         },
         {
-        	name: "../desktop/login/Form.js",
-        	dependencies: ["desktop.login.Form"]
+        	name: "../lucid/login/Form.js",
+        	dependencies: ["lucid.login.Form"]
         },
 		//APPS
 		{
-			name: "../desktop/apps/AccountInfo.js",
-			dependencies: ["desktop.apps.AccountInfo"],
-            layerDependencies: ["../desktop/desktop.js"]
+			name: "../lucid/apps/AccountInfo.js",
+			dependencies: ["lucid.apps.AccountInfo"],
+            layerDependencies: ["../lucid/lucid.js"]
 		},
 		{
-			name: "../desktop/apps/AdminPanel.js",
-			dependencies: ["desktop.apps.AdminPanel"],
-            layerDependencies: ["../desktop/desktop.js"]
+			name: "../lucid/apps/AdminPanel.js",
+			dependencies: ["lucid.apps.AdminPanel"],
+            layerDependencies: ["../lucid/lucid.js"]
 		},
 		{
-			name: "../desktop/apps/AppearanceConfig.js",
-			dependencies: ["desktop.apps.AppearanceConfig"],
-            layerDependencies: ["../desktop/desktop.js"]
+			name: "../lucid/apps/AppearanceConfig.js",
+			dependencies: ["lucid.apps.AppearanceConfig"],
+            layerDependencies: ["../lucid/lucid.js"]
 		},
 		{
-			name: "../desktop/apps/Calculator.js",
-			dependencies: ["desktop.apps.Calculator"],
-            layerDependencies: ["../desktop/desktop.js"]
+			name: "../lucid/apps/Calculator.js",
+			dependencies: ["lucid.apps.Calculator"],
+            layerDependencies: ["../lucid/lucid.js"]
 		},
 		{
-			name: "../desktop/apps/Checkers.js",
-			dependencies: ["desktop.apps.Checkers"],
-            layerDependencies: ["../desktop/desktop.js"]
+			name: "../lucid/apps/Checkers.js",
+			dependencies: ["lucid.apps.Checkers"],
+            layerDependencies: ["../lucid/lucid.js"]
 		},
 		{
-			name: "../desktop/apps/Contacts.js",
-			dependencies: ["desktop.apps.Contacts"],
-            layerDependencies: ["../desktop/desktop.js"]
+			name: "../lucid/apps/Contacts.js",
+			dependencies: ["lucid.apps.Contacts"],
+            layerDependencies: ["../lucid/lucid.js"]
 		},
 		{
-			name: "../desktop/apps/FeedReader.js",
-			dependencies: ["desktop.apps.FeedReader"],
-            layerDependencies: ["../desktop/desktop.js"]
+			name: "../lucid/apps/FeedReader.js",
+			dependencies: ["lucid.apps.FeedReader"],
+            layerDependencies: ["../lucid/lucid.js"]
 		},
 		{
-			name: "../desktop/apps/FileBrowser.js",
-			dependencies: ["desktop.apps.FileBrowser"],
-            layerDependencies: ["../desktop/desktop.js"]
+			name: "../lucid/apps/FileBrowser.js",
+			dependencies: ["lucid.apps.FileBrowser"],
+            layerDependencies: ["../lucid/lucid.js"]
 		},
 		{
-			name: "../desktop/apps/ImageViewer.js",
-			dependencies: ["desktop.apps.ImageViewer"]
+			name: "../lucid/apps/ImageViewer.js",
+			dependencies: ["lucid.apps.ImageViewer"]
 		},
 		{
-			name: "../desktop/apps/KatanaIDE.js",
-			dependencies: ["desktop.apps.KatanaIDE"],
-            layerDependencies: ["../desktop/desktop.js"]
+			name: "../lucid/apps/KatanaIDE.js",
+			dependencies: ["lucid.apps.KatanaIDE"],
+            layerDependencies: ["../lucid/lucid.js"]
 		},
 		{
-			name: "../desktop/apps/Messenger.js",
-			dependencies: ["desktop.apps.Messenger"],
-            layerDependencies: ["../desktop/desktop.js"]
+			name: "../lucid/apps/Messenger.js",
+			dependencies: ["lucid.apps.Messenger"],
+            layerDependencies: ["../lucid/lucid.js"]
 		},
 		{
-			name: "../desktop/apps/MineSweep.js",
-			dependencies: ["desktop.apps.MineSweep"],
-            layerDependencies: ["../desktop/desktop.js"]
+			name: "../lucid/apps/MineSweep.js",
+			dependencies: ["lucid.apps.MineSweep"],
+            layerDependencies: ["../lucid/lucid.js"]
 		},
 		{
-			name: "../desktop/apps/MusicPlayer.js",
-			dependencies: ["desktop.apps.MusicPlayer"],
-            layerDependencies: ["../desktop/desktop.js"]
+			name: "../lucid/apps/MusicPlayer.js",
+			dependencies: ["lucid.apps.MusicPlayer"],
+            layerDependencies: ["../lucid/lucid.js"]
 		},
 		{
-			name: "../desktop/apps/StartupConfig.js",
-			dependencies: ["desktop.apps.StartupConfig"],
-            layerDependencies: ["../desktop/desktop.js"]
+			name: "../lucid/apps/StartupConfig.js",
+			dependencies: ["lucid.apps.StartupConfig"],
+            layerDependencies: ["../lucid/lucid.js"]
 		},
 		{
-			name: "../desktop/apps/TaskManager.js",
-			dependencies: ["desktop.apps.TaskManager"],
-            layerDependencies: ["../desktop/desktop.js"]
+			name: "../lucid/apps/TaskManager.js",
+			dependencies: ["lucid.apps.TaskManager"],
+            layerDependencies: ["../lucid/lucid.js"]
 		},
 		{
-			name: "../desktop/apps/Terminal.js",
-			dependencies: ["desktop.apps.Terminal"],
-            layerDependencies: ["../desktop/desktop.js"]
+			name: "../lucid/apps/Terminal.js",
+			dependencies: ["lucid.apps.Terminal"],
+            layerDependencies: ["../lucid/lucid.js"]
 		},
 		{
-			name: "../desktop/apps/TextEditor.js",
-			dependencies: ["desktop.apps.TextEditor"],
-            layerDependencies: ["../desktop/desktop.js"]
+			name: "../lucid/apps/TextEditor.js",
+			dependencies: ["lucid.apps.TextEditor"],
+            layerDependencies: ["../lucid/lucid.js"]
 		},
 		{
-			name: "../desktop/apps/Todo.js",
-			dependencies: ["desktop.apps.Todo"],
-            layerDependencies: ["../desktop/desktop.js"]
+			name: "../lucid/apps/Todo.js",
+			dependencies: ["lucid.apps.Todo"],
+            layerDependencies: ["../lucid/lucid.js"]
 		},
 		{
-			name: "../desktop/apps/UpdateManager.js",
-			dependencies: ["desktop.apps.UpdateManager"],
-            layerDependencies: ["../desktop/desktop.js"]
+			name: "../lucid/apps/UpdateManager.js",
+			dependencies: ["lucid.apps.UpdateManager"],
+            layerDependencies: ["../lucid/lucid.js"]
 		},
 		{
-			name: "../desktop/apps/WebBrowser.js",
-			dependencies: ["desktop.apps.WebBrowser"],
-            layerDependencies: ["../desktop/desktop.js"]
+			name: "../lucid/apps/WebBrowser.js",
+			dependencies: ["lucid.apps.WebBrowser"],
+            layerDependencies: ["../lucid/lucid.js"]
 		},
 		{
-			name: "../desktop/apps/WordProcessor.js",
-			dependencies: ["desktop.apps.WordProcessor"],
-            layerDependencies: ["../desktop/desktop.js"]
+			name: "../lucid/apps/WordProcessor.js",
+			dependencies: ["lucid.apps.WordProcessor"],
+            layerDependencies: ["../lucid/lucid.js"]
 		}
     ],
     prefixes: [
-        [ "desktop", "../desktop" ],
+        [ "lucid", "../lucid" ],
         [ "dijit", "../dijit" ],
         [ "dojox", "../dojox" ]
     ]

@@ -1,10 +1,10 @@
 .. _dev-ref-widget-statusbar:
 
 ========================
-desktop.widget.StatusBar
+lucid.widget.StatusBar
 ========================
 
-.. module:: desktop.widget.StatusBar
+.. module:: lucid.widget.StatusBar
     :synopsis: A status bar widget that can be used in windows
 
 The status bar widget is a simple widget that you can use to indicate what your application is currently doing. It displays messages, and has a progress bar. It shares many of the methods and properties used in the ``dijit.ProgressBar`` widget.
@@ -15,7 +15,7 @@ The code below will add a status bar to the bottom of the window.
 
 .. code-block:: javascript
 
-   var statusbar = this.statusbar = new desktop.widget.StatusBar({
+   var statusbar = this.statusbar = new lucid.widget.StatusBar({
        region: "bottom"
    });
    window.addChild(statusbar);
@@ -24,7 +24,7 @@ If you want to show a specific message when adding the status bar, just provide 
 
 .. code-block:: javascript
 
-   var statusbar = this.statusbar = new desktop.widget.StatusBar({
+   var statusbar = this.statusbar = new lucid.widget.StatusBar({
        label: "Loading data from server..."
    });
 
@@ -42,7 +42,7 @@ The status bar widget also has a progress bar that can be used to show activity.
 
 .. code-block:: javascript
 
-   var statusbar = this.statusbar = new desktop.widget.StatusBar({
+   var statusbar = this.statusbar = new lucid.widget.StatusBar({
        showProgress: true,
        region: "bottom"
    });

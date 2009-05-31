@@ -13,7 +13,7 @@ import("lib.unzip");
 
 class package {
     function compatible($versions) {
-        $data = file_get_contents($GLOBALS['path']."../desktop/dojotoolkit/desktop/resources/version.json");
+        $data = file_get_contents($GLOBALS['path']."../desktop/dojotoolkit/lucid/resources/version.json");
         $version = Zend_Json::decode($data);
         foreach($versions as $check) {
             $check = explode(".", $check);
@@ -94,14 +94,14 @@ class package {
 		package::_insert_application_meta($info);
 		$backendDir = $GLOBALS['path']."../apps/".$app->sysname;
 		if(is_dir($path."/files")) package::_recursive_copy($path."/backends", $backendDir);
-		$sysDir = $GLOBALS['path']."../desktop/dojotoolkit/desktop/apps/".$app->sysname;
+		$sysDir = $GLOBALS['path']."../desktop/dojotoolkit/lucid/apps/".$app->sysname;
 		if(is_dir($path."/".$app->sysname)) package::_recursive_copy($path."/".$app->sysname, $sysDir);
-		$appFile = $GLOBALS['path']."../desktop/dojotoolkit/desktop/apps/".$app->sysname.".js";
+		$appFile = $GLOBALS['path']."../desktop/dojotoolkit/lucid/apps/".$app->sysname.".js";
 		copy($path."/".$app->sysname.".js", $appFile);
 		return array(
 			"/apps/".$app->sysname,
-			"/desktop/dojotoolkit/desktop/apps/".$app->sysname,
-			"/desktop/dojotoolkit/desktop/apps/".$app->sysname.".js"
+			"/desktop/dojotoolkit/lucid/apps/".$app->sysname,
+			"/desktop/dojotoolkit/lucid/apps/".$app->sysname.".js"
 		);
 	}
 	function _insert_application_meta($info) {
@@ -121,11 +121,11 @@ class package {
 		$app->save();
 	}
 	function _install_theme($info, $path) {
-		$newpath = $GLOBALS['path']."/../desktop/dojotoolkit/desktop/resources/themes/".strtolower($info['name']);
+		$newpath = $GLOBALS['path']."/../desktop/dojotoolkit/lucid/resources/themes/".strtolower($info['name']);
 		@mkdir($newpath, 0777);
 		package::_recursive_copy($path."/".strtolower($info['name']), $newpath);
 		copy($path."/meta.json", $newpath."/meta.json");
-		return array("/desktop/dojotoolkit/desktop/resources/themes/".strtolower($info['name']));
+		return array("/desktop/dojotoolkit/lucid/resources/themes/".strtolower($info['name']));
 	}
 	function _install_translation($info, $path) {
 		function rsearch($path) {

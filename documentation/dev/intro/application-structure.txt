@@ -5,7 +5,7 @@ Application Structure
 =====================
 Applications are Dojo modules
 =============================
-Lucid applications are essentially dojo modules. They live in the ``desktop.apps`` namespace. The name of the module in this namespace is known as the application's system name, or sysname. All applications extend the ``desktop.apps._App`` class, which contains some bootstrap code and self-management functions.
+Lucid applications are essentially dojo modules. They live in the ``lucid.apps`` namespace. The name of the module in this namespace is known as the application's system name, or sysname. All applications extend the ``desktop.apps._App`` class, which contains some bootstrap code and self-management functions.
 
 Metadata
 ========
@@ -40,7 +40,7 @@ You can get the path to scripts, images, audio, etc. using ``dojo.moduleUrl``:
 
 .. code-block:: javascript
 
-   var soundPath = dojo.moduleUrl("desktop.apps.SystemName", "resources/sound.mp3");
+   var soundPath = dojo.moduleUrl("lucid.apps.SystemName", "resources/sound.mp3");
 
 
 Note that some APIs (such as the Sound API) require that you pass a string. Since moduleUrl returns an object containing a toString method, you need to pass the ``uri`` property of the object returned.
@@ -49,12 +49,12 @@ Note that some APIs (such as the Sound API) require that you pass a string. Sinc
     
     soundPath = soundPath.uri;
 
-When used in conjunction with the ``desktop.xhr`` method, you can make calls to custom backends packaged with your app this way.
+When used in conjunction with the ``lucid.xhr`` method, you can make calls to custom backends packaged with your app this way.
 
 .. code-block:: javascript
 
-   desktop.xhr({
-       url: dojo.moduleUrl("desktop.apps.SystemName", "backends/someFile.php"),
+   lucid.xhr({
+       url: dojo.moduleUrl("lucid.apps.SystemName", "backends/someFile.php"),
        load: function(data){
            console.log("Returned from backend: "+data);
        }

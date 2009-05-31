@@ -17,9 +17,9 @@ In this tutorial, we will be writing a simple contact manager app. You will see 
 
 .. code-block:: javascript
 
-    dojo.provide("desktop.apps.MyContacts");
+    dojo.provide("lucid.apps.MyContacts");
     
-    dojo.declare("desktop.apps.MyContacts", desktop.apps._App, {
+    dojo.declare("lucid.apps.MyContacts", desktop.apps._App, {
         init: function(args) {
             /*Startup code goes here*/
         }
@@ -34,12 +34,12 @@ Let's examine this. We have two functions, ``init`` and ``kill``. ``init`` is ca
 
 Creating Windows
 ================
-Now let's create a window. The ``desktop.widget.Window`` widget provides us with all the windows in the desktop. We'll add the following code to our init function:
+Now let's create a window. The ``lucid.widget.Window`` widget provides us with all the windows in the desktop. We'll add the following code to our init function:
 
 .. code-block:: javascript
 
     this.windows = [];
-    var win = new desktop.widget.Window({
+    var win = new lucid.widget.Window({
         title: "My Contacts",
         onClose: dojo.hitch(this, "kill")
     });
@@ -66,7 +66,7 @@ Before we make our UI, we should make a ``Registry`` store to save our contacts 
 
 .. code-block:: javascript
 
-    var contactStore = this.contactStore = new desktop.Registry({
+    var contactStore = this.contactStore = new lucid.Registry({
         name: "contacts",
         appname: this.sysname,
         data: {
@@ -78,7 +78,7 @@ Before we make our UI, we should make a ``Registry`` store to save our contacts 
     dojo.connect(contactStore, "onDelete", function() { contactStore.save(); });
     dojo.connect(contactStore, "onSet", function() { contactStore.save(); });
 
-If you're experienced with Dojo, you'll notice that ``desktop.Registry`` is a ``dojo.data`` store. This store is unique, because it can store all of it's information on the server. The name of the store is a unique name, specific to your app. Two stores should never have the same name, so make sure you're descriptive when choosing the name of the store. We provide the store with our system name (contained in ``this.sysname``), so that one app won't override the contents of another app's store. You'll also notice that the store is saved every time it's data changes. You'll see the store in action later in the tutorial.
+If you're experienced with Dojo, you'll notice that ``lucid.Registry`` is a ``dojo.data`` store. This store is unique, because it can store all of it's information on the server. The name of the store is a unique name, specific to your app. Two stores should never have the same name, so make sure you're descriptive when choosing the name of the store. We provide the store with our system name (contained in ``this.sysname``), so that one app won't override the contents of another app's store. You'll also notice that the store is saved every time it's data changes. You'll see the store in action later in the tutorial.
 
 Writing the UI
 ==============
@@ -94,11 +94,11 @@ Now that we have our store defined, we can begin to piece together our UI. We'll
     dojo.require("dojox.grid.cells.dijit");
     dojo.require("dijit.form.TextBox");
     dojo.require("dijit.form.Button");
-    desktop.addDojoCss("dojox/grid/resources/Grid.css");
+    lucid.addDojoCss("dojox/grid/resources/Grid.css");
 
 This will load the widgets from the server when our app is loaded. Also note that we included a CSS file. This is because the ``dojox`` widgets are not included in the base stylesheet that Lucid uses, so we have to load them when we load the app.
 
-Now that we have loaded our widgets, we can start drawing our UI. ``desktop.widget.Window`` is a subclassed ``BorderContainer``, so you add a ``region`` property to position the element. It can be either "top", "bottom", "leading", "trailing", "left", "right", or "center". Add the following code to your ``init`` function, just before you call ``win.show()``:
+Now that we have loaded our widgets, we can start drawing our UI. ``lucid.widget.Window`` is a subclassed ``BorderContainer``, so you add a ``region`` property to position the element. It can be either "top", "bottom", "leading", "trailing", "left", "right", or "center". Add the following code to your ``init`` function, just before you call ``win.show()``:
 
 .. code-block:: javascript
 
@@ -153,7 +153,7 @@ So, now we have a toolbar added to our window. Let's make a ``dojox.grid.DataGri
 
 Working with the Registry
 =========================
-Now that we have our grid, we can now define the methods that add and remove contacts to our store. Remember, ``desktop.Registry`` is a ``dojo.data`` store. When we made the store, we set it up so that it will save it's contents whenever a field is changed, so we don't have to worry about saving the store when we close the application.
+Now that we have our grid, we can now define the methods that add and remove contacts to our store. Remember, ``lucid.Registry`` is a ``dojo.data`` store. When we made the store, we set it up so that it will save it's contents whenever a field is changed, so we don't have to worry about saving the store when we close the application.
 
 Add the following code to your new/removeContact methods:
 
@@ -186,24 +186,24 @@ Here's the full application's code:
 
 .. code-block:: javascript
 
-    dojo.provide("desktop.apps.MyContacts");
+    dojo.provide("lucid.apps.MyContacts");
     dojo.require("dijit.Toolbar");
     dojo.require("dojox.grid.DataGrid");
     dojo.require("dojox.grid.cells.dijit");
     dojo.require("dijit.form.TextBox");
     dojo.require("dijit.form.Button");
-    desktop.addDojoCss("dojox/grid/resources/Grid.css");
+    lucid.addDojoCss("dojox/grid/resources/Grid.css");
 
-    dojo.declare("desktop.apps.MyContacts", desktop.apps._App, {
+    dojo.declare("lucid.apps.MyContacts", desktop.apps._App, {
         init: function(args) {
             this.windows = [];
-            var win = new desktop.widget.Window({
+            var win = new lucid.widget.Window({
                 title: "My Contacts",
                 onClose: dojo.hitch(this, "kill")
             });
             this.windows.push(win);
         
-            var contactStore = this.contactStore = new desktop.Registry({
+            var contactStore = this.contactStore = new lucid.Registry({
                 name: "contacts",
                 appname: this.sysname,
                 data: {

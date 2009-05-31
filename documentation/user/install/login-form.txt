@@ -19,7 +19,7 @@ First, add the following before the ``</head>`` tag in your page. Be sure to rep
     <script src="/path/to/lucid/desktop/dojotoolkit/dojo/dojo.js" type="text/javascript"></script>
     <link href="/path/to/lucid/desktop/dojotoolkit/dijit/themes/dijit.css" rel="stylesheet" type="text/css" />
     <script type="text/javascript">
-        dojo.require("desktop.login.Form");
+        dojo.require("lucid.login.Form");
     </script>
 
 Place form in page
@@ -28,7 +28,7 @@ To place the form, add the following ``<div>`` element to anywhere in the ``<bod
 
 .. code-block:: html
     
-    <div dojoType="desktop.login.Form"></div>
+    <div dojoType="lucid.login.Form"></div>
 
 Make the HTML valid
 -------------------
@@ -37,9 +37,9 @@ This step is optional. If you're concerned about your HTML validating, you can c
 .. code-block:: html
 
    <script type="text/javascript">
-       dojo.require("desktop.login.Form");
+       dojo.require("lucid.login.Form");
        dojo.addOnLoad(function(){
-           var form = new desktop.login.Form({}, "desktop_login_form");
+           var form = new lucid.login.Form({}, "desktop_login_form");
            form.startup();
        });
    </script>
@@ -66,14 +66,14 @@ Copy the following code into an HTML file, and upload it to your installation pa
             <title>Lucid Desktop - Login</title>
             <script type="text/javascript" src="./desktop/dojotoolkit/release/dojo/dojo/dojo.js"></script>
             <script type="text/javascript">
-                dojo.require("desktop.login.Form");
+                dojo.require("lucid.login.Form");
             </script>
             <link href="./desktop/dojotoolkit/dojo/resources/dojo.css" rel="stylesheet" type="text/css" />
             <link href="./desktop/dojotoolkit/dijit/themes/dijit.css" rel="stylesheet" type="text/css" />
             <link href="./desktop/dojotoolkit/dijit/themes/tundra/tundra.css" rel="stylesheet" type="text/css" />
         </head>
         <body class="tundra">
-            <form id="psychdesktop_login" dojoType="desktop.login.Form"></form>
+            <form id="psychdesktop_login" dojoType="lucid.login.Form"></form>
         </body>
     </html>
 
@@ -95,13 +95,13 @@ Here is how you would add each property to the form:
 
 .. code-block:: html
 
-   <div dojoType="desktop.login.Form" parameter1="true" parameter2="value"></div>
+   <div dojoType="lucid.login.Form" parameter1="true" parameter2="value"></div>
 
 If you are using the programatic declaration of the form (the one that validates), use the following syntax. Note that boolean values don't get quotes, and the last parameter gets no comma at the end.
 
 .. code-block:: javascript
     
-    var form = new desktop.login.Form({
+    var form = new lucid.login.Form({
         parameter1: true,
         parameter2: "value"
     }, "desktop_login_form");
@@ -134,7 +134,7 @@ Also, you need to add the theme's CSS class to the ``<div>`` tag. Change 'tundra
 
 .. code-block:: html
 
-   <div dojoType="desktop.login.Form" class="tundra"></div>
+   <div dojoType="lucid.login.Form" class="tundra"></div>
 
 
 Writing your own CSS rules

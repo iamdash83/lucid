@@ -1,10 +1,10 @@
 .. _dev-ref-sound:
 
 =============
-desktop.Sound
+lucid.Sound
 =============
 
-.. module:: desktop.Sound
+.. module:: lucid.Sound
     :synopsis: Play audio files in applications
 
 The sound module can be used to stream audio from both the web and from the filesystem. It abstracts between flash, html5 <audio>, and <embed> to play the sounds.
@@ -15,8 +15,8 @@ Before we can play the sound, we need to create a sound object. To start, we'll 
 
 .. code-block:: javascript
     
-    var sound = new desktop.Sound({
-        src: dojo.moduleUrl("desktop.apps."+this.sysname, "media/sound.wav")
+    var sound = new lucid.Sound({
+        src: dojo.moduleUrl("lucid.apps."+this.sysname, "media/sound.wav")
     });
 
 There's some additional parameters we can pass to the sound object:

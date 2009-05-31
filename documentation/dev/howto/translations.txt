@@ -125,11 +125,11 @@ The way it is used
 Later on, the application will require its localization through the use of
 ``dojo.requireLocalization``::
 
-    dojo.requireLocalization("desktop.apps.Contacts", "Contacts");
+    dojo.requireLocalization("lucid.apps.Contacts", "Contacts");
 
 And within the application, as needed::
 
-   var nls = dojo.i18n.getLocalization("desktop.apps.Contacts", "Contacts");
+   var nls = dojo.i18n.getLocalization("lucid.apps.Contacts", "Contacts");
 
 A bit of caution
 ----------------
