@@ -87,20 +87,23 @@
 					</div>
 					<div>
 						<input dojoType="dijit.form.RadioButton" type="radio" name="db_type" value="mssql" id="db_type_mssql" />
-						<label for="db_type_mssql"> Microsoft SQL Server</label>
+						<label for="db_type_mssql"> Microsoft SQL Server <b>[Experimental]</b></label>
 					</div>
 					<div>
 						<input dojoType="dijit.form.RadioButton" type="radio" name="db_type" value="pgsql" id="db_type_pgsql" />
-						<label for="db_type_pgsql"> PostgreSQL</label>
+						<label for="db_type_pgsql"> PostgreSQL <b>[Experimental]</b> (broken)</label>
 					</div>
-					<div>
+					<div style="display: none;">
 						<input dojoType="dijit.form.RadioButton" type="radio" name="db_type" value="ibase" id="db_type_ibase" />
 						<label for="db_type_ibase"> iBase</label>
 					</div>
 					<div>
 						<input dojoType="dijit.form.RadioButton" type="radio" name="db_type" value="oci8" id="db_type_oci8" />
-						<label for="db_type_oci8"> Oracle DB (versions 7-10)</label>
+						<label for="db_type_oci8"> Oracle DB (versions 7-10) <b>[Experimental]</b></label>
 					</div>
+                    <div>
+                        <b>Note:</b> Experimental DBs are not officially supported. If possible, use MySQL or SQLite.
+                    </div>
 					<br />
 					Database Host:&nbsp;
 					<input dojoType="dijit.form.TextBox" name="db_host" type="text" /> <i style="font-size: 10pt;">(Path to database for SQLite)</i>
