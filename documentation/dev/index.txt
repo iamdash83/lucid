@@ -5,7 +5,7 @@ Developer Documentation
 =======================
 
 .. note::
-   Starting in 1.0 RC2, the ``desktop`` namespace was renamed to ``lucid``. There is some code in place for backwards compatibility, but it will be removed in 1.1. Please update your apps.
+   Starting in 1.0 RC2, the ``desktop`` namespace was renamed to ``lucid``. There is some code in place for backwards compatibility, but it will be removed in 2.0. Please update your apps.
 
 Getting Started
 ===============

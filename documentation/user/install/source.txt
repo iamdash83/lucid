@@ -6,8 +6,8 @@ Installing From Source
 
 **Note:** The development version of Lucid is cutting/bleeding edge software. You should not use it unless you know what you are doing. You have been warned.
 
-Checking out source code from subversion
-========================================
+Checking out source code from Git
+=================================
 In order to get a copy of Lucid's source code, you must have Git_. installed.
 
 .. _Git: http://www.git-scm.com/
