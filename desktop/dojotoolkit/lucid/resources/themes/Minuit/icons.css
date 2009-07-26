@@ -174,7 +174,7 @@
 .icon-16-apps-preferences-desktop-locale
 { width: 16px; height: 16px; background-repeat: no-repeat;  background-image: url("./icons/16x16/apps/preferences-desktop-locale.png"); }
 .icon-16-apps-preferences-desktop-remote-desktop
-{ width: 16px; height: 16px; background-repeat: no-repeat;  background-image: url("./icons/16x16/apps/preferences-desktop-remote-lucid.png"); }
+{ width: 16px; height: 16px; background-repeat: no-repeat;  background-image: url("./icons/16x16/apps/preferences-desktop-remote-desktop.png"); }
 .icon-16-apps-preferences-desktop-screensaver
 { width: 16px; height: 16px; background-repeat: no-repeat;  background-image: url("./icons/16x16/apps/preferences-desktop-screensaver.png"); }
 .icon-16-apps-preferences-desktop-sound
@@ -218,7 +218,7 @@
 .icon-16-categories-applications-system
 { width: 16px; height: 16px; background-repeat: no-repeat;  background-image: url("./icons/16x16/categories/applications-system.png"); }
 .icon-16-categories-preferences-desktop
-{ width: 16px; height: 16px; background-repeat: no-repeat;  background-image: url("./icons/16x16/categories/preferences-lucid.png"); }
+{ width: 16px; height: 16px; background-repeat: no-repeat;  background-image: url("./icons/16x16/categories/preferences-desktop.png"); }
 .icon-16-categories-preferences-desktop-peripherals
 { width: 16px; height: 16px; background-repeat: no-repeat;  background-image: url("./icons/16x16/categories/preferences-desktop-peripherals.png"); }
 .icon-16-categories-preferences-system
@@ -352,7 +352,7 @@
 .icon-16-places-start-here
 { width: 16px; height: 16px; background-repeat: no-repeat;  background-image: url("./icons/16x16/places/start-here.png"); }
 .icon-16-places-user-desktop
-{ width: 16px; height: 16px; background-repeat: no-repeat;  background-image: url("./icons/16x16/places/user-lucid.png"); }
+{ width: 16px; height: 16px; background-repeat: no-repeat;  background-image: url("./icons/16x16/places/user-desktop.png"); }
 .icon-16-places-user-home
 { width: 16px; height: 16px; background-repeat: no-repeat;  background-image: url("./icons/16x16/places/user-home.png"); }
 .icon-16-places-user-trash
@@ -593,7 +593,7 @@
 .icon-22-apps-preferences-desktop-locale
 { width: 22px; height: 22px; background-repeat: no-repeat;  background-image: url("./icons/22x22/apps/preferences-desktop-locale.png"); }
 .icon-22-apps-preferences-desktop-remote-desktop
-{ width: 22px; height: 22px; background-repeat: no-repeat;  background-image: url("./icons/22x22/apps/preferences-desktop-remote-lucid.png"); }
+{ width: 22px; height: 22px; background-repeat: no-repeat;  background-image: url("./icons/22x22/apps/preferences-desktop-remote-desktop.png"); }
 .icon-22-apps-preferences-desktop-screensaver
 { width: 22px; height: 22px; background-repeat: no-repeat;  background-image: url("./icons/22x22/apps/preferences-desktop-screensaver.png"); }
 .icon-22-apps-preferences-desktop-sound
@@ -637,7 +637,7 @@
 .icon-22-categories-applications-system
 { width: 22px; height: 22px; background-repeat: no-repeat;  background-image: url("./icons/22x22/categories/applications-system.png"); }
 .icon-22-categories-preferences-desktop
-{ width: 22px; height: 22px; background-repeat: no-repeat;  background-image: url("./icons/22x22/categories/preferences-lucid.png"); }
+{ width: 22px; height: 22px; background-repeat: no-repeat;  background-image: url("./icons/22x22/categories/preferences-desktop.png"); }
 .icon-22-categories-preferences-desktop-peripherals
 { width: 22px; height: 22px; background-repeat: no-repeat;  background-image: url("./icons/22x22/categories/preferences-desktop-peripherals.png"); }
 .icon-22-categories-preferences-system
@@ -771,7 +771,7 @@
 .icon-22-places-start-here
 { width: 22px; height: 22px; background-repeat: no-repeat;  background-image: url("./icons/22x22/places/start-here.png"); }
 .icon-22-places-user-desktop
-{ width: 22px; height: 22px; background-repeat: no-repeat;  background-image: url("./icons/22x22/places/user-lucid.png"); }
+{ width: 22px; height: 22px; background-repeat: no-repeat;  background-image: url("./icons/22x22/places/user-desktop.png"); }
 .icon-22-places-user-home
 { width: 22px; height: 22px; background-repeat: no-repeat;  background-image: url("./icons/22x22/places/user-home.png"); }
 .icon-22-places-user-trash
@@ -1012,7 +1012,7 @@
 .icon-32-apps-preferences-desktop-locale
 { width: 32px; height: 32px; background-repeat: no-repeat;  background-image: url("./icons/32x32/apps/preferences-desktop-locale.png"); }
 .icon-32-apps-preferences-desktop-remote-desktop
-{ width: 32px; height: 32px; background-repeat: no-repeat;  background-image: url("./icons/32x32/apps/preferences-desktop-remote-lucid.png"); }
+{ width: 32px; height: 32px; background-repeat: no-repeat;  background-image: url("./icons/32x32/apps/preferences-desktop-remote-desktop.png"); }
 .icon-32-apps-preferences-desktop-screensaver
 { width: 32px; height: 32px; background-repeat: no-repeat;  background-image: url("./icons/32x32/apps/preferences-desktop-screensaver.png"); }
 .icon-32-apps-preferences-desktop-sound
@@ -1056,7 +1056,7 @@
 .icon-32-categories-applications-system
 { width: 32px; height: 32px; background-repeat: no-repeat;  background-image: url("./icons/32x32/categories/applications-system.png"); }
 .icon-32-categories-preferences-desktop
-{ width: 32px; height: 32px; background-repeat: no-repeat;  background-image: url("./icons/32x32/categories/preferences-lucid.png"); }
+{ width: 32px; height: 32px; background-repeat: no-repeat;  background-image: url("./icons/32x32/categories/preferences-desktop.png"); }
 .icon-32-categories-preferences-desktop-peripherals
 { width: 32px; height: 32px; background-repeat: no-repeat;  background-image: url("./icons/32x32/categories/preferences-desktop-peripherals.png"); }
 .icon-32-categories-preferences-system
@@ -1190,7 +1190,7 @@
 .icon-32-places-start-here
 { width: 32px; height: 32px; background-repeat: no-repeat;  background-image: url("./icons/32x32/places/start-here.png"); }
 .icon-32-places-user-desktop
-{ width: 32px; height: 32px; background-repeat: no-repeat;  background-image: url("./icons/32x32/places/user-lucid.png"); }
+{ width: 32px; height: 32px; background-repeat: no-repeat;  background-image: url("./icons/32x32/places/user-desktop.png"); }
 .icon-32-places-user-home
 { width: 32px; height: 32px; background-repeat: no-repeat;  background-image: url("./icons/32x32/places/user-home.png"); }
 .icon-32-places-user-trash

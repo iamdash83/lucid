@@ -11,7 +11,7 @@ icons_DATA =					\
 	network-server.png			\
 	network-workgroup.png			\
 	start-here.png	\
-	user-lucid.png			\
+	user-desktop.png			\
 	user-home.png				\
 	user-trash.png
 
