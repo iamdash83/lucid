@@ -125,7 +125,10 @@
 					internal_error("permission_denied");
 				}
 			}
-			else { $out = new intOutput("generic_err"); }
+			else {
+                sleep(3);
+                $out = new intOutput("generic_err");
+            }
 		}
 		if($_GET['action'] == "logout")
 		{
