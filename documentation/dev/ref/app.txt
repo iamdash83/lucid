@@ -1,8 +1,8 @@
 .. _dev-ref-app:
 
-===========
+=========
 lucid.app
-===========
+=========
 
 .. module:: lucid.app
     :synopsis: Application management

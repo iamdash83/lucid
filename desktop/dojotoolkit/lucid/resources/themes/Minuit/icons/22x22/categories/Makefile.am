@@ -14,7 +14,7 @@ icons_DATA =				\
 	applications-office.png	\
 	applications-other.png	\
 	applications-system.png	\
-	preferences-lucid.png	\
+	preferences-desktop.png	\
 	preferences-desktop-peripherals.png	\
 	preferences-system.png
 
