@@ -1,2 +1,0 @@
-Welcome to Psych Desktop's public file system
-All users of this Psych Desktop installation can create files and folders here.
