@@ -1,0 +1,25 @@
+.lucidWidgetHeader {
+    background: #666;
+    height: 5em;
+}
+
+.lucidWidgetHeaderLogo {
+    font-size: 3em;
+    float: left;
+    padding-left: 1em;
+    padding-top: .5em;
+    font-color: #fff;
+}
+
+.lucidWidgetHeaderUserinfo {
+    float: right;
+    padding-left: 2em;
+    padding-top: 2em;
+}
+
+.lucidWidgetHeaderButtons {
+    width: 200px;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 1em;
+}
