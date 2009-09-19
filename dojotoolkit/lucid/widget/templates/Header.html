@@ -4,14 +4,14 @@
     </div>
     <div class="lucidWidgetHeaderUserinfo">
         <div>
-            <div dojoAttachPoint="userNode">Username</div> - <a href="#">Logout</a>
+            <span dojoAttachPoint="userNode">Username</span> - <a href="#">Logout</a>
         </div>
-        <div style="dislay: none;">
+        <div style="display: none;">
             <a href="#">Login</a>
         </div>
     </div>
     <div class="lucidWidgetHeaderButtons">
-        <div dojoType="dijit.form.DropDownButton">
+        <button dojoType="dijit.form.DropDownButton">
             <span>Applications</span>
             <div dojoType="dijit.Menu">
                 <div dojoType="dijit.MenuItem">App 1</div>
@@ -19,8 +19,8 @@
                 <div dojoType="dijit.MenuItem">App 3</div>
                 <div dojoType="dijit.MenuItem">App 4</div>
             </div>
-        </div>
-        <div dojoType="dijit.form.DropDownButton">
+        </button>
+        <button dojoType="dijit.form.DropDownButton">
             <span>Notifications</span>
             <div dojoType="dijit.TooltipDialog">
                 <ul>
@@ -30,6 +30,6 @@
                     <li>Event 4</li>
                 </ul>
             </div>
-        </div>
+        </button>
     </div>
 </div>
