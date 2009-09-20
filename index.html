@@ -13,8 +13,8 @@
             dojo.require("dijit.TitlePane");
             dojo.require("dojox.layout.GridContainer");
             dojo.addOnLoad(dojo.hitch(this, function() {
-                dojo.parser.parse();
-                dijit.byId('lucidTab1Container').setColumns(2);
+                dojo.parser.parse(); //NOTE: Couldn't we have done djConfig.parseOnLoad = true ?
+                dijit.byId('lucidTab1Container').setColumns(2); //NOTE: So we don't forget -- this is a hack to fix a splitters bug on the GridContainer.
                 lucid.user.isLoggedIn({onComplete: dojo.hitch(this, function(data) {
                     if(data.result == null) {}
                         //Since we start in the guest state -- nothing is required here.
@@ -57,7 +57,7 @@
                         </div>
                     </div>
                 </div>
-                <div id="lucidTab2" dojoType="dijit.layout.ContentPane" title="Cool stories">
+                <div id="lucidTab2" dojoType="dijit.layout.ContentPane" title="Cool stories" closable="true">
                     Cool stories, right from your browser, bro.
                 </div>
             </div>
