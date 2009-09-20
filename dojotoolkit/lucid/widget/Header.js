@@ -18,7 +18,8 @@ dojo.declare("lucid.widget.Header", [dijit._Widget, dijit._Templated, dijit._Con
         dojo.subscribe("/user/logout", dojo.hitch(this, function(data) {
             console.log('/user/logout recieved by header');
             this.attr("userLabel", false);
-        }));  
+        }));
+        this._checkLogin();
     },
     _setUserLabelAttr: function(val){
         if(val == false){
@@ -29,5 +30,14 @@ dojo.declare("lucid.widget.Header", [dijit._Widget, dijit._Templated, dijit._Con
             dojo.style(this.guestDisplayNode, "display", "none");
             this.userNode[dojo.isIE ? "innerText" : "textContent"] = val;
         }
+    },
+    _checkLogin: function(){
+        lucid.user.isLoggedIn({onComplete: dojo.hitch(this, function(data) {
+            if(data.result == null){
+                this.attr("userLabel", false);
+            }else{
+                this.attr("userLabel", data.result.name);
+            }
+        })});        
     }
 });
