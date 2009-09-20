@@ -15,6 +15,15 @@
             dojo.addOnLoad(dojo.hitch(this, function() {
                 dojo.parser.parse();
                 dijit.byId('lucidTab1Container').setColumns(2);
+                lucid.isLoggedIn({onComplete: dojo.hitch(this, function(data) {
+                    if(data.result == null) {}
+                        //Since we start in the guest state -- nothing is required here.
+                    else {
+                        //Announce we have an active session.
+                        alert('broadcasting /user/login');
+                        dojo.publish("/user/login", [data.result.name]);
+                    }
+                })});
             }));
         </script>
         <link href="./dojotoolkit/dojo/resources/dojo.css" rel="stylesheet" type="text/css" />

@@ -8,5 +8,15 @@ dojo.require("dijit.TooltipDialog");
 
 dojo.declare("lucid.widget.Header", [dijit._Widget, dijit._Templated, dijit._Contained], {
     templatePath: dojo.moduleUrl("lucid.widget", "templates/Header.html"),
-    widgetsInTemplate: true
+    widgetsInTemplate: true,
+    postCreate: function() {
+        dojo.subscribe("/user/login", dojo.hitch(this, function(data) {
+            alert('/user/login recieved by header');
+            this.userNode.innerHTML = data;
+        }));
+        dojo.subscribe("/user/logout", dojo.hitch(this, function(data) {
+            alert('/user/logout recieved by header');
+            this.userNode.innerHTML = "Guest";
+        }));  
+    }
 });
