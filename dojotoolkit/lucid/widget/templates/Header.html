@@ -3,10 +3,10 @@
         Lucid
     </div>
     <div class="lucidWidgetHeaderUserinfo">
-        <div>
-            <span dojoAttachPoint="userNode">Guest</span> - <a href="#">Logout</a>
+        <div dojoAttachPoint="userDisplayNode">
+            <span dojoAttachPoint="userNode">${userLabel}</span> - <a href="#">Logout</a>
         </div>
-        <div style="display: none;">
+        <div style="display: none;" dojoAttachPoint="guestDisplayNode">
             <a href="#">Login</a>
         </div>
     </div>

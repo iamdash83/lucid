@@ -15,7 +15,7 @@
             dojo.addOnLoad(dojo.hitch(this, function() {
                 dojo.parser.parse();
                 dijit.byId('lucidTab1Container').setColumns(2);
-                lucid.isLoggedIn({onComplete: dojo.hitch(this, function(data) {
+                lucid.user.isLoggedIn({onComplete: dojo.hitch(this, function(data) {
                     if(data.result == null) {}
                         //Since we start in the guest state -- nothing is required here.
                     else {
@@ -46,14 +46,11 @@
                         hasResizableColumns="true"
                         withHandles="true"
                         acceptTypes="dijit.layout.ContentPane, dijit.TitlePane, dijit.ColorPalette, dijit._Calendar">
-                        <div id="lucidExampleModule1" dojoType="dijit.TitlePane"  title="Clock">
-                            It's quarter past GO DUCK YOURSELF.
-                        </div>
                         <div id="lucidExampleModule2" dojoType="dijit.TitlePane" title="Calendar">
-                            You miss everything dumbduck.
+                            Today isn't january 35th 
                         </div>
                         <div id="lucidExampleModule3" dojoType="dijit.TitlePane" title="Clock">
-                            It's quarter past GO DUCK YOURSELF.
+                            It's quarter past 19:00
                         </div>
                         <div id="lucidExampleModule4" dojoType="dijit.TitlePane" title="Hi">
                             Hello, world.
