@@ -25,7 +25,7 @@ class ShareFs extends BaseFs {
 	}
 	function _getShareName($path) {
 		$sharename = explode("/", $path);
-		return $sharename[1];
+		return $sharename[0];
 	}
 	function _basePath($path=false) {
 		$this->shareName = $this->_getShareName($path);
