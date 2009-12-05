@@ -134,18 +134,20 @@
 			$user = $User->get_current();
 			if(!$user->has_permission("core.app.write")) internal_error("permission_denied");
 			//if(!isset($_POST['filename'])) {
-                if(!array_key_exists("sysname", $_POST)){
-                    $_POST['sysname']="";
-                }
-				$_POST['sysname'] = str_replace("..", "", $_POST['sysname']);
-				$p = $App->filter("sysname", $_POST['sysname']);
-				if($p === false) { $app = new App(array("sysname" => $_POST['sysname'])); }
-				else { $app = $p[0]; }
-				foreach(array('name', 'author', 'email', 'version', 'maturity', 'category') as $item) {
-					if(isset($_POST[$item]))
-						$app->$item = $_POST[$item];
-				}
-				$app->save();
+		        if(!array_key_exists("sysname", $_POST)){
+		            $_POST['sysname']="";
+		        }
+			if($_POST['sysname'] == "")
+				$out = new intOutput("generic_err"); //WHY THE FUCK WAS THIS NEVER HERE. WHAT. THE. FUCK.
+			$_POST['sysname'] = str_replace("..", "", $_POST['sysname']);
+			$p = $App->filter("sysname", $_POST['sysname']);
+			if($p === false) { $app = new App(array("sysname" => $_POST['sysname'])); }
+			else { $app = $p[0]; }
+			foreach(array('name', 'author', 'email', 'version', 'maturity', 'category') as $item) {
+				if(isset($_POST[$item]))
+					$app->$item = $_POST[$item];
+			}
+			$app->save();
 			//}
 			if(isset($_POST['filename'])) {
 				$_POST['filename'] = str_replace("..", "", $_POST['filename']);
