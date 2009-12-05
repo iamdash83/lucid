@@ -128,10 +128,11 @@ dojo.declare("lucid.ui.applets.Menu", lucid.ui.Applet, {
 		var l = dojo.i18n.getLocalization("lucid.ui", "menus");
 		var ap = dojo.i18n.getLocalization("lucid", "apps");
 
-		var data = lucid.app.appList;
 		if (this._menu){
 			this._menu.destroy();
+			lucid.app.refreshAppList();
 		}
+		var data = lucid.app.appList;
 		var menu = this._menu = new dijit.Menu({});
 		var cats = {};
 		for(var item in data)

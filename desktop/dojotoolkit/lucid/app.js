@@ -44,6 +44,115 @@ lucid.app = {
 			handleAs: "json"
 		});
 	},
+		//	summary:
+		//		Removes the dojo cache of the application 'sysname'
+	reload: function(d, nocheck) {
+		// summary:
+		//		reload a lucid application (dojo module in the lucid.apps.* namespace).
+		// d: String
+		//		The Lucid Application to reload (namespace)
+		// nocheck: Boolean
+		//		Use dojo.require checks?
+		if(d.indexOf("lucid.apps.") != 0) {
+			throw new Error("Only Lucid applications can be reloaded from the lucid.app.reload function.");
+			return false;
+		}
+		if(!dojo._loadedModules[d]){
+			//see if d is a partial name
+			var partialmatch=[];
+			for(var m in dojo._loadedModules){
+				if(m.indexOf(d)>=0){
+					partialmatch.push(m);
+				}
+			}
+			if(partialmatch.length==1){
+				console.info(d, 'is a partial match to',partialmatch[0]);
+				d=partialmatch[0];
+			}else if(partialmatch.length>1){
+				console.error("more than one modules matche the partial name \"",d,"\" try a more specific module name",partialmatch);
+				return;
+			}
+		}
+	
+		//remove the module namespace from its parent namespace
+		var sym=d.split('.');
+		if(sym.length>1){
+			var pname=sym.slice(0,-1).join('.');
+			var prop=sym[sym.length-1];
+			var parent=dojo.getObject(pname,false);
+			if(parent){
+				console.log('delete property',prop,'on object',pname,':',delete parent[prop]);
+			}
+		}
+	 
+		//remove _loadedModules entry so that dojo.require will re-load it
+		delete dojo._loadedModules[d];
+	 
+		//tidy up _loadedUrls so that dojo._getText will reload it
+		sym=dojo._getModuleSymbols(d);
+		var relpath = sym.join("/") + '.js';
+		//copied from dojo._loadUri
+		var uri = ((relpath.charAt(0) == '/' || relpath.match(/^\w+:/)) ? "" : dojo.baseUrl) + relpath;
+	 
+		delete dojo._loadedUrls[uri];
+		dojo._loadedUrls.splice(dojo.indexOf(dojo._loadedUrls,uri),1);
+	 
+		//set cacheBust to make sure we load latest file
+		dojo.config.cacheBust=+new Date;
+	 
+	 	//F6 shortcut support
+		dojo._loadreloaded=d;
+		if(!dojo._reloadhotkey){
+			dojo._reloadhotkey=dojo.connect(document.documentElement,'onkeydown',function(e){
+				if(e.keyCode===dojo.keys.F6){
+					dojo.reload(dojo._loadreloaded);
+					dojo.stopEvent(e);
+				}
+			});
+		}
+	
+		//hijack dojo._getText to search for templatePath and reset any cache if any are found
+		var _getText = dojo._getText;
+		//copied from util/buildscripts/jslib/buildUtil.js
+		var interningDojoUriRegExpString = "(((templatePath|templateCssPath)\\s*(=|:)\\s*)|dojo\\.uri\\.cache\\.allow\\(\\s*)dojo\\.(module)?Url\\(\\s*?[\\\"\\']([\\w\\.\\/]+)[\\\"\\'](([\\,\\s]*)[\\\"\\']([\\w\\.\\/]*)[\\\"\\'])?\\s*\\)",
+			interningGlobalDojoUriRegExp = new RegExp(interningDojoUriRegExpString, "g");
+		dojo._getText=function(){
+			var content=_getText.apply(dojo,arguments);
+			var m=content.match(interningGlobalDojoUriRegExp);
+			if(m){
+				dojo.forEach(m,function(mi){
+					if(!mi.indexOf('templatePath')){
+						var file=dojo.trim(mi.split(':',2)[1]);
+						var url=eval(file);
+						url=url.toString();
+						if(dijit._Templated._templateCache[url]){
+							console.info('Clearing dijit template cache for',url);
+							delete dijit._Templated._templateCache[url];
+						}
+					}
+				});
+			}
+			//console.log('dojo._getText',m);
+			return content;
+		}
+		console.info('reloading module',d);
+		dojo['require'](d,nocheck);
+		//set the original _getText back to where it was
+		dojo._getText=_getText;
+
+	},
+		//	summary:
+		//		Refreshs the app list (e.g. for during Katana IDE development)
+	refreshAppList: function(){
+		lucid.xhr({
+			backend: "core.app.fetch.list",
+            		sync: true,
+			load: dojo.hitch(this, function(data, ioArgs){
+				lucid.app.appList = data;
+			}),
+			handleAs: "json"
+		});
+	},
 	startupApps: function(){
 		//	summary:
 		//		Launches the apps specified in lucid.config to launch on startup

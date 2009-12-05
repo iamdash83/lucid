@@ -206,6 +206,7 @@ dojo.declare("lucid.apps.KatanaIDE", lucid.apps._App, {
 									filename: path+"/"+filename,
 									content: filename.match(".js$") ? defaultContent : " "
 								});
+								dojo.publish("updateMenu");
 								this.appStore.newItem({
 									id: appname+"/"+path+"/"+filename+(new Date()).toString(),
 									name: filename,
@@ -290,6 +291,11 @@ dojo.declare("lucid.apps.KatanaIDE", lucid.apps._App, {
 						this.appStore.deleteItem(this._contextItem);
 						this._contextItem = null;
 					}));
+					dojo.publish("updateMenu");
+					setTimeout(dojo.hitch(lucid, function() {
+						lucid.app.launch("KatanaIDE");
+					}), 1000);
+					this.kill();
 				})
 				if(!fname) 
 					lucid.dialog.yesno({
@@ -297,6 +303,7 @@ dojo.declare("lucid.apps.KatanaIDE", lucid.apps._App, {
 						message: sys.delFromSys.replace("%s", this.appStore.getValue(this._contextItem, "name")),
 						onComplete: dojo.hitch(this, function(a){
 							if(a) doDelete();
+							dojo.publish("updateMenu");
 						})
 					})
 				else doDelete();
@@ -334,6 +341,7 @@ dojo.declare("lucid.apps.KatanaIDE", lucid.apps._App, {
 				    editor: editor
 			    }
 			    editor.startup();
+				this.tabArea.selectChild(pane);
 				dojo.connect(pane, "onClose", function(){
 				    pane.resize = function(){};
 				    editor.destroy();
@@ -342,8 +350,8 @@ dojo.declare("lucid.apps.KatanaIDE", lucid.apps._App, {
 				    if(content != "")
 					    editor.massiveWrite(content);
 					editor.setCaretPosition(0,0);
-                    this.tabArea.layout();
-                    editor.startup();
+		    this.tabArea.layout();
+		    editor.startup();
 				}), 200);
 			})
 		})
@@ -432,10 +440,12 @@ dojo.declare("lucid.apps.KatanaIDE", lucid.apps._App, {
 		var ideLocale = dojo.i18n.getLocalization("lucid.apps.KatanaIDE", "ide");
 		var data = {};
 		for(var key in this.metaUi){
-			if(this.metaUi[key].getValue() == "") 
+			if(this.metaUi[key].getValue() != "") 
 			data[key] = this.metaUi[key].getValue();
 		}
 		lucid.app.save(data);
+		lucid.app.reload("lucid.apps."+this.metaUi[sysname]);
+		dojo.publish("updateMenu");
 	},
 	setMeta: function(info){
 		for(var key in this.metaUi){
@@ -525,6 +535,7 @@ dojo.declare("lucid.apps.KatanaIDE", lucid.apps._App, {
 			filename: "/"+info.sysname+".js",
 			content: defaultContent
 		}));
+		dojo.publish("updateMenu");
 		lucid.app.createFolder(info.sysname);
 		//make the store item
 		var root = this.appStore.newItem(dojo.mixin(dojo.clone(this.appInfo[info.sysname]), {
@@ -576,12 +587,8 @@ dojo.declare("lucid.apps.KatanaIDE", lucid.apps._App, {
 			filename: pane.ide_info.fileName,
 			content: content
 		});
-		//var lm = dojo._loadedModules;
-		//for(var key in lm){
-		//	if(key.indexOf("lucid.apps."+pane.ide_info.appName) == 0){
-		//		delete lm[key];
-		//	}
-		//}
+		dojo.publish("updateMenu");
+		lucid.app.reload("lucid.apps."+pane.ide_info.appName);
 	},
 
 	kill: function()
