@@ -54,3 +54,18 @@ We can use ``launchHandler()`` to launch the installed web browser as well. We c
 
    lucid.app.launchHandler(null, {url: "http://www.lucid-desktop.org/"}, "text/x-uri");
 
+Reload an app's code
+====================
+You can reload an app's code by using ``lucid.app.reload``:
+
+.. code-block:: javascript
+   
+   lucid.app.reload("lucid.app.MyApp");
+
+You can also reload a specific module only:
+
+.. code-block:: javascript
+   
+   lucid.app.reload("lucid.app.MyApp.someModule");
+
+You should only use this in a development environment (eg put it into firebug), it's a bit unpredicable. This function is triggered in Katana IDE after saving a file, so you don't need to do it manually if you're coding in the IDE.
