@@ -31,7 +31,7 @@ dojo.declare("lucid.Sound", dijit._Widget, {
 		this.domNode.style.left="-999px";
 		this.domNode.style.top="-999px";
 		document.body.appendChild(this.domNode);
-		var backends = ["html", "flash", "embed"];
+		var backends = [/*"html", (Gecko!=Support .mp3) */ "flash", "embed"];
 		for(var k in backends){
 			var i = backends[k];
 			var backend = new lucid.Sound[i]({
@@ -179,7 +179,7 @@ dojo.declare("lucid.Sound.html", lucid.Sound._backend, {
 		this.htmlSound.pause();
 	},
 	stop: function(){
-		this.htmlSound.stop();
+		this.htmlSound=null;
 	},
 	position: function(v){
 		if(v) this.htmlSound.currentTime = v;
@@ -235,7 +235,7 @@ dojo.declare("lucid.Sound.flash", lucid.Sound._backend, {
 	volume: function(val){
 		return dojox.flash.comm.callFunction(this.id, "setVolume", [val]);
 	},
-	checkCompat: function(){
+	testCompat: function(){
 		return dojox.flash.info.capable && typeof dojox.flash.comm.makeObj != "undefined";
 	},
 	startup: function(){
