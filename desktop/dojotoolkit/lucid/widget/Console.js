@@ -179,6 +179,12 @@ dojo.declare("lucid.widget.Console", [dijit._Widget, dijit._Templated, dijit._Co
 		pwd: function(params){
 			this.write(this.formatPath(this.path)+"\n");
 			this.detach();
+		},
+		"4str4stam": function(params)
+		{
+			this.write("LEATHER BELT"+"\n");
+			this.write("LEVEL 18?"+"\n");
+			this.detach();
 		}
 	},
 	postCreate: function(){
