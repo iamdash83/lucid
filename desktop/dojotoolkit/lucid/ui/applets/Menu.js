@@ -162,7 +162,7 @@ dojo.declare("lucid.ui.applets.Menu", lucid.ui.Applet, {
 				{
 					var item = new dijit.MenuItem({
 						label: ap[data[app].name] || data[app].name,
-						iconClass: data[app].icon ? (data[app].icon.indexOf(".") === -1 ? data[app].icon : "icon-app-"+data[app].sysname) : null
+						iconClass: data[app].icon ? (data[app].icon.indexOf(".") === -1 ? data[app].icon : "icon-app-"+data[app].sysname) : ""
 					});
 					dojo.connect(item, "onClick", dojo.hitch(lucid.app, "launch", data[app].sysname));
 					if(cat == "Preferences"){
