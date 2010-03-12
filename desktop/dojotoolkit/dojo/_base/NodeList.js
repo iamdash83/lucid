@@ -19,6 +19,10 @@ dojo.require("dojo._base.array");
 
 	var loopBody = function(f, a, o){
 		a = [0].concat(aps.call(a, 0));
+		if(!a.sort){
+			// make sure it's a real array before we pass it on to be wrapped
+			a = aps.call(a, 0);
+		}
 		o = o || d.global;
 		return function(node){
 			a[0] = node;
@@ -566,7 +570,7 @@ dojo.require("dojo._base.array");
 			//		|	"only"
 			//		|	"replace"
 			// 		or an offset in the childNodes property
-			return d.query(queryOrListOrNode).place(item[0], position);	// dojo.NodeList
+			return d.query(queryOrListOrNode).place(this[0], position);	// dojo.NodeList
 		},
 
 		// FIXME: do we need this?

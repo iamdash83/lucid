@@ -37,6 +37,7 @@
 	'formatBlock': 'Stile paragrafo',
 	'fontSize': 'Dimensione carattere',
 	'fontName': 'Nome carattere',
+	'tabIndent': 'Rientro Tab',
 	/* Error messages */
 	'systemShortcut': 'Azione "${0}" disponibile sul proprio browser solo mediante i tasti di scelta rapida della tastiera. Utilizzare ${1}.'
 })

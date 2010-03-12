@@ -424,11 +424,22 @@ dojo.date.locale.parse = function(/*String*/value, /*dojo.date.locale.__FormatOp
 
 	// Check for overflow.  The Date() constructor normalizes things like April 32nd...
 	//TODO: why isn't this done for times as well?
-	var allTokens = tokens.join("");
+	var allTokens = tokens.join(""),
+		dateToken = allTokens.indexOf('d') != -1,
+		monthToken = allTokens.indexOf('M') != -1;
+
 	if(!valid ||
-		(allTokens.indexOf('M') != -1 && dateObject.getMonth() != result[1]) ||
-		(allTokens.indexOf('d') != -1 && dateObject.getDate() != result[2])){
+		(monthToken && dateObject.getMonth() > result[1]) ||
+		(dateToken && dateObject.getDate() > result[2])){
 		return null;
+	}
+
+	// Check for underflow, due to DST shifts.  See #9366
+	// This assumes a 1 hour dst shift correction at midnight
+	// We could compare the timezone offset after the shift and add the difference instead.
+	if((monthToken && dateObject.getMonth() < result[1]) ||
+		(dateToken && dateObject.getDate() < result[2])){
+		dateObject = dojo.date.add(dateObject, "hour", 1);
 	}
 
 	return dateObject; // Date
@@ -596,27 +607,6 @@ dojo.date.locale.getNames = function(/*String*/item, /*String*/type, /*String?*/
 	// return by copy so changes won't be made accidentally to the in-memory model
 	return (label || lookup[props.join('-')]).concat(); /*Array*/
 };
-
-dojo.date.locale.displayPattern = function(/*String*/fixedPattern, /*String?*/locale){
-	// summary:
-	//	Provides a localized representation of a date/time pattern string
-	//
-	// description:
-	//	Takes a date/time pattern string like "MM/dd/yyyy" and substitutes
-	//	the letters appropriate to show a user in a particular locale, as
-	//	defined in [the CLDR specification](http://www.unicode.org/reports/tr35/tr35-4.html#Date_Format_Patterns)
-	// fixedPattern:
-	//	A date string using symbols from this set: "GyMdkHmsSEDFwWahKzYeugAZvcL"
-	// locale:
-	//	use a special locale, otherwise takes the default
-
-	var fixed = "GyMdkHmsSEDFwWahKzYeugAZvcL",
-		local = dojo.date.locale._getGregorianBundle(locale).patternChars;
-	return dojo.map(fixedPattern, function(c){
-		 var i = fixed.indexOf(c);
-		 return i < 0 ? c : local.charAt(i);
-	}).join(""); // String
-}
 
 dojo.date.locale.isWeekend = function(/*Date?*/dateObject, /*String?*/locale){
 	// summary:

@@ -8,7 +8,6 @@
 		@import "../../../dijit/themes/dijit.css";
 		@import "../../../dijit/themes/tundra/form/Button.css";
 		@import "../../../dijit/tests/css/dijitTests.css"; 
-		
 		@import "../resources/FileInput.css"; 
 	</style>
 	<script>
@@ -65,7 +64,7 @@
 		//using this early for the forceNoFlash test:
 		dojo.require("dojox.embed.Flash");
 		
-		var uploadUrl = "../resources/UploadFile.php";
+		var uploadUrl = "../tests/UploadFile.php";
 		
 		var rmFiles = "";
 		var fileMask = [
@@ -111,12 +110,12 @@
 			
 			var f0 = new dojox.form.FileUploader({
 				button:dijit.byId("btn0"), 
-				degradable:true,
 				uploadUrl:uploadUrl, 
 				uploadOnChange:false, 
 				selectMultipleFiles:selectMultipleFiles,
 				fileMask:fileMask,
-				isDebug:false,
+				isDebug:true,
+				devMode:true,
 				postData:{sessionid:"TestStuff won't be sent", userId:"DojoMan"}
 			});
 			
@@ -230,9 +229,22 @@
 		#noFlash button, #hasFlash button{
 			font-size:9px;
 		}
+		#cont{
+			width:200px;
+			height:100px;
+			overflow:scroll;
+			background-color:transparent;
+		}
 	</style>
 </head>
 <body class="tundra">
+	<p style="font-size:14px; width:480px; border:2px solid #ff0000; padding:3px;">
+		<strong>NOTE:</strong> This test does upload,
+		but the server scripts are renamed to <em>tests/UploadFile.php.<strong>disabled</strong></em> and
+		<em>tests/cLOG.php.<strong>disabled</strong></em> to prevent security attacks on hosted servers.
+		You should rename these files (removing <em>.disabled</em>) in your local copy to conduct tests. 
+	</p>
+	
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
   <tr>
     <td class="leftCol">
@@ -268,8 +280,10 @@
             <p id="hSingle">Single-file mode. You may choose only one from the System Dialog.</p>
         </div>
         
+        <div id="cont">
         <div id="btn0" class="browse" dojoType="dijit.form.Button">Select Images...</div>
-        <span id="fTypes">Choose from these types:</span>
+        </div>
+		<span id="fTypes">Choose from these types:</span>
         
         <textarea cols="50" rows="6" id="fileToUpload"></textarea>
         <input type="text" id="postdata" value="Add Post Data Here" />

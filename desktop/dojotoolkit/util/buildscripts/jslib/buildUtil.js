@@ -23,7 +23,7 @@ buildUtil.DojoBuildOptions = {
 		helpText: "The build will be stamped with this version string."
 	},
 	"localeList": {
-		defaultValue: "ar,ca,cs,da,de-de,el,en-gb,en-us,es-es,fi-fi,fr-fr,he-il,hu,it-it,ja-jp,ko-kr,nl-nl,no,pl,pt-br,pt-pt,ru,sk,sl,sv,th,tr,zh-tw,zh-cn",
+		defaultValue: "ar,ca,cs,da,de-de,el,en-gb,en-us,es-es,fi-fi,fr-fr,he-il,hu,it-it,ja-jp,ko-kr,nl-nl,nb,pl,pt-br,pt-pt,ru,sk,sl,sv,th,tr,zh-tw,zh-cn",
 		helpText: "The set of locales to use when flattening i18n bundles."
 	},
 	
@@ -90,11 +90,11 @@ buildUtil.DojoBuildOptions = {
 	},
 
 	"copyTests": {
-		defaultValue: true,
+		defaultValue: false,
 		helpText: "Turn on or off copying of test files."
 	},
 	"mini": {
-		defaultValue: false,
+		defaultValue: true,
 		helpText: "Removes files like tests, demos dijit/bench, unfinished themes, and interned "
 			+ "Dijit templates from the build. Overrides the value set for copyTests."
 	},
@@ -1606,6 +1606,7 @@ buildUtil.baseMappings = {
 	"_getIeDispatcher": "event",
 	
 	"byId": "html",
+	"destroy": "html",
 	"_destroyElement": "html",
 	"isDescendant": "html",
 	"setSelectable": "html",
@@ -1636,7 +1637,10 @@ buildUtil.baseMappings = {
 	"coords": "html", 
 	"hasAttr": "html", 
 	"attr": "html",
-	"removeAttr": "html", 
+	"removeAttr": "html",
+	"create": "html",
+	"empty": "html",
+	"_toDom": "html",
 	"hasClass": "html", 
 	"addClass": "html", 
 	"removeClass": "html",
