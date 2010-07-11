@@ -125,7 +125,11 @@ dojo.require("dojox.uuid.generateTimeBasedUuid");
             window.ActiveXObject = null;
         return ret;
     }
-
+	lucid._activeXhrRequests = function(){
+		//	summary:
+		//		returns number of active XHR requests from protected system vars
+		return xhrRequests;
+	}
     lucid.xhr = function(/*dojo.__ioArgs|String*/args){
 	    //	summary:
     	//		an extention of dojo's XHR utilities, but with some extra params to make life easy
