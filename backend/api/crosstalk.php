@@ -29,16 +29,20 @@
 			if($result_user == false) $result_user = array();
 			if($result_public == false) $result_public = array();
 			$result = array_merge($result_user, $result_public);
-			$array = array();
-			foreach($result as $row) {
-				array_push($array, array(
-					"sender" => $row->sender,
-					"appsysname" => $row->appsysname,
-					"instance" => $row->instance,
-					"args" => $row->args,
-					"topic" => $row->topic
-				));
-				$row->delete();
+			$time = time();
+			while(!$resultA && ((time() - $time) < 30) && !connection_aborted()) {
+				$array = array();
+				foreach($result as $row) {
+					array_push($array, array(
+						"sender" => $row->sender,
+						"appsysname" => $row->appsysname,
+						"instance" => $row->instance,
+						"args" => $row->args,
+						"topic" => $row->topic
+					));
+					$resultA = true;
+					$row->delete();
+				}
 			}
 			$out = new jsonOutput($array);
 		}
