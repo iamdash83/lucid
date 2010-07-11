@@ -24,13 +24,14 @@
 	{
 		if ($_GET['action'] == "checkForEvents")
 	    {
-			$result_user = $Crosstalk->filter("userid", $_SESSION['userid']);
-			$result_public = $Crosstalk->filter("userid", -1);
-			if($result_user == false) $result_user = array();
-			if($result_public == false) $result_public = array();
-			$result = array_merge($result_user, $result_public);
 			$time = time();
+			$resultA = false;
 			while(!$resultA && ((time() - $time) < 30) && !connection_aborted()) {
+				$result_user = $Crosstalk->filter("userid", $_SESSION['userid']);
+				$result_public = $Crosstalk->filter("userid", -1);
+				if($result_user == false) $result_user = array();
+				if($result_public == false) $result_public = array();
+				$result = array_merge($result_user, $result_public);
 				$array = array();
 				foreach($result as $row) {
 					array_push($array, array(
@@ -43,6 +44,8 @@
 					$resultA = true;
 					$row->delete();
 				}
+				if(!$resultA)
+					usleep(100000);
 			}
 			$out = new jsonOutput($array);
 		}
