@@ -2,6 +2,12 @@ dojo.provide("lucid.crosstalk");
 lucid.crosstalk = {
 	//	summary:
 	//		An API that allows an app to communicate with other applications on a system-wide level. 
+	//	polling: Boolean
+	//		is long polling active?
+	polling: false,
+	//	_xhrCall: dojo.Deferred
+	//		the polling object
+	_xhrCall: {},
 	//	session: Array
 	//		handler storage
 	session: [],
@@ -55,17 +61,21 @@ lucid.crosstalk = {
 		//}
 		//else { // handlers found. ask to obtain any events.
 			//lucid.log("Crosstalk API: Checking for events...");
-        	lucid.xhr({
-	        	backend: "api.crosstalk.io.checkForEvents",
-				handleAs: "json",
-	        	load: dojo.hitch(this, function(data){
-                    dojo.forEach(data, function(msg){
-                        this.msgQueue.push(msg);
-                    }, this);
-                    this._internalCheck2();
-                }),
-	        	error: function(type, error){ lucid.log("Error in Crosstalk call: "+error.message); }
-        	});
+			if(!this.polling) {
+				this._xhrCall = lucid.xhr({
+					backend: "api.crosstalk.io.checkForEvents",
+					handleAs: "json",
+					load: dojo.hitch(this, function(data){
+						dojo.forEach(data, function(msg){
+							this.msgQueue.push(msg);
+						}, this);
+						this.polling = false;
+						this._internalCheck2();
+					}),
+					error: function(type, error){ if (type.dojoType=='cancel') { return; } lucid.crosstalk.polling = false; lucid.log("Error in Crosstalk call: "+error.message); }
+				});
+				this.polling = true;
+			}
 		//}
 	},
 	exists: function(/*Int?*/id, /*Function*/onComplete, /*Function?*/onError)

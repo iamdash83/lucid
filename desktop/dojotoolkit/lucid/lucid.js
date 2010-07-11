@@ -75,6 +75,7 @@ dojo.require("dojox.uuid.generateTimeBasedUuid");
 (function(){
     // some internal sysem vars for XHR security
     var token = null;
+	var xhrRequests = 0;
     var systemActive = true;
     var appActive = false;
     var currentApp = false;
@@ -92,12 +93,27 @@ dojo.require("dojox.uuid.generateTimeBasedUuid");
     // redeclare the function in this scope
     var d = dojo;
     var dxhr = eval("({xhr:"+dojo._xhrObj.toString()+"})").xhr; //stupid workaround for IE
+	
+	dojo.connect(dojo, "_ioWatch", null, function(dfd, _validCheck, _ioCheck, _resHandle) {
+		xhrRequests = xhrRequests + 1;
+		dfd.addBoth(function() {
+			xhrRequests = xhrRequests - 1;
+		});
+	});
+	
     dojo._xhrObj = function(){
         if(!(systemActive == true && appActive === false)){
             console.log(arguments.callee.caller.toString());
             throw new Error("Access denied: App or outside script attempted to get an XHR object directly");
             return;
         }
+		if(lucid.crosstalk.polling && xhrRequests >= 2) {
+			lucid.log("XHRObject needed. Freeing Crosstalk Long Poller...");
+			lucid.crosstalk._xhrCall.canceler();
+			lucid.crosstalk.polling = false;
+			lucid.crosstalk.stop();
+			lucid.crosstalk.setup_timer();
+		}
         if(xhr)
             window.XMLHttpRequest = xhr;
         if(dojo.isIE)
