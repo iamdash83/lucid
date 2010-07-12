@@ -73,7 +73,7 @@ dojo.require("dojox.uuid.generateTimeBasedUuid");
 
 
 (function(){
-    // some internal sysem vars for XHR security
+    // some internal system vars for XHR security
     var token = null;
 	var xhrRequests = 0;
     var systemActive = true;
