@@ -48,6 +48,12 @@ dojo.declare("lucid.apps.WebBrowser", lucid.apps._App, {
 	go: function(url)
 	{
 		var URL = (typeof url == "string" ? url : this.urlbox.getValue());
+        var re = new RegExp("[A-Za-z]://*");
+        if(!re.test(URL)){
+            URL = "http://"+URL;
+        }
+        // I don't know what I was thinking when I wrote this, but yeah, commented it out for now
+        /*
 		if(!(URL.charAt(4) == ":" && URL.charAt(5) == "/" && URL.charAt(6) == "/"))
 		{
 			//but wait, what if it's an FTP site?
@@ -65,6 +71,7 @@ dojo.declare("lucid.apps.WebBrowser", lucid.apps._App, {
 				}
 			}
 		}
+        */
 		this.Iframe.src = URL;
 		this.urlbox.setValue(URL);
 		return;
