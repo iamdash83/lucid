@@ -8,7 +8,7 @@ Application development with Lucid is very easy, and you can make full featured 
 
 This tutorial will assume that you know how to use Dojo's widget system. If you don't, it is suggested you take a look at `Dojo's documentation`_. before we begin.
 
-.. _Dojo's documentation: http://dojotoolkit.org/docs
+.. _Dojo's documentation: http://dojotoolkit.org/documentation/
 
 You can use Katana IDE to write your application, or you may use your favorite text editor. If you use a text editor, you have to create the app in the IDE first, and then open ``/desktop/dojotoolkit/desktop/apps/YourApp.js`` in the text editor.
 
