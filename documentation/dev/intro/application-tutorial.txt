@@ -10,7 +10,7 @@ This tutorial will assume that you know how to use Dojo's widget system. If you 
 
 .. _Dojo's documentation: http://dojotoolkit.org/documentation/
 
-You can use Katana IDE to write your application, or you may use your favorite text editor. If you use a text editor, you have to create the app in the IDE first, and then open ``/desktop/dojotoolkit/desktop/apps/YourApp.js`` in the text editor.
+You can use Katana IDE to write your application, or you may use your favorite text editor. If you use a text editor, you have to create the app in the IDE first, and then open ``/desktop/dojotoolkit/lucid/apps/YourApp.js`` in the text editor.
 
 
 In this tutorial, we will be writing a simple contact manager app. You will see how easy it is to make such a useful application. From the IDE, click on the 'New' button, and enter in 'MyContacts' as the System name, and 'My Contacts' as the displayed name. System names cannot contain spaces, should start with a letter, and should be camel-cased. Displayed names, however, can contain anything. The IDE will then create your application, and give you the skeleton below.
@@ -19,7 +19,7 @@ In this tutorial, we will be writing a simple contact manager app. You will see 
 
     dojo.provide("lucid.apps.MyContacts");
     
-    dojo.declare("lucid.apps.MyContacts", desktop.apps._App, {
+    dojo.declare("lucid.apps.MyContacts", lucid.apps._App, {
         init: function(args) {
             /*Startup code goes here*/
         }
@@ -194,7 +194,7 @@ Here's the full application's code:
     dojo.require("dijit.form.Button");
     lucid.addDojoCss("dojox/grid/resources/Grid.css");
 
-    dojo.declare("lucid.apps.MyContacts", desktop.apps._App, {
+    dojo.declare("lucid.apps.MyContacts", lucid.apps._App, {
         init: function(args) {
             this.windows = [];
             var win = new lucid.widget.Window({

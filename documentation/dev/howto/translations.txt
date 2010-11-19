@@ -14,7 +14,7 @@ they are (in bold):
 
   - dojotoolkit/
 
-    - desktop/
+    - lucid/
 
       - apps/
 
@@ -80,7 +80,7 @@ for countries, but hey...
 
 Translating an application
 --------------------------
-If you open one of these files, say ``desktop/apps/Contacts/nls/Contacts.js``
+If you open one of these files, say ``lucid/apps/Contacts/nls/Contacts.js``
 for exemple, you'll see this
 
 .. code-block:: javascript
@@ -102,7 +102,7 @@ language folder. What you'll see there are key/value pairs. You need to translat
 the right side which are the values.
 
 For example, this is the french translation, located in 
-``desktop/apps/Contacts/nls/fr/``
+``lucid/apps/Contacts/nls/fr/``
 
 .. code-block:: javascript
 

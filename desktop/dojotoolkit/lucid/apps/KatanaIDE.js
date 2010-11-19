@@ -22,4 +22,4 @@ dojo.requireLocalization("lucid.apps.KatanaIDE", "ide");
 dojo.require("lucid.apps.KatanaIDE._base");
 dojo.require("lucid.apps.KatanaIDE.CodeTextArea");
 dojo.require("lucid.apps.KatanaIDE.EditorLite");
-lucid.addDojoCss("desktop/apps/KatanaIDE/codeEditor.css");
+lucid.addDojoCss("lucid/apps/KatanaIDE/codeEditor.css");

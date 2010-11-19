@@ -5,7 +5,7 @@ Application Structure
 =====================
 Applications are Dojo modules
 =============================
-Lucid applications are essentially dojo modules. They live in the ``lucid.apps`` namespace. The name of the module in this namespace is known as the application's system name, or sysname. All applications extend the ``desktop.apps._App`` class, which contains some bootstrap code and self-management functions.
+Lucid applications are essentially dojo modules. They live in the ``lucid.apps`` namespace. The name of the module in this namespace is known as the application's system name, or sysname. All applications extend the ``lucid.apps._App`` class, which contains some bootstrap code and self-management functions.
 
 Metadata
 ========

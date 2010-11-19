@@ -35,7 +35,7 @@ _base.js
 
    dojo.provide("lucid.apps.MyApp._base");
 
-   dojo.declare("lucid.apps.MyApp", desktop.apps._App, {
+   dojo.declare("lucid.apps.MyApp", lucid.apps._App, {
        init: function(args) {
            this.win = new lucid.widget.Window({
                title: "My App",
