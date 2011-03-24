@@ -41,7 +41,6 @@
 .dojoxDialogTitleBar {
 	/* outer container for the titlebar of the dialog */
 	cursor:move;
-	position:absolute;
 	top:0;
 	left:0;
 	right:0;
@@ -80,7 +79,7 @@ div.dojoxDialogNoTitle {
 	padding-top:9px;
 }
 
-.dojoxDialogCloseIcon {
+.dojoxDialogCloseIcon, .dojoxDialogCloseIconHover {
 	background : url("images/dialogCloseButton.png") no-repeat top right;
 	position: absolute;
 	vertical-align: middle;
@@ -93,6 +92,18 @@ div.dojoxDialogNoTitle {
 }
 .dj_ie6 .dojoxDialogCloseIcon {
 	background-image: url("images/dialogCloseButton.gif");
+}
+
+.dojoxDialog div.dijitDialogCloseIconHover,
+.dojoxDialog div.dijitDialogCloseIconActive {
+    background-position:0 0;
+}
+
+.dojoxDialog .dijitDialogCloseIconHover {
+    background-image: url("images/dialogCloseButton.png");
+}
+.dj_ie6 .dojoxDialog .dijitDialogCloseIconHover {
+    background-image: url("images/dialogCloseButton.gif");
 }
 
 .dojoxDialogNoTitle .dojoxDialogCloseIcon {

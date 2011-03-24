@@ -4,21 +4,18 @@ dojo.require("dijit.layout.StackContainer");
 dojo.require("dijit.layout.ContentPane");
 dojo.require("dijit.form.Button");
 
-dojo.require("dojo.i18n"); 
-dojo.requireLocalization("dijit", "common"); 
-dojo.requireLocalization("dojox.widget", "Wizard"); 
+dojo.require("dojo.i18n");
+dojo.requireLocalization("dijit", "common");
+dojo.requireLocalization("dojox.widget", "Wizard");
 
-dojo.declare(
-	"dojox.widget.Wizard",
-	[dijit.layout.StackContainer, dijit._Templated],
-	{
+dojo.declare("dojox.widget.Wizard", [dijit.layout.StackContainer, dijit._Templated], {
 	// summary:
 	//		A set of panels that display sequentially, typically notating a step-by-step
 	//		procedure like an install
 	//
 	
 	widgetsInTemplate: true,
-	templatePath: dojo.moduleUrl("dojox.widget", "Wizard/Wizard.html"),
+	templateString: dojo.cache("dojox.widget", "Wizard/Wizard.html"),
 	
 	// nextButtonLabel: String
 	//		Label override for the "Next" button.
@@ -59,9 +56,9 @@ dojo.declare(
 	},
 
 	startup: function(){
-		if(this._started){ 
-			//console.log('started'); 
-			return; 
+		if(this._started){
+			//console.log('started');
+			return;
 		}
 		this.inherited(arguments);
 		
@@ -79,9 +76,13 @@ dojo.declare(
 		this.connect(this.doneButton, "onClick", "done");
 
 		this._subscription = dojo.subscribe(this.id + "-selectChild", dojo.hitch(this,"_checkButtons"));
-		this._checkButtons();
 		this._started = true;
 		
+	},
+	
+	resize: function(){
+		this.inherited(arguments);
+		this._checkButtons();
 	},
 
 	_checkButtons: function(){
@@ -89,7 +90,7 @@ dojo.declare(
 		var sw = this.selectedChildWidget;
 		
 		var lastStep = sw.isLastChild;
-		this.nextButton.attr("disabled", lastStep);
+		this.nextButton.set("disabled", lastStep);
 		this._setButtonClass(this.nextButton);
 		if(sw.doneFunction){
 			//console.log(sw.doneFunction);
@@ -101,12 +102,12 @@ dojo.declare(
 			// #1438 issue here.
 			this.doneButton.domNode.style.display = "none";
 		}
-		this.previousButton.attr("disabled", !this.selectedChildWidget.canGoBack);
+		this.previousButton.set("disabled", !this.selectedChildWidget.canGoBack);
 		this._setButtonClass(this.previousButton);
 	},
 
 	_setButtonClass: function(button){
-		button.domNode.style.display = (this.hideDisabled && button.disabled) ? "none" : "";	
+		button.domNode.style.display = (this.hideDisabled && button.disabled) ? "none" : "";
 	},
 
 	_forward: function(){
@@ -128,15 +129,13 @@ dojo.declare(
 	
 });
 
-dojo.declare("dojox.widget.WizardPane",
-	dijit.layout.ContentPane,
-	{
+dojo.declare("dojox.widget.WizardPane", dijit.layout.ContentPane, {
 	// summary: A panel in a `dojox.widget.Wizard`
 	//
 	// description:
 	//	An extended ContentPane with additional hooks for passing named
 	//	functions to prevent the pane from going either forward or
-	//	backwards. 
+	//	backwards.
 	//
 	// canGoBack: Boolean
 	//		If true, then can move back to a previous panel (by clicking the "Previous" button)
@@ -145,7 +144,8 @@ dojo.declare("dojox.widget.WizardPane",
 	// passFunction: String
 	//		Name of function that checks if it's OK to advance to the next panel.
 	//		If it's not OK (for example, mandatory field hasn't been entered), then
-	//		returns an error message (String) explaining the reason.
+	//		returns an error message (String) explaining the reason. Can return null (pass)
+	//		or a Boolean (true == pass)
 	passFunction: null,
 	
 	// doneFunction: String

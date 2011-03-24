@@ -9,7 +9,9 @@ dojo.declare("dojox.data.StoreExplorer", dijit.layout.BorderContainer, {
 		dojo.mixin(this, options);
 	},
 	store: null,
+	columnWidth: '',
 	stringQueries: false,
+	showAllColumns: false,
 	postCreate: function(){
 		var self = this;
 		this.inherited(arguments);
@@ -17,7 +19,7 @@ dojo.declare("dojox.data.StoreExplorer", dijit.layout.BorderContainer, {
 			region:'top'
 		}).placeAt(this);
 		function addButton(name, action){
-			var button = new dijit.form.Button({label: name}); 
+			var button = new dijit.form.Button({label: name});
 			contentPane.containerNode.appendChild(button.domNode);
 			button.onClick = action;
 			return button;
@@ -36,16 +38,18 @@ dojo.declare("dojox.data.StoreExplorer", dijit.layout.BorderContainer, {
 		var createNewButton = addButton("Create New", dojo.hitch(this, "createNew"));
 		var deleteButton = addButton("Delete",function(){
 			var items = grid.selection.getSelected();
-			for (var i = 0; i < items.length; i++){
+			for(var i = 0; i < items.length; i++){
 				self.store.deleteItem(items[i]);
 			}
 		});
 		this.setItemName = function(name){
 			createNewButton.attr('label',"<img style='width:12px; height:12px' src='" + dojo.moduleUrl("dijit.themes.tundra.images","dndCopy.png") + "' /> Create New " + name);
 			deleteButton.attr('label',"Delete " + name);
-		}
+		};
 		addButton("Save",function(){
-			self.store.save();
+			self.store.save({onError:function(error){
+				alert(error);
+			}});
 			//refresh the tree
 			self.tree.refreshItem();
 		});
@@ -56,37 +60,37 @@ dojo.declare("dojox.data.StoreExplorer", dijit.layout.BorderContainer, {
 			var columnName = prompt("Enter column name:","property");
 			if(columnName){
 				self.gridLayout.push({
-						field: columnName, 
-						name: columnName, 
-						formatter: dojo.hitch(self,"_formatCell"), 
+						field: columnName,
+						name: columnName,
+						formatter: dojo.hitch(self,"_formatCell"),
 						editable: true
 					});
 				self.grid.attr("structure",self.gridLayout);
 			}
 		});
-        var centerCP = new dijit.layout.ContentPane({
-            region:'center'
-        }).placeAt(this);
+		var centerCP = new dijit.layout.ContentPane({
+			region:'center'
+		}).placeAt(this);
 		var grid = this.grid = new dojox.grid.DataGrid(
 				{store: this.store}
 			);
-        centerCP.attr("content", grid);
+		centerCP.attr("content", grid);
 		grid.canEdit = function(inCell, inRowIndex){
 			var value = this._copyAttr(inRowIndex, inCell.field);
-			return !(value && typeof value == 'object') || value instanceof Date; 
+			return !(value && typeof value == 'object') || value instanceof Date;
 		}
-		
+
 		var trailingCP = new dijit.layout.ContentPane({
-			region: 'trailing', 
-			splitter: true, 
+			region: 'trailing',
+			splitter: true,
 			style: "width: 300px"
-        }).placeAt(this);
-        
-        var tree = this.tree = new dojox.data.ItemExplorer({
+		}).placeAt(this);
+
+		var tree = this.tree = new dojox.data.ItemExplorer({
 			store: this.store}
 			);
-        trailingCP.attr("content", tree);
-		
+		trailingCP.attr("content", tree);
+
 		dojo.connect(grid, "onCellClick", function(){
 			var selected = grid.selection.getSelected()[0];
 			tree.setItem(selected);
@@ -95,8 +99,8 @@ dojo.declare("dojox.data.StoreExplorer", dijit.layout.BorderContainer, {
 		this.gridOnFetchComplete = grid._onFetchComplete;
 		this.setStore(this.store);
 	},
-	setQuery: function(query){
-		this.grid.setQuery(query);
+	setQuery: function(query, options){
+		this.grid.setQuery(query, options);
 	},
 	_formatCell: function(value){
 		if(this.store.isItem(value)){
@@ -119,13 +123,13 @@ dojo.declare("dojox.data.StoreExplorer", dijit.layout.BorderContainer, {
 			for(i = 0; i < idAttributes.length; i++){
 				key = idAttributes[i];
 				layout.push({
-					field: key, 
-					name: key, 
-					_score: 100, 
-					formatter: formatCell, 
+					field: key,
+					name: key,
+					_score: 100,
+					formatter: formatCell,
 					editable: false
 				});
-				
+
 			}
 			for(i=0; item = items[i++];){
 				var keys = store.getAttributes(item);
@@ -140,46 +144,48 @@ dojo.declare("dojox.data.StoreExplorer", dijit.layout.BorderContainer, {
 					}
 					if(!found){
 						layout.push({
-							field: key, 
-							name: key, 
-							_score: 1, 
+							field: key,
+							name: key,
+							_score: 1,
 							formatter: formatCell,
-							styles: "white-space:nowrap; ", 
+							styles: "white-space:nowrap; ",
 							editable: true
 						});
 					}
-				}					
+				}
 			}
 			layout = layout.sort(function(a, b){
-				return a._score > b._score ? -1 : 1;
+				return  b._score - a._score;
 			});
-			for(j=0; column = layout[j]; j++){
-				if(column._score < items.length/40 * j){
-					layout.splice(j,layout.length-j);
-					break;
+			if(!self.showAllColumns){
+				for(j=0; column=layout[j]; j++){
+					if(column._score < items.length/40 * j) {
+						layout.splice(j, layout.length-j);
+						break;
+					}
 				}
 			}
 			for(j=0; column = layout[j++];){
-				column.width=Math.round(100/layout.length) + '%';
+				column.width=self.columnWidth || Math.round(100/layout.length) + '%';
 			}
-			grid._onFetchComplete = defaultOnComplete; 
+			grid._onFetchComplete = defaultOnComplete;
 			grid.attr("structure",layout);
 			var retValue = defaultOnComplete.apply(this, arguments);
-			
+
 		}
  		grid.setStore(store);
  		this.queryOptions = {cache:true};
 		this.tree.setStore(store);
 	},
 	createNew: function(){
-		var props = prompt("Enter any properties to put in the new item (in JSON literal form):","{ }");
+		var props = prompt("Enter any properties (in JSON literal form) to put in the new item (passed to the newItem constructor):","{ }");
 		if(props){
 			try{
 				this.store.newItem(dojo.fromJson(props));
-        	}catch(e){
-        		alert(e);
-        	}       
-				
+			}catch(e){
+				alert(e);
+			}
+
 		}
 	}
 });

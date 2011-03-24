@@ -1,21 +1,23 @@
-// generated from ldml/main/*.xml, xpath: ldml/calendars/calendar-gregorian
-({
-	'dateFormat-full': "EEEE, d MMMM yyyy",
-	'dateFormat-long': "d MMMM yyyy",
-	'dateFormat-medium': "d MMM yyyy",
-	'dateFormat-short': "dd/MM/yyyy",
-	'timeFormat-full': "HH:mm:ss v",
-	'timeFormat-long': "HH:mm:ss z",
-	'timeFormat-medium': "HH:mm:ss",
-	'timeFormat-short': "HH:mm",
-	'dateFormatItem-MEd':"E, d/M",
-	'dateFormatItem-MMMEd':"E d MMM",
-	'dateFormatItem-MMMMd':"d MMMM",
-	'dateFormatItem-MMdd':"dd/MM",
-	'dateFormatItem-Md':"d/M",
-	'dateFormatItem-yMEd':"EEE, d/M/yyyy",
-	'dateFormatItem-yyMMM':"MMM yy",
-	'dateFormatItem-yyyyMM':"MM/yyyy",
-	'dateFormatItem-yyyyMMMM':"MMMM yyyy"
-})
-                        
+define(
+//begin v1.x content
+{
+	"dateFormatItem-yyMMM": "MMM yy",
+	"dateFormatItem-Md": "d/M",
+	"dateFormatItem-yMEd": "EEE, d/M/yyyy",
+	"timeFormat-full": "HH:mm:ss zzzz",
+	"timeFormat-medium": "HH:mm:ss",
+	"dateFormatItem-yyyyMMMM": "MMMM y",
+	"dateFormatItem-MEd": "E, d/M",
+	"dateFormat-medium": "d MMM y",
+	"dateFormatItem-MMdd": "dd/MM",
+	"dateFormatItem-yyyyMM": "MM/yyyy",
+	"dateFormat-full": "EEEE, d MMMM y",
+	"timeFormat-long": "HH:mm:ss z",
+	"timeFormat-short": "HH:mm",
+	"dateFormat-short": "dd/MM/yyyy",
+	"dateFormatItem-MMMMd": "d MMMM",
+	"dateFormat-long": "d MMMM y",
+	"dateFormatItem-MMMEd": "E d MMM"
+}
+//end v1.x content
+);

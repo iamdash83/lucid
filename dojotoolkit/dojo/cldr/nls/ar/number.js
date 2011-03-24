@@ -1,12 +1,18 @@
-// generated from ldml/main/*.xml, xpath: ldml/numbers
-({
-	'decimal':"٫",
-	'group':"٬",
-	'list':"؛",
-	'percentSign':"٪",
-	'nativeZeroDigit':"٠",
-	'exponential':"اس",
-	'nan':"ليس رقم",
-	'decimalFormat':"#,##0.###;#,##0.###-",
-	'currencyFormat':"¤ #,##0.00;¤ #,##0.00-"
-})
+define(
+//begin v1.x content
+{
+	"group": "٬",
+	"percentSign": "٪",
+	"exponential": "اس",
+	"list": "؛",
+	"infinity": "∞",
+	"minusSign": "-",
+	"decimal": "٫",
+	"nan": "ليس رقم",
+	"perMille": "؉",
+	"decimalFormat": "#,##0.###;#,##0.###-",
+	"currencyFormat": "¤ #,##0.00;¤ #,##0.00-",
+	"plusSign": "+"
+}
+//end v1.x content
+);

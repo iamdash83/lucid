@@ -1,4 +1,5 @@
-dojo.provide("dojo.date.stamp");
+define("dojo/date/stamp", ["dojo"], function(dojo) {
+dojo.getObject("date.stamp", true, dojo);
 
 // Methods to convert dates to or from a wire (string) format using well-known conventions
 
@@ -41,8 +42,8 @@ dojo.date.stamp.fromISOString = function(/*String*/formattedString, /*Number?*/d
 			/^(?:(\d{4})(?:-(\d{2})(?:-(\d{2}))?)?)?(?:T(\d{2}):(\d{2})(?::(\d{2})(.\d+)?)?((?:[+-](\d{2}):(\d{2}))|Z)?)?$/;
 	}
 
-	var match = dojo.date.stamp._isoRegExp.exec(formattedString);
-	var result = null;
+	var match = dojo.date.stamp._isoRegExp.exec(formattedString),
+		result = null;
 
 	if(match){
 		match.shift();
@@ -52,19 +53,19 @@ dojo.date.stamp.fromISOString = function(/*String*/formattedString, /*Number?*/d
 		if(defaultTime){
 			// mix in defaultTime.  Relatively expensive, so use || operators for the fast path of defaultTime === 0
 			defaultTime = new Date(defaultTime);
-			dojo.map(["FullYear", "Month", "Date", "Hours", "Minutes", "Seconds", "Milliseconds"], function(prop){
+			dojo.forEach(dojo.map(["FullYear", "Month", "Date", "Hours", "Minutes", "Seconds", "Milliseconds"], function(prop){
 				return defaultTime["get" + prop]();
-			}).forEach(function(value, index){
-				if(match[index] === undefined){
-					match[index] = value;
-				}
+			}), function(value, index){
+				match[index] = match[index] || value;
 			});
 		}
-		result = new Date(match[0]||1970, match[1]||0, match[2]||1, match[3]||0, match[4]||0, match[5]||0, match[6]||0);
-//		result.setFullYear(match[0]||1970); // for year < 100
+		result = new Date(match[0]||1970, match[1]||0, match[2]||1, match[3]||0, match[4]||0, match[5]||0, match[6]||0); //TODO: UTC defaults
+		if(match[0] < 100){
+			result.setFullYear(match[0] || 1970);
+		}
 
-		var offset = 0;
-		var zoneSign = match[7] && match[7].charAt(0);
+		var offset = 0,
+			zoneSign = match[7] && match[7].charAt(0);
 		if(zoneSign != 'Z'){
 			offset = ((match[8] || 0) * 60) + (Number(match[9]) || 0);
 			if(zoneSign != '-'){ offset *= -1; }
@@ -78,7 +79,7 @@ dojo.date.stamp.fromISOString = function(/*String*/formattedString, /*Number?*/d
 	}
 
 	return result; // Date or null
-}
+};
 
 /*=====
 	dojo.date.stamp.__Options = function(){
@@ -109,9 +110,9 @@ dojo.date.stamp.toISOString = function(/*Date*/dateObject, /*dojo.date.stamp.__O
 
 	var _ = function(n){ return (n < 10) ? "0" + n : n; };
 	options = options || {};
-	var formattedDate = [];
-	var getter = options.zulu ? "getUTC" : "get";
-	var date = "";
+	var formattedDate = [],
+		getter = options.zulu ? "getUTC" : "get",
+		date = "";
 	if(options.selector != "time"){
 		var year = dateObject[getter+"FullYear"]();
 		date = ["0000".substr((year+"").length)+year, _(dateObject[getter+"Month"]()+1), _(dateObject[getter+"Date"]())].join('-');
@@ -128,10 +129,13 @@ dojo.date.stamp.toISOString = function(/*Date*/dateObject, /*dojo.date.stamp.__O
 		}else if(options.selector != "time"){
 			var timezoneOffset = dateObject.getTimezoneOffset();
 			var absOffset = Math.abs(timezoneOffset);
-			time += (timezoneOffset > 0 ? "-" : "+") + 
+			time += (timezoneOffset > 0 ? "-" : "+") +
 				_(Math.floor(absOffset/60)) + ":" + _(absOffset%60);
 		}
 		formattedDate.push(time);
 	}
 	return formattedDate.join('T'); // String
-}
+};
+
+return dojo.date.stamp;
+});

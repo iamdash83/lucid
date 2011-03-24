@@ -1,14 +1,1 @@
-@import "widget/Header.css";
-
-.lucidMainContainer {
-    position: absolute;
-    top: 0px;
-    left: 0px;
-    right: 0px;
-    bottom: 0px;
-}
-
-.dj_ie .lucidMainContainer {
-    width: 100%;
-    height: 100%;
-}
+@import url('../../widget/resources/GlobalToolbar.css');

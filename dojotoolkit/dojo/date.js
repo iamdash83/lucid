@@ -1,4 +1,5 @@
-dojo.provide("dojo.date");
+define("dojo/date", ["dojo"], function(dojo) {
+dojo.getObject("date", true, dojo);
 
 /*=====
 dojo.date = {
@@ -13,7 +14,7 @@ dojo.date.getDaysInMonth = function(/*Date*/dateObject){
 	var days = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
 	if(month == 1 && dojo.date.isLeapYear(dateObject)){ return 29; } // Number
 	return days[month]; // Number
-}
+};
 
 dojo.date.isLeapYear = function(/*Date*/dateObject){
 	//	summary:
@@ -27,7 +28,7 @@ dojo.date.isLeapYear = function(/*Date*/dateObject){
 
 	var year = dateObject.getFullYear();
 	return !(year%400) || (!(year%4) && !!(year%100)); // Boolean
-}
+};
 
 // FIXME: This is not localized
 dojo.date.getTimezoneName = function(/*Date*/dateObject){
@@ -52,7 +53,7 @@ dojo.date.getTimezoneName = function(/*Date*/dateObject){
 	}else{
 		// If at first you don't succeed ...
 		// If IE knows about the TZ, it appears before the year
-		// Capital letters or slash before a 4-digit year 
+		// Capital letters or slash before a 4-digit year
 		// at the end of string
 		var pat = /([A-Z\/]+) \d{4}$/;
 		if((match = str.match(pat))){
@@ -61,7 +62,7 @@ dojo.date.getTimezoneName = function(/*Date*/dateObject){
 		// Some browsers (e.g. Safari) glue the TZ on the end
 		// of toLocaleString instead of putting it in toString
 			str = dateObject.toLocaleString();
-			// Capital letters or slash -- end of string, 
+			// Capital letters or slash -- end of string,
 			// after space
 			pat = / ([A-Z\/]+)$/;
 			if((match = str.match(pat))){
@@ -72,7 +73,7 @@ dojo.date.getTimezoneName = function(/*Date*/dateObject){
 
 	// Make sure it doesn't somehow end up return AM or PM
 	return (tz == 'AM' || tz == 'PM') ? '' : tz; // String
-}
+};
 
 // Utility methods to do arithmetic calculations with Dates
 
@@ -91,19 +92,17 @@ dojo.date.compare = function(/*Date*/date1, /*Date?*/date2, /*String?*/portion){
 	//		"date", "time", "datetime"
 
 	// Extra step required in copy for IE - see #3112
-	date1 = new Date(Number(date1));
-	date2 = new Date(Number(date2 || new Date()));
+	date1 = new Date(+date1);
+	date2 = new Date(+(date2 || new Date()));
 
-	if(portion !== "undefined"){
-		if(portion == "date"){
-			// Ignore times and compare dates.
-			date1.setHours(0, 0, 0, 0);
-			date2.setHours(0, 0, 0, 0);
-		}else if(portion == "time"){
-			// Ignore dates and compare times.
-			date1.setFullYear(0, 0, 0);
-			date2.setFullYear(0, 0, 0);
-		}
+	if(portion == "date"){
+		// Ignore times and compare dates.
+		date1.setHours(0, 0, 0, 0);
+		date2.setHours(0, 0, 0, 0);
+	}else if(portion == "time"){
+		// Ignore dates and compare times.
+		date1.setFullYear(0, 0, 0);
+		date2.setFullYear(0, 0, 0);
 	}
 	
 	if(date1 > date2){ return 1; } // int
@@ -123,7 +122,7 @@ dojo.date.add = function(/*Date*/date, /*String*/interval, /*int*/amount){
 	//	amount:
 	//		How much to add to the date.
 
-	var sum = new Date(Number(date)); // convert to Number before copying to accomodate IE (#3112)
+	var sum = new Date(+date); // convert to Number before copying to accomodate IE (#3112)
 	var fixOvershoot = false;
 	var property = "Date";
 
@@ -185,10 +184,11 @@ dojo.date.add = function(/*Date*/date, /*String*/interval, /*int*/amount){
 			fixOvershoot = true;
 			property = "Month";
 			break;
-		case "hour":
-		case "minute":
-		case "second":
-		case "millisecond":
+//		case "hour":
+//		case "minute":
+//		case "second":
+//		case "millisecond":
+		default:
 			property = "UTC"+interval.charAt(0).toUpperCase() + interval.substring(1) + "s";
 	}
 
@@ -337,3 +337,6 @@ dojo.date.difference = function(/*Date*/date1, /*Date?*/date2, /*String?*/interv
 	// Round for fractional values and DST leaps
 	return Math.round(delta); // Number (integer)
 };
+
+return dojo.date;
+});

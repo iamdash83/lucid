@@ -1,39 +1,50 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
-		"http://www.w3.org/TR/html4/strict.dtd">
+<!DOCTYPE html>
 <html>
 <head>
+	<meta http-equiv="Content-type" content="text/html; charset=utf-8">
 	<title>_Widget deferred connection test</title>
 	<style type="text/css">
-		@import "../../dojo/resources/dojo.css";
-		@import "../themes/tundra/tundra.css";
+		@import "../themes/claro/document.css";
+		@import "../themes/claro/claro.css";
 		@import "css/dijitTests.css";
 	</style>
 
 	<script type="text/javascript" src="../../dojo/dojo.js"
-		djConfig="isDebug: true, parseOnLoad: true"></script>
+		data-dojo-config="isDebug: true, parseOnLoad: true"></script>
 	<script>
 		dojo.require("dijit.form.Button");
 
+		overrodeMouseMoved = false;
+		bothOverrodeMouseMoved = false;
+		connectedMouseMoved = false;
+		bothConnectedMouseMoved = false;
+
 		function bothHandler(){
-			console.log("'both' button: overrode handler called");
+			if(!bothOverrodeMouseMoved){
+				console.log("'both' button: overrode handler called");
+			}
 			bothOverrodeMouseMoved = true;
 		}
 
 		dojo.addOnLoad(function(){
 			dojo.connect(dijit.byId("connect"), "onMouseMove", function(){
-				console.log("'connect' button: mouse moved");
+				if(!connectedMouseMoved){
+					console.log("'connect' button: mouse moved");
+				}
 				connectedMouseMoved = true;
 			});
 
 			dojo.connect(dijit.byId("both"), "onMouseMove", function(){
-				console.log("'both' button: connected handler");
+				if(!bothConnectedMouseMoved){
+					console.log("'both' button: connected handler");
+				}
 				bothConnectedMouseMoved = true;
-			});			
+			});
 		});
 
 	</script>
 </head>
-<body class="tundra">
+<body class="claro">
 	<h1>Test deferred connections</h1>
 	<p>
 		OnMouseMove is a deferred connection, _Widget only call dojo.connect()
@@ -48,21 +59,21 @@
 	<!--
 		"overrode" button specifies an onmousemove handler on initialization.
 	-->
-	<button id="overrode" dojoType="dijit.form.Button"
-		onMouseMove="console.log('\'overrode\' button: mouse moved'); overrodeMouseMoved = true;">
+	<button id="overrode" data-dojo-type="dijit.form.Button"
+		data-dojo-props='onMouseMove:function(){ if(!overrodeMouseMoved){ console.log("\"overrode\" button: mouse moved"); } overrodeMouseMoved = true; }'>
 		overrode
 	</button>
 
 	<!--
 		"connect" button essentially is doing a dojo.connect("connect", "onMouseMove", myFunc).
 		This should trigger an additional dojo.connect() call from Button.focusNode.onmousemove
-		to the Button.onMouseMove empty function. 
+		to the Button.onMouseMove empty function.
 	-->
-	<button id="connect" dojoType="dijit.form.Button">
+	<button id="connect" data-dojo-type="dijit.form.Button">
 		connected
 	</button>
 
-	<button id="both" dojoType="dijit.form.Button" onMouseMove="bothHandler">
+	<button id="both" data-dojo-type="dijit.form.Button" data-dojo-props='onMouseMove:bothHandler'>
 		both
 	</button>
 </body>

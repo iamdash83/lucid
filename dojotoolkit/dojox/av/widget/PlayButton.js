@@ -7,7 +7,7 @@ dojo.declare("dojox.av.widget.PlayButton", [dijit._Widget, dijit._Templated], {
 	// summary:
 	//		A Play/Pause button widget to use with dojox.av.widget.Player
 	//
-	templatePath: dojo.moduleUrl("dojox.av.widget","resources/PlayButton.html"),
+	templateString: dojo.cache("dojox.av.widget","resources/PlayButton.html"),
 	//
 	postCreate: function(){
 		// summary:
@@ -30,7 +30,7 @@ dojo.declare("dojox.av.widget.PlayButton", [dijit._Widget, dijit._Templated], {
 		//		Fired on play or pause click.
 		//
 		if(this._mode=="play"){
-			this.onPlay();	
+			this.onPlay();
 		}else{
 			this.onPause();
 		}
@@ -56,7 +56,7 @@ dojo.declare("dojox.av.widget.PlayButton", [dijit._Widget, dijit._Templated], {
 	},
 	showPlay: function(){
 		// summary:
-		//		Toggles the pause button invisible and the play 
+		//		Toggles the pause button invisible and the play
 		//		button visible..
 		//
 		this._mode = "play";
@@ -65,7 +65,7 @@ dojo.declare("dojox.av.widget.PlayButton", [dijit._Widget, dijit._Templated], {
 	},
 	showPause: function(){
 		// summary:
-		//		Toggles the play button invisible and the pause 
+		//		Toggles the play button invisible and the pause
 		//		button visible.
 		//
 		this._mode = "pause";

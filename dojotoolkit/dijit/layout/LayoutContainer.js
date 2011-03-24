@@ -1,6 +1,4 @@
-dojo.provide("dijit.layout.LayoutContainer");
-
-dojo.require("dijit.layout._LayoutWidget");
+define("dijit/layout/LayoutContainer", ["dojo", "dijit", "dijit/layout/_LayoutWidget"], function(dojo, dijit) {
 
 dojo.declare("dijit.layout.LayoutContainer",
 	dijit.layout._LayoutWidget,
@@ -49,14 +47,14 @@ dojo.declare("dijit.layout.LayoutContainer",
 		dijit.layout.layoutChildren(this.domNode, this._contentBox, this.getChildren());
 	},
 
-	addChild: function(/*Widget*/ child, /*Integer?*/ insertIndex){
+	addChild: function(/*dijit._Widget*/ child, /*Integer?*/ insertIndex){
 		this.inherited(arguments);
 		if(this._started){
 			dijit.layout.layoutChildren(this.domNode, this._contentBox, this.getChildren());
 		}
 	},
 
-	removeChild: function(/*Widget*/ widget){
+	removeChild: function(/*dijit._Widget*/ widget){
 		this.inherited(arguments);
 		if(this._started){
 			dijit.layout.layoutChildren(this.domNode, this._contentBox, this.getChildren());
@@ -72,4 +70,8 @@ dojo.extend(dijit._Widget, {
 	//		"none", "left", "right", "bottom", "top", and "client".
 	//		See the LayoutContainer description for details on this parameter.
 	layoutAlign: 'none'
+});
+
+
+return dijit.layout.LayoutContainer;
 });

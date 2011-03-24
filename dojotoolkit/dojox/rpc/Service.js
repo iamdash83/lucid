@@ -1,6 +1,4 @@
-dojo.provide("dojox.rpc.Service");
-
-dojo.require("dojo.AdapterRegistry");
+define("dojox/rpc/Service", ["dojo", "dojox", "dojo.AdapterRegistry"], function(dojo, dojox) {
 
 dojo.declare("dojox.rpc.Service", null, {
 	constructor: function(smd, options){
@@ -22,11 +20,11 @@ dojo.declare("dojox.rpc.Service", null, {
 		//	description:
 		//		dojox.rpc.Service must be loaded prior to any plugin services like dojox.rpc.Rest
 		// 		dojox.rpc.JsonRpc in order for them to register themselves, otherwise you get
-		// 		a "No match found" error.  
+		// 		a "No match found" error.
 		var url;
 		var self = this;
 		function processSmd(smd){
-			smd._baseUrl = new dojo._Url(location.href,url || '.') + '';
+			smd._baseUrl = new dojo._Url((dojo.isBrowser ? location.href : dojo.config.baseUrl) ,url || '.') + '';
 			self._smd = smd;
 
 			//generate the methods
@@ -86,6 +84,7 @@ dojo.declare("dojox.rpc.Service", null, {
 	_getRequest: function(method,args){
 		var smd = this._smd;
 		var envDef = dojox.rpc.envelopeRegistry.match(method.envelope || smd.envelope || "NONE");
+		var parameters = (method.parameters || []).concat(smd.parameters || []);
 		if(envDef.namedParams){
 			// the serializer is expecting named params
 			if((args.length==1) && dojo.isObject(args[0])){
@@ -101,7 +100,6 @@ dojo.declare("dojox.rpc.Service", null, {
 				}
 				args = data;
 			}
-			var parameters = (method.parameters || []).concat(smd.parameters || []);
 			if(method.strictParameters||smd.strictParameters){
 				//remove any properties that were not defined
 				for(i in args){
@@ -126,11 +124,11 @@ dojo.declare("dojox.rpc.Service", null, {
 					}
 				}
 			}
-		}else if(method.parameters && method.parameters[0] && method.parameters[0].name && (args.length==1) && dojo.isObject(args[0])){
+		}else if(parameters && parameters[0] && parameters[0].name && (args.length==1) && dojo.isObject(args[0])){
 			// looks like named params, we will convert
 			if(envDef.namedParams === false){
 				// the serializer is expecting ordered params, must be ordered
-				args = dojox.rpc.toOrdered(method, args);
+				args = dojox.rpc.toOrdered(parameters, args);
 			}else{
 				// named is ok
 				args = args[0];
@@ -150,12 +148,13 @@ dojo.declare("dojox.rpc.Service", null, {
 		return dojo.mixin(request, {
 			sync: dojox.rpc._sync,
 			contentType: contentType,
-			headers: {},
+			headers: method.headers || smd.headers || request.headers || {},
 			target: request.target || dojox.rpc.getTarget(smd, method),
 			transport: method.transport || smd.transport || request.transport,
 			envelope: method.envelope || smd.envelope || request.envelope,
 			timeout: method.timeout || smd.timeout,
 			callbackParamName: method.callbackParamName || smd.callbackParamName,
+			rpcObjectParamName: method.rpcObjectParamName || smd.rpcObjectParamName,
 			schema: schema,
 			handleAs: request.handleAs || "auto",
 			preventCache: method.preventCache || smd.preventCache,
@@ -189,11 +188,11 @@ dojox.rpc.getTarget = function(smd, method){
 	return dest;
 };
 
-dojox.rpc.toOrdered=function(method, args){
+dojox.rpc.toOrdered=function(parameters, args){
 	if(dojo.isArray(args)){ return args; }
 	var data=[];
-	for(var i=0;i<method.parameters.length;i++){
-		data.push(args[method.parameters[i].name]);
+	for(var i=0;i<parameters.length;i++){
+		data.push(args[parameters[i].name]);
 	}
 	return data;
 };
@@ -286,7 +285,7 @@ dojox.rpc.transportRegistry.register(
 	function(str){ return str == "GET"; },
 	{
 		fire: function(r){
-			r.url=  r.target + (r.data ? '?'+  r.data : '');
+			r.url=  r.target + (r.data ? '?' + ((r.rpcObjectParamName) ? r.rpcObjectParamName + '=' : '') + r.data : '');
 			return dojo.xhrGet(r);
 		}
 	}
@@ -299,7 +298,7 @@ dojox.rpc.transportRegistry.register(
 	function(str){ return str == "JSONP"; },
 	{
 		fire: function(r){
-			r.url = r.target + ((r.target.indexOf("?") == -1) ? '?' : '&') + r.data;
+			r.url = r.target + ((r.target.indexOf("?") == -1) ? '?' : '&') + ((r.rpcObjectParamName) ? r.rpcObjectParamName + '=' : '') + r.data;
 			r.callbackParamName = r.callbackParamName || "callback";
 			return dojo.io.script.get(r);
 		}
@@ -317,3 +316,7 @@ dojo._contentHandlers.auto = function(xhr){
 		retContentType.match(/\/xml/) ? handlers.xml(xhr) : handlers.text(xhr);
 	return results;
 };
+
+return dojox.rpc.Service;
+
+});

@@ -1,3 +1,5 @@
+define(
+//begin v1.x content
 ({
 	'bold': 'Grassetto',
 	'copy': 'Copia',
@@ -37,6 +39,14 @@
 	'formatBlock': 'Stile paragrafo',
 	'fontSize': 'Dimensione carattere',
 	'fontName': 'Nome carattere',
+	'tabIndent': 'Rientranza tabulazione',
+	"fullScreen": "Attiva/Disattiva schermo intero",
+	"viewSource": "Visualizza origine HTML",
+	"print": "Stampa",
+	"newPage": "Nuova pagina",
 	/* Error messages */
 	'systemShortcut': 'Azione "${0}" disponibile sul proprio browser solo mediante i tasti di scelta rapida della tastiera. Utilizzare ${1}.'
 })
+
+//end v1.x content
+);

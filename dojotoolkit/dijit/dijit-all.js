@@ -1,68 +1,13 @@
+define("dijit/dijit-all", ["dojo", "dijit", "dijit/dijit", "dijit/ColorPalette", "dijit/Declaration", "dijit/Dialog", "dijit/DialogUnderlay", "dijit/TooltipDialog", "dijit/Editor", "dijit/_editor/plugins/FontChoice", "dijit/_editor/plugins/LinkDialog", "dijit/Menu", "dijit/MenuItem", "dijit/PopupMenuItem", "dijit/MenuBar", "dijit/MenuBarItem", "dijit/PopupMenuBarItem", "dijit/MenuSeparator", "dijit/ProgressBar", "dijit/TitlePane", "dijit/Toolbar", "dijit/Tooltip", "dijit/Tree", "dijit/InlineEditBox", "dijit/form/Form", "dijit/form/Button", "dijit/form/DropDownButton", "dijit/form/ComboButton", "dijit/form/ToggleButton", "dijit/form/CheckBox", "dijit/form/RadioButton", "dijit/form/TextBox", "dijit/form/ValidationTextBox", "dijit/form/CurrencyTextBox", "dijit/form/DateTextBox", "dijit/form/NumberSpinner", "dijit/form/NumberTextBox", "dijit/form/ComboBox", "dijit/form/FilteringSelect", "dijit/form/MultiSelect", "dijit/form/Select", "dijit/form/HorizontalSlider", "dijit/form/VerticalSlider", "dijit/form/HorizontalRule", "dijit/form/VerticalRule", "dijit/form/HorizontalRuleLabels", "dijit/form/VerticalRuleLabels", "dijit/form/SimpleTextarea", "dijit/form/Textarea", "dijit/layout/AccordionContainer", "dijit/layout/ContentPane", "dijit/layout/BorderContainer", "dijit/layout/LayoutContainer", "dijit/layout/LinkPane", "dijit/layout/SplitContainer", "dijit/layout/StackContainer", "dijit/layout/TabContainer"], function(dojo, dijit) {
+
 console.warn("dijit-all may include much more code than your application actually requires. We strongly recommend that you investigate a custom build or the web build tool");
-dojo.provide("dijit.dijit-all");
 
 /*=====
-dijit["dijit-all"] = { 
-	// summary: A rollup that includes every dijit. You probably don't need this.
+dijit["dijit-all"] = {
+	// summary:
+	//		A rollup that includes every dijit. You probably don't need this.
 };
 =====*/
 
-dojo.require("dijit.dijit");
-
-dojo.require("dijit.ColorPalette");
-dojo.require("dijit.Declaration");
-
-dojo.require("dijit.Dialog");
-dojo.require("dijit.DialogUnderlay");
-dojo.require("dijit.TooltipDialog");
-
-dojo.require("dijit.Editor");
-
-dojo.require("dijit.Menu");
-dojo.require("dijit.MenuItem");
-dojo.require("dijit.PopupMenuItem");
-dojo.require("dijit.MenuBar");
-dojo.require("dijit.MenuBarItem");
-dojo.require("dijit.PopupMenuBarItem");
-dojo.require("dijit.MenuSeparator");
-
-dojo.require("dijit.ProgressBar");
-dojo.require("dijit.TitlePane");
-dojo.require("dijit.Toolbar");
-dojo.require("dijit.Tooltip");
-dojo.require("dijit.Tree");
-dojo.require("dijit.InlineEditBox");
-
-dojo.require("dijit.form.Button");
-dojo.require("dijit.form.CheckBox");
-dojo.require("dijit.form.ComboBox");
-dojo.require("dijit.form.CurrencyTextBox");
-dojo.require("dijit.form.DateTextBox");
-dojo.require("dijit.form.FilteringSelect");
-dojo.require("dijit.form.NumberSpinner");
-dojo.require("dijit.form.NumberTextBox");
-
-// slider files
-dojo.require("dijit.form.HorizontalSlider");
-dojo.require("dijit.form.VerticalSlider");
-dojo.require("dijit.form.HorizontalRule");
-dojo.require("dijit.form.VerticalRule");
-dojo.require("dijit.form.HorizontalRuleLabels");
-dojo.require("dijit.form.VerticalRuleLabels");
-
-dojo.require("dijit.form.SimpleTextarea");
-dojo.require("dijit.form.Textarea");
-dojo.require("dijit.form.TextBox");
-dojo.require("dijit.form.ValidationTextBox");
-dojo.require("dijit.form._FormWidget");
-dojo.require("dijit.form._Spinner");
-
-dojo.require("dijit.layout.AccordionContainer");
-dojo.require("dijit.layout.ContentPane");
-dojo.require("dijit.layout.BorderContainer");
-dojo.require("dijit.layout.LayoutContainer"); //deprecated
-dojo.require("dijit.layout.LinkPane");
-dojo.require("dijit.layout.SplitContainer"); //deprecated
-dojo.require("dijit.layout.StackContainer");
-dojo.require("dijit.layout.TabContainer");
-dojo.require("dijit.layout._LayoutWidget");
+return dijit;
+});

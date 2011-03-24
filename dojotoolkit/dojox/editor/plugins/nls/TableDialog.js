@@ -9,8 +9,7 @@
 	tableWidth: "Table Width:",
 	backgroundColor: "Background Color:",
 	borderColor: "Border Color:",
-	borderThickness: "BorderThickness",
-	pixels: "Pixels",
+	borderThickness: "Border Thickness:",
 	percent: "percent",
 	pixels: "pixels",
 	"default": "default",
@@ -19,6 +18,7 @@
 	right: "right",
 	buttonSet: "Set", // translated elsewhere?
 	buttonInsert: "Insert",
+	buttonCancel: "Cancel",
 
 	selectTableLabel: "Select Table",
 	insertTableRowBeforeLabel: "Add Row Before",
@@ -28,3 +28,4 @@
 	deleteTableRowLabel: "Delete Row",
 	deleteTableColumnLabel: "Delete Column"
 })
+	

@@ -5,51 +5,14 @@
         <script type="text/javascript" src="./dojotoolkit/dojo/dojo.js" djConfig="parseOnLoad: true"></script>
         <script>
             dojo.require("lucid.lucid");
-            dojo.require("dijit.layout.BorderContainer");
-            dojo.require("dojox.layout.ToggleSplitter");
-            dojo.require("dijit.layout.TabContainer");
-            dojo.require("dijit.layout.ContentPane");
-            dojo.require("dijit.TitlePane");
-            dojo.require("dojox.layout.GridContainer");
-            dojo.addOnLoad(function(){
-                dijit.byId('lucidTab1Container').setColumns(2); //NOTE: So we don't forget -- this is a hack to fix a splitters bug on the GridContainer.
-            });
         </script>
         <link href="./dojotoolkit/dojo/resources/dojo.css" rel="stylesheet" type="text/css" />
         <link href="./dojotoolkit/dijit/themes/dijit.css" rel="stylesheet" type="text/css" />
         <link href="./dojotoolkit/dijit/themes/tundra/tundra.css" rel="stylesheet" type="text/css" />
         <link href="./dojotoolkit/lucid/resources/css/lucid.css" rel="stylesheet" type="text/css" />
-        <link rel="stylesheet" href="./dojotoolkit/dojox/layout/resources/GridContainer.css">
-        <link rel="stylesheet" href="./dojotoolkit/dojox/layout/resources/DndGridContainer.css">
 
     </head>
     <body class="tundra">
-        <div class="lucidMainContainer" dojoType="dijit.layout.BorderContainer" gutters="false">
-            <div id="lucid-header" style="width: 100%" region="top" dojoType="lucid.widget.Header"></div>
-            <div id="lucidTabBar" region="center" dojoType="dijit.layout.TabContainer">
-                <div id="lucidTab1" dojoType="dijit.layout.ContentPane" title="Dashboard">
-                    <div id="lucidTab1Container" dojoType="dojox.layout.GridContainer"
-                        nbZones="3"
-                        opacity="0.7"
-                        allowAutoScroll="true"
-                        hasResizableColumns="true"
-                        withHandles="true"
-                        acceptTypes="dijit.layout.ContentPane, dijit.TitlePane, dijit.ColorPalette, dijit._Calendar">
-                        <div id="lucidExampleModule2" dojoType="dijit.TitlePane" title="Calendar">
-                            Today isn't january 35th 
-                        </div>
-                        <div id="lucidExampleModule3" dojoType="dijit.TitlePane" title="Clock">
-                            It's quarter past 19:00
-                        </div>
-                        <div id="lucidExampleModule4" dojoType="dijit.TitlePane" title="Hi">
-                            Hello, world.
-                        </div>
-                    </div>
-                </div>
-                <div id="lucidTab2" dojoType="dijit.layout.ContentPane" title="Running App 1" closable="true">
-                    Cool stories, right from your browser, bro.
-                </div>
-            </div>
-        </div>
+        <div data-dojo-type="lucid.widget.GlobalToolbar"></div>
     </body>
 </html>

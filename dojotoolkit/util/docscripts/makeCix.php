@@ -13,7 +13,7 @@
 //
 
 // $Rev: $ 
-$current_version = "1.3.0";
+$current_version = "1.6.0";
 
 header("Content-type: text/xml");
 
@@ -92,7 +92,7 @@ foreach ($out as $ns => $data){
 									$paramElm->setAttribute("name",$param);
 									$paramElm->setAttribute("ilk","argument");
 									if($pData['summary']){
-										$paramElm->setAttribute("doc",htmlentities($pData['summary']));
+										$paramElm->setAttribute("doc", fix_utf(htmlentities($pData['summary'])));
 									}
 									$objElm -> appendChild($paramElm);
 								}
@@ -112,7 +112,7 @@ foreach ($out as $ns => $data){
 			}
 			// helpful data:
 			if(!empty($info['summary'])){
-				$objElm->setAttribute("doc",htmlentities($info['summary']));
+				$objElm->setAttribute("doc", fix_utf(htmlentities($info['summary'])));
 			}
 			
 			// avoid appending this node if we skipped popoulating it (in the case of nsdata->appendCHild())
@@ -180,14 +180,19 @@ function dojo_inspect($data,$ns,$doc,$t="scope"){
 							$elm->setAttribute("ilk","function");
 							break;
 						default:
-							$elm->setAttribute("citdl",$info);
-							break;
+							if (is_array($info)) {
+							    if ($info["instance"]) {
+								$elm->setAttribute("citdl",$info["instance"]);
+							    }
+							} else {
+							    $elm->setAttribute("citdl",$info);
+							}
 					}
 				}
 				break;
 
 			// ahhh, the blessed summary:
-			case "summary" : $elm->setAttribute("doc",htmlentities($info));
+			case "summary" : $elm->setAttribute("doc", fix_utf(htmlentities($info)));
 				break;
 
 			// just in case we missed something?
@@ -317,6 +322,10 @@ function expando_dojo($array){
 		
 	}
 	return $ret;
+}
+
+function fix_utf($str){
+	return iconv('utf-8','utf-8', $str);
 }
 
 ?>

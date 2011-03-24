@@ -1,21 +1,23 @@
+define(
+//begin v1.x content
 ({
 	'bold': 'Krepko',
 	'copy': 'Prekopiraj',
 	'cut': 'Izreži',
 	'delete': 'Izbriši',
-	'indent': 'Zamakni',
+	'indent': 'Zamik',
 	'insertHorizontalRule': 'Vodoravno ravnilo',
 	'insertOrderedList': 'Oštevilčen seznam',
-	'insertUnorderedList': 'Seznam z oznakami',
+	'insertUnorderedList': 'Naštevni seznam',
 	'italic': 'Ležeče',
 	'justifyCenter': 'Poravnaj na sredino',
 	'justifyFull': 'Poravnaj obojestransko',
 	'justifyLeft': 'Poravnaj levo',
 	'justifyRight': 'Poravnaj desno',
-	'outdent': 'Zamakni navzven',
+	'outdent': 'Viseč odstavek',
 	'paste': 'Prilepi',
-	'redo': 'Ponovno uveljavi',
-	'removeFormat': 'Odstrani oblikovanje',
+	'redo': 'Znova uveljavi',
+	'removeFormat': 'Odstrani obliko zapisa',
 	'selectAll': 'Izberi vse',
 	'strikethrough': 'Prečrtano',
 	'subscript': 'Podpisano',
@@ -27,17 +29,23 @@
 	'toggleDir': 'Preklopi smer',
 	'insertImage': 'Vstavi sliko',
 	'insertTable': 'Vstavi/uredi tabelo',
-	'toggleTableBorder': 'Preklopi obrobo tabele',
+	'toggleTableBorder': 'Preklopi na rob tabele',
 	'deleteTable': 'Izbriši tabelo',
 	'tableProp': 'Lastnost tabele',
-	'htmlToggle': 'Izvorna HTML koda',
+	'htmlToggle': 'Izvorna koda HTML',
 	'foreColor': 'Barva ospredja',
 	'hiliteColor': 'Barva ozadja',
 	'plainFormatBlock': 'Slog odstavka',
 	'formatBlock': 'Slog odstavka',
 	'fontSize': 'Velikost pisave',
 	'fontName': 'Ime pisave',
+	'tabIndent': 'Zamik tabulatorja',
+	"fullScreen": "Preklopi na celozaslonski način",
+	"viewSource": "Prikaži izvorno kodo HTML",
+	"print": "Natisni",
+	"newPage": "Nova stran",
 	/* Error messages */
-	'systemShortcutFF': 'Dejanje "${0}" je na voljo samo v brskalniku Mozilla Firefox prek bližnjic na tipkovnici. Uporabite ${1}.'
+	'systemShortcut': 'Dejanje "${0}" lahko v vašem brskalniku uporabite samo z bližnjico na tipkovnici. Uporabite ${1}.'
 })
-
+//end v1.x content
+);

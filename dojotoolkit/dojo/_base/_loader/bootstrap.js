@@ -1,3 +1,9 @@
+//>>includeStart("amdLoader", kwArgs.asynchLoader);
+(function(){
+
+function bootstrapDojo(dojo, dijit, dojox){
+
+//>>includeEnd("amdLoader");
 /*=====
 // note:
 //		'djConfig' does not exist under 'dojo.*' so that it can be set before the
@@ -69,11 +75,12 @@ djConfig = {
 	//		of calling `dojo.registerModulePath("foo", "../../bar");`. Multiple
 	//		modules may be configured via `djConfig.modulePaths`.
 	modulePaths: {},
-	// afterOnLoad: Boolean 
+	// afterOnLoad: Boolean
 	//		Indicates Dojo was added to the page after the page load. In this case
 	//		Dojo will not wait for the page DOMContentLoad/load events and fire
 	//		its dojo.addOnLoad callbacks after making sure all outstanding
-	//		dojo.required modules have loaded.
+	//		dojo.required modules have loaded. Only works with a built dojo.js,
+	//		it does not work the dojo.js directly from source control.
 	afterOnLoad: false,
 	// addOnLoad: Function or Array
 	//		Adds a callback via dojo.addOnLoad. Useful when Dojo is added after
@@ -86,7 +93,7 @@ djConfig = {
 	addOnLoad: null,
 	// require: Array
 	//		An array of module names to be loaded immediately after dojo.js has been included
-	//		in a page. 
+	//		in a page.
 	require: [],
 	// defaultDuration: Array
 	//		Default duration, in milliseconds, for wipe and fade animations within dijits.
@@ -95,11 +102,34 @@ djConfig = {
 	// dojoBlankHtmlUrl: String
 	//		Used by some modules to configure an empty iframe. Used by dojo.io.iframe and
 	//		dojo.back, and dijit popup support in IE where an iframe is needed to make sure native
-	//		controls do not bleed through the popups. Normally this configuration variable 
+	//		controls do not bleed through the popups. Normally this configuration variable
 	//		does not need to be set, except when using cross-domain/CDN Dojo builds.
-	//		Save dojo/resources/blank.html to your domain and set `djConfig.dojoBlankHtmlUrl` 
+	//		Save dojo/resources/blank.html to your domain and set `djConfig.dojoBlankHtmlUrl`
 	//		to the path on your domain your copy of blank.html.
-	dojoBlankHtmlUrl: undefined
+	dojoBlankHtmlUrl: undefined,
+	//	ioPublish: Boolean?
+	//		Set this to true to enable publishing of topics for the different phases of
+	// 		IO operations. Publishing is done via dojo.publish. See dojo.__IoPublish for a list
+	// 		of topics that are published.
+	ioPublish: false,
+	//  useCustomLogger: Anything?
+	//		If set to a value that evaluates to true such as a string or array and
+	//		isDebug is true and Firebug is not available or running, then it bypasses
+	//		the creation of Firebug Lite allowing you to define your own console object.
+	useCustomLogger: undefined,
+	// transparentColor: Array
+	//		Array containing the r, g, b components used as transparent color in dojo.Color;
+	//		if undefined, [255,255,255] (white) will be used.
+	transparentColor: undefined,
+	// skipIeDomLoaded: Boolean
+	//		For IE only, skip the DOMContentLoaded hack used. Sometimes it can cause an Operation
+	//		Aborted error if the rest of the page triggers script defers before the DOM is ready.
+	//		If this is config value is set to true, then dojo.addOnLoad callbacks will not be
+	//		triggered until the page load event, which is after images and iframes load. If you
+	//		want to trigger the callbacks sooner, you can put a script block in the bottom of
+	//		your HTML that calls dojo._loadInit();. If you are using multiversion support, change
+	//		"dojo." to the appropriate scope name for dojo.
+	skipIeDomLoaded: false
 }
 =====*/
 
@@ -118,18 +148,19 @@ djConfig = {
 		var cn = [
 			"assert", "count", "debug", "dir", "dirxml", "error", "group",
 			"groupEnd", "info", "profile", "profileEnd", "time", "timeEnd",
-			"trace", "warn", "log" 
+			"trace", "warn", "log"
 		];
-		var i=0, tn;
+		var i = 0, tn;
 		while((tn=cn[i++])){
 			if(!console[tn]){
 				(function(){
 					var tcn = tn+"";
-					console[tcn] = ('log' in console) ? function(){ 
+					console[tcn] = ('log' in console) ? function(){
 						var a = Array.apply({}, arguments);
 						a.unshift(tcn+":");
 						console["log"](a.join(" "));
 					} : function(){}
+					console[tcn]._fake = true;
 				})();
 			}
 		}
@@ -138,7 +169,7 @@ djConfig = {
 	//TODOC:  HOW TO DOC THIS?
 	// dojo is the root variable of (almost all) our public symbols -- make sure it is defined.
 	if(typeof dojo == "undefined"){
-		this.dojo = {
+		dojo = {
 			_scopeName: "dojo",
 			_scopePrefix: "",
 			_scopePrefixArgs: "",
@@ -152,12 +183,12 @@ djConfig = {
 
 	//Need placeholders for dijit and dojox for scoping code.
 	if(typeof dijit == "undefined"){
-		this.dijit = {_scopeName: "dijit"};
+		dijit = {_scopeName: "dijit"};
 	}
 	if(typeof dojox == "undefined"){
-		this.dojox = {_scopeName: "dojox"};
+		dojox = {_scopeName: "dojox"};
 	}
-	
+
 	if(!d._scopeArgs){
 		d._scopeArgs = [dojo, dijit, dojox];
 	}
@@ -179,9 +210,13 @@ dojo.global = {
 		debugAtAllCosts: false
 	};
 
-	if(typeof djConfig != "undefined"){
-		for(var opt in djConfig){
-			d.config[opt] = djConfig[opt];
+	// FIXME: 2.0, drop djConfig support. Use dojoConfig exclusively for global config.
+	var cfg = typeof djConfig != "undefined" ? djConfig :
+		typeof dojoConfig != "undefined" ? dojoConfig : null;
+		
+	if(cfg){
+		for(var c in cfg){
+			d.config[c] = cfg[c];
 		}
 	}
 
@@ -193,22 +228,31 @@ dojo.global = {
 =====*/
 	dojo.locale = d.config.locale;
 
-	var rev = "$Rev: 17468 $".match(/\d+/); 
+	var rev = "$Rev: 23917 $".match(/\d+/);
 
-	dojo.version = {
-		// summary: 
-		//		version number of dojo
-		//	major: Integer
+/*=====
+	dojo.version = function(){
+		// summary:
+		//		Version number of the Dojo Toolkit
+		// major: Integer
 		//		Major version. If total version is "1.2.0beta1", will be 1
-		//	minor: Integer
+		// minor: Integer
 		//		Minor version. If total version is "1.2.0beta1", will be 2
-		//	patch: Integer
+		// patch: Integer
 		//		Patch version. If total version is "1.2.0beta1", will be 0
-		//	flag: String
+		// flag: String
 		//		Descriptor flag. If total version is "1.2.0beta1", will be "beta1"
-		//	revision: Number
+		// revision: Number
 		//		The SVN rev from which dojo was pulled
-		major: 1, minor: 3, patch: 1, flag: "",
+		this.major = 0;
+		this.minor = 0;
+		this.patch = 0;
+		this.flag = "";
+		this.revision = 0;
+	}
+=====*/
+	dojo.version = {
+		major: 1, minor: 6, patch: 0, flag: "",
 		revision: rev ? +rev[0] : NaN,
 		toString: function(){
 			with(d.version){
@@ -224,41 +268,50 @@ dojo.global = {
 	}
 	//>>excludeEnd("webkitMobile");
 
-	var tobj = {};
-	dojo._mixin = function(/*Object*/ obj, /*Object*/ props){
+	var extraNames, extraLen, empty = {};
+	for(var i in {toString: 1}){ extraNames = []; break; }
+	dojo._extraNames = extraNames = extraNames || ["hasOwnProperty", "valueOf", "isPrototypeOf",
+		"propertyIsEnumerable", "toLocaleString", "toString", "constructor"];
+	extraLen = extraNames.length;
+
+	dojo._mixin = function(/*Object*/ target, /*Object*/ source){
 		// summary:
-		//		Adds all properties and methods of props to obj. This addition
+		//		Adds all properties and methods of source to target. This addition
 		//		is "prototype extension safe", so that instances of objects
 		//		will not pass along prototype defaults.
-		for(var x in props){
-			// the "tobj" condition avoid copying properties in "props"
-			// inherited from Object.prototype.  For example, if obj has a custom
+		var name, s, i;
+		for(name in source){
+			// the "tobj" condition avoid copying properties in "source"
+			// inherited from Object.prototype.  For example, if target has a custom
 			// toString() method, don't overwrite it with the toString() method
-			// that props inherited from Object.prototype
-			if(tobj[x] === undefined || tobj[x] != props[x]){
-				obj[x] = props[x];
+			// that source inherited from Object.prototype
+			s = source[name];
+			if(!(name in target) || (target[name] !== s && (!(name in empty) || empty[name] !== s))){
+				target[name] = s;
 			}
 		}
 		//>>excludeStart("webkitMobile", kwArgs.webkitMobile);
-		// IE doesn't recognize custom toStrings in for..in
-		if(d.isIE && props){
-			var p = props.toString;
-			if(typeof p == "function" && p != obj.toString && p != tobj.toString &&
-				p != "\nfunction toString() {\n    [native code]\n}\n"){
-					obj.toString = props.toString;
+		// IE doesn't recognize some custom functions in for..in
+		if(extraLen && source){
+			for(i = 0; i < extraLen; ++i){
+				name = extraNames[i];
+				s = source[name];
+				if(!(name in target) || (target[name] !== s && (!(name in empty) || empty[name] !== s))){
+					target[name] = s;
+				}
 			}
 		}
 		//>>excludeEnd("webkitMobile");
-		return obj; // Object
+		return target; // Object
 	}
 
 	dojo.mixin = function(/*Object*/obj, /*Object...*/props){
-		// summary:	
+		// summary:
 		//		Adds all properties and methods of props to obj and returns the
 		//		(now modified) obj.
 		//	description:
 		//		`dojo.mixin` can mix multiple source objects into a
-		//		destionation object which is then returned. Unlike regular
+		//		destination object which is then returned. Unlike regular
 		//		`for...in` iteration, `dojo.mixin` is also smart about avoiding
 		//		extensions which other toolkits may unwisely add to the root
 		//		object prototype
@@ -279,7 +332,7 @@ dojo.global = {
 		//	|		constructor: function(properties){
 		//	|			// property configuration:
 		//	|			dojo.mixin(this, properties);
-		//	|	
+		//	|
 		//	|			console.log(this.quip);
 		//	|			//  ...
 		//	|		},
@@ -300,7 +353,7 @@ dojo.global = {
 		//	|			name: "Carl Brutanananadilewski"
 		//	|		}
 		//	|	);
-		//	|	
+		//	|
 		//	|	// will print "Carl Brutanananadilewski"
 		//	|	console.log(flattened.name);
 		//	|	// will print "true"
@@ -315,8 +368,8 @@ dojo.global = {
 	dojo._getProp = function(/*Array*/parts, /*Boolean*/create, /*Object*/context){
 		var obj=context || d.global;
 		for(var i=0, p; obj && (p=parts[i]); i++){
-			if(i == 0 && this._scopeMap[p]){
-				p = this._scopeMap[p];
+			if(i == 0 && d._scopeMap[p]){
+				p = d._scopeMap[p];
 			}
 			obj = (p in obj ? obj[p] : (create ? obj[p]={} : undefined));
 		}
@@ -324,14 +377,14 @@ dojo.global = {
 	}
 
 	dojo.setObject = function(/*String*/name, /*Object*/value, /*Object?*/context){
-		// summary: 
+		// summary:
 		//		Set a property from a dot-separated string, such as "A.B.C"
-		//	description: 
+		//	description:
 		//		Useful for longer api chains where you have to test each object in
 		//		the chain, or when you have an object reference in string format.
 		//		Objects are created as needed along `path`. Returns the passed
 		//		value if setting is successful or `undefined` if not.
-		//	name: 	
+		//	name:
 		//		Path to a property, in the form "A.B.C".
 		//	context:
 		//		Optional. Object to use as root of path. Defaults to
@@ -354,14 +407,14 @@ dojo.global = {
 	}
 
 	dojo.getObject = function(/*String*/name, /*Boolean?*/create, /*Object?*/context){
-		// summary: 
+		// summary:
 		//		Get a property from a dot-separated string, such as "A.B.C"
-		//	description: 
+		//	description:
 		//		Useful for longer api chains where you have to test each object in
 		//		the chain, or when you have an object reference in string format.
-		//	name: 	
+		//	name:
 		//		Path to an property, in the form "A.B.C".
-		//	create: 
+		//	create:
 		//		Optional. Defaults to `false`. If `true`, Objects will be
 		//		created at any point along the 'path' that is undefined.
 		//	context:
@@ -371,12 +424,12 @@ dojo.global = {
 	}
 
 	dojo.exists = function(/*String*/name, /*Object?*/obj){
-		//	summary: 
+		//	summary:
 		//		determine if an object supports a given method
-		//	description: 
+		//	description:
 		//		useful for longer api chains where you have to test each object in
-		//		the chain
-		//	name: 	
+		//		the chain. Useful for object and method detection.
+		//	name:
 		//		Path to an object, in the form "A.B.C".
 		//	obj:
 		//		Object to use as root of path. Defaults to
@@ -394,37 +447,26 @@ dojo.global = {
 		//	|	// search from a particular scope
 		//	|	dojo.exists("bar", foo); // true
 		//	|	dojo.exists("bar.baz", foo); // false
-		return !!d.getObject(name, false, obj); // Boolean
+		return d.getObject(name, false, obj) !== undefined; // Boolean
 	}
 
-
 	dojo["eval"] = function(/*String*/ scriptFragment){
-		//	summary: 
-		//		Perform an evaluation in the global scope. Use this rather than
-		//		calling 'eval()' directly.
-		//	description: 
+		//	summary:
+		//		A legacy method created for use exclusively by internal Dojo methods. Do not use
+		//		this method directly, the behavior of this eval will differ from the normal
+		//		browser eval.
+		//	description:
 		//		Placed in a separate function to minimize size of trapped
 		//		exceptions. Calling eval() directly from some other scope may
 		//		complicate tracebacks on some platforms.
 		//	returns:
 		//		The result of the evaluation. Often `undefined`
-
-
-		// note:
-		//	 - JSC eval() takes an optional second argument which can be 'unsafe'.
-		//	 - Mozilla/SpiderMonkey eval() takes an optional second argument which is the
-		//  	 scope object for new symbols.
-
-		// FIXME: investigate Joseph Smarr's technique for IE:
-		//		http://josephsmarr.com/2007/01/31/fixing-eval-to-use-global-scope-in-ie/
-		//	see also:
-		// 		http://trac.dojotoolkit.org/ticket/744
 		return d.global.eval ? d.global.eval(scriptFragment) : eval(scriptFragment); 	// Object
 	}
 
 	/*=====
 		dojo.deprecated = function(behaviour, extra, removal){
-			//	summary: 
+			//	summary:
 			//		Log a debug message to indicate that a behavior has been
 			//		deprecated.
 			//	behaviour: String
@@ -443,7 +485,7 @@ dojo.global = {
 
 		dojo.experimental = function(moduleName, extra){
 			//	summary: Marks code as experimental.
-			//	description: 
+			//	description:
 			//	 	This can be used to mark a function, file, or module as
 			//	 	experimental.  Experimental code is not ready to be used, and the
 			//	 	APIs are subject to change without notice.  Experimental code may be
@@ -468,3 +510,59 @@ dojo.global = {
 })();
 //>>excludeEnd("webkitMobile");
 // vim:ai:ts=4:noet
+//>>includeStart("amdLoader", kwArgs.asynchLoader);
+
+return {dojo:dojo, dijit:dijit, dojox:dojox};
+}
+
+// This resource ("bootstrap") is responsible for creating and starting to populate the
+// dojo, dijit, and dojox objects. With the introduction of AMD loading, there are
+// several ways bootstrap could be evaluated:
+//
+// 1. Consequent to dojo.js script-injecting it. In this case it is expected to be
+//    evaluated immediately and dojo, dijit, and dojox are expected to be located
+//    in the global namespace. Note that if bootstrap is injected by dojo.js, then
+//    an AMD loader is *not* being used.
+//
+// 2. Consequent to an AMD loader script-injecting it. In this case, it is expected
+//    to delay evaluation, and instead publish a factory function to be executed under
+//    the control of the AMD loader. IAW AMD loader design, the global space should
+//    not be polluted; therefore dojo, dijit, and dojox are not be published into
+//    the global space.
+//
+// 3. Consequent to a built version of dojo (sync or xdomain loader).
+//
+// For [1], a bootstrap version of define is provided below. the v1.6 sync loader
+// will replace this with a better AMD simulation. The bootstrap version ensures bootstrap
+// is executed immediately--just as with all dojo versions prior to v1.6.
+//
+// For [2], a factory function is provided to the loader that executes the bootstrap
+// without polluting the global namespace. The factory returns the dojo object, and the
+// dijit and dojox objects are stuffed into the dojo object (at _dijit and _dojox) so
+// that dojo, dijit, and dojox bootstraps used with AMD can retrieve and control these
+// objects.
+//
+// For [3], the build util with v1.6 strips *all* AMD artifacts from this resource and reverts it
+// to look like v1.5. This ensures the built version, with either the sync or xdomain loader, work
+// *exactly* as in v1.5. While it may be possible to do more, any solution that does not
+// include significant work on the build util is likely to introduce edge cases that fail. Therefore
+// this work is delayed for 1.7 when a AMD-capable built util will be provided.
+
+if(!this.define){
+	// bootstrapping dojo with sync loader; dojo, dijit, and dojox go into the global space
+	var result = bootstrapDojo();
+	dojo = result.dojo;
+	dijit = result.dijit;
+	dojox = result.dojox;
+}else{
+	// bootstrapping dojo with an AMD loader
+	define([], function(){
+		var result= bootstrapDojo();
+		result.dojo._dijit= result.dijit;
+		result.dojo._dojox= result.dojox;
+		return result.dojo;
+	});
+}
+
+})();
+//>>includeEnd("amdLoader");

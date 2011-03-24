@@ -1,7 +1,4 @@
-dojo.provide("dijit._editor._Plugin");
-dojo.require("dijit._Widget");
-dojo.require("dijit.Editor");
-dojo.require("dijit.form.Button");
+define("dijit/_editor/_Plugin", ["dojo", "dijit", "dijit/_Widget", "dijit/form/Button"], function(dojo, dijit) {
 
 dojo.declare("dijit._editor._Plugin", null, {
 	// summary
@@ -9,10 +6,10 @@ dojo.declare("dijit._editor._Plugin", null, {
 	//		a single button on the Toolbar and some associated code
 
 	constructor: function(/*Object?*/args, /*DomNode?*/node){
-		if(args){
-			dojo.mixin(this, args);
-		}
+		this.params = args || {};
+		dojo.mixin(this, this.params);
 		this._connects=[];
+		this._attrPairNames = {};
 	},
 
 	// editor: [const] dijit.Editor
@@ -24,32 +21,30 @@ dojo.declare("dijit._editor._Plugin", null, {
 	iconClassPrefix: "dijitEditorIcon",
 
 	// button: dijit._Widget?
-	//		Pointer to `dijit.form.Button` or other widget (ex: `dijit.form.FilteringSelect`) that controls this plugin.
+	//		Pointer to `dijit.form.Button` or other widget (ex: `dijit.form.FilteringSelect`)
+	//		that is added to the toolbar to control this plugin.
 	//		If not specified, will be created on initialization according to `buttonClass`
 	button: null,
-
-	// queryCommand: ???
-	//		TODO: unused, remove
-	queryCommand: null,
 
 	// command: String
 	//		String like "insertUnorderedList", "outdent", "justifyCenter", etc. that represents an editor command.
 	//		Passed to editor.execCommand() if `useDefaultCommand` is true.
 	command: "",
 
-	// commandArg: anything
-	//		Argument to execCommand() after command.
-	//		TODO: unused, remove
-	commandArg: null,
-
 	// useDefaultCommand: Boolean
 	//		If true, this plugin executes by calling Editor.execCommand() with the argument specified in `command`.
 	useDefaultCommand: true,
 
 	// buttonClass: Widget Class
-	//		Class for button to control this plugin.   This is used to instantiate the button, unless `button` itself
-	//		is specified directly.
+	//		Class of widget (ex: dijit.form.Button or dijit.form.FilteringSelect)
+	//		that is added to the toolbar to control this plugin.
+	//		This is used to instantiate the button, unless `button` itself is specified directly.
 	buttonClass: dijit.form.Button,
+
+	// disabled: Boolean
+	//		Flag to indicate if this plugin has been disabled and should do nothing
+	//		helps control button state, among other things.  Set via the setter api.
+	disabled: false,
 
 	getLabel: function(/*String*/key){
 		// summary:
@@ -59,33 +54,37 @@ dojo.declare("dijit._editor._Plugin", null, {
 		return this.editor.commands[key];		// String
 	},
 
-	_initButton: function(props){
+	_initButton: function(){
 		// summary:
-		//		Initialize the button that will control this plugin.
+		//		Initialize the button or other widget that will control this plugin.
 		//		This code only works for plugins controlling built-in commands in the editor.
 		// tags:
 		//		protected extension
 		if(this.command.length){
-			var label = this.getLabel(this.command);
-			var className = this.iconClassPrefix+" "+this.iconClassPrefix + this.command.charAt(0).toUpperCase() + this.command.substr(1);
+			var label = this.getLabel(this.command),
+				editor = this.editor,
+				className = this.iconClassPrefix+" "+this.iconClassPrefix + this.command.charAt(0).toUpperCase() + this.command.substr(1);
 			if(!this.button){
-				props = dojo.mixin({
+				var props = dojo.mixin({
 					label: label,
+					dir: editor.dir,
+					lang: editor.lang,
 					showLabel: false,
 					iconClass: className,
 					dropDown: this.dropDown,
 					tabIndex: "-1"
-				}, props || {});
+				}, this.params || {});
 				this.button = new this.buttonClass(props);
 			}
 		}
+		if(this.get("disabled") && this.button){
+			this.button.set("disabled", this.get("disabled"));
+		}
 	},
 
-	destroy: function(f){
+	destroy: function(){
 		// summary:
 		//		Destroy this plugin
-
-		// TODO: remove f parameter, it's unused
 
 		dojo.forEach(this._connects, dojo.disconnect);
 		if(this.dropDown){
@@ -118,18 +117,19 @@ dojo.declare("dijit._editor._Plugin", null, {
 			c = this.command,
 			checked, enabled;
 		if(!e || !e.isLoaded || !c.length){ return; }
+		var disabled = this.get("disabled");
 		if(this.button){
 			try{
-				enabled = e.queryCommandEnabled(c);
+				enabled = !disabled && e.queryCommandEnabled(c);
 				if(this.enabled !== enabled){
 					this.enabled = enabled;
-					this.button.attr('disabled', !enabled);
+					this.button.set('disabled', !enabled);
 				}
 				if(typeof this.button.checked == 'boolean'){
 					checked = e.queryCommandState(c);
 					if(this.checked !== checked){
 						this.checked = checked;
-						this.button.attr('checked', e.queryCommandState(c));
+						this.button.set('checked', e.queryCommandState(c));
 					}
 				}
 			}catch(e){
@@ -144,31 +144,31 @@ dojo.declare("dijit._editor._Plugin", null, {
 
 		// TODO: refactor code to just pass editor to constructor.
 
-		// FIXME: detatch from previous editor!!
+		// FIXME: detach from previous editor!!
 		this.editor = editor;
 
 		// FIXME: prevent creating this if we don't need to (i.e., editor can't handle our command)
 		this._initButton();
 
-		// FIXME: wire up editor to button here!
-		if(this.command.length &&
-			!this.editor.queryCommandAvailable(this.command)){
-			// console.debug("hiding:", this.command);
-			if(this.button){
+		// Processing for buttons that execute by calling editor.execCommand()
+		if(this.button && this.useDefaultCommand){
+			if(this.editor.queryCommandAvailable(this.command)){
+				this.connect(this.button, "onClick",
+					dojo.hitch(this.editor, "execCommand", this.command, this.commandArg)
+				);
+			}else{
+				// hide button because editor doesn't support command (due to browser limitations)
 				this.button.domNode.style.display = "none";
 			}
 		}
-		if(this.button && this.useDefaultCommand){
-			this.connect(this.button, "onClick",
-				dojo.hitch(this.editor, "execCommand", this.command, this.commandArg)
-			);
-		}
+
 		this.connect(this.editor, "onNormalizedDisplayChanged", "updateState");
 	},
 
 	setToolbar: function(/*dijit.Toolbar*/ toolbar){
 		// summary:
-		//		Tell the plugin to add itself to the toolbar (if there is a button associated with the plugin).
+		//		Tell the plugin to add it's controller widget (often a button)
+		//		to the toolbar.  Does nothing if there is no controller widget.
 
 		// TODO: refactor code to just pass toolbar to constructor.
 
@@ -176,5 +176,103 @@ dojo.declare("dijit._editor._Plugin", null, {
 			toolbar.addChild(this.button);
 		}
 		// console.debug("adding", this.button, "to:", toolbar);
+	},
+	
+	set: function(/* attribute */ name, /* anything */ value){
+		// summary:
+		//		Set a property on a plugin
+		//	name:
+		//		The property to set.
+		//	value:
+		//		The value to set in the property.
+		// description:
+		//		Sets named properties on a plugin which may potentially be handled by a
+		// 		setter in the plugin.
+		// 		For example, if the plugin has a properties "foo"
+		//		and "bar" and a method named "_setFooAttr", calling:
+		//	|	plugin.set("foo", "Howdy!");
+		//		would be equivalent to writing:
+		//	|	plugin._setFooAttr("Howdy!");
+		//		and:
+		//	|	plugin.set("bar", 3);
+		//		would be equivalent to writing:
+		//	|	plugin.bar = 3;
+		//
+		//	set() may also be called with a hash of name/value pairs, ex:
+		//	|	plugin.set({
+		//	|		foo: "Howdy",
+		//	|		bar: 3
+		//	|	})
+		//	This is equivalent to calling set(foo, "Howdy") and set(bar, 3)
+		if(typeof name === "object"){
+			for(var x in name){
+				this.set(x, name[x]);
 	}
+			return this;
+		}
+		var names = this._getAttrNames(name);
+		if(this[names.s]){
+			// use the explicit setter
+			var result = this[names.s].apply(this, Array.prototype.slice.call(arguments, 1));
+		}else{
+			this._set(name, value);
+		}
+		return result || this;
+	},
+
+	get: function(name){
+		// summary:
+		//		Get a property from a plugin.
+		//	name:
+		//		The property to get.
+		// description:
+		//		Get a named property from a plugin. The property may
+		//		potentially be retrieved via a getter method. If no getter is defined, this
+		// 		just retrieves the object's property.
+		// 		For example, if the plugin has a properties "foo"
+		//		and "bar" and a method named "_getFooAttr", calling:
+		//	|	plugin.get("foo");
+		//		would be equivalent to writing:
+		//	|	plugin._getFooAttr();
+		//		and:
+		//	|	plugin.get("bar");
+		//		would be equivalent to writing:
+		//	|	plugin.bar;
+		var names = this._getAttrNames(name);
+		return this[names.g] ? this[names.g]() : this[name];
+	},
+
+	_setDisabledAttr: function(disabled){
+		// summary:
+		//		Function to set the plugin state and call updateState to make sure the
+		//		button is updated appropriately.
+		this.disabled = disabled;
+		this.updateState();
+	},
+	
+	_getAttrNames: function(name){
+		// summary:
+		//		Helper function for get() and set().
+		//		Caches attribute name values so we don't do the string ops every time.
+		// tags:
+		//		private
+
+		var apn = this._attrPairNames;
+		if(apn[name]){ return apn[name]; }
+		var uc = name.charAt(0).toUpperCase() + name.substr(1);
+		return (apn[name] = {
+			s: "_set"+uc+"Attr",
+			g: "_get"+uc+"Attr"
+		});
+	},
+	
+	_set: function(/*String*/ name, /*anything*/ value){
+		// summary:
+		//		Helper function to set new value for specified attribute
+		var oldValue = this[name];
+		this[name] = value;
+	}
+});
+
+return dijit._editor._Plugin;
 });

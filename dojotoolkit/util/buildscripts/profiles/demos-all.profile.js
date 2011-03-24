@@ -1,7 +1,14 @@
 // This is the demos-all profile, which mimics the nightly checkout/build profile, but adds in the demos/
 // repo for easy debugging. We are not to link to the demos in nightly in a static fashion, but rather use
-// this repo as a testing place for versioned demos to be pushed onto dojotoolkit.org 
+// this repo as a testing place for versioned demos to be pushed onto dojotoolkit.org
 dependencies = {
+	
+	action:"clean,release",
+	optimize:"shrinksafe",
+	cssOptimize:"comments.keepLines",
+	releaseName:"demosite",
+	mini:"false",
+	
 	layers: [
 		// standard:
 		{
@@ -17,12 +24,6 @@ dependencies = {
 			],
 			dependencies: [
 				"dijit.dijit-all"
-			]
-		},
-		{
-			name: "../dojox/off/offline.js",
-			dependencies: [
-				"dojox.off.offline"
 			]
 		},
 			
@@ -70,13 +71,6 @@ dependencies = {
 			]
 		},
 		{
-			// The Offline demos
-			name: "../demos/offline/src.js",
-			dependencies: [
-				"demos.offline.src"
-			]
-		},
-		{
 			// the Image Preview demo:
 			name: "../demos/cropper/src.js",
 			dependencies:[
@@ -101,6 +95,13 @@ dependencies = {
 			name: "../demos/faces/src.js",
 			dependencies:[
 				"demos.faces.src"
+			]
+		},
+		{
+			// the CSS3 animations demo
+			name: "../demos/css3/src.js",
+			dependencies:[
+				"demos.css3.src"
 			]
 		}
 	],

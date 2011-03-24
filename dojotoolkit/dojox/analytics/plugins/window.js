@@ -1,3 +1,4 @@
+dojo.require("dojox.analytics._base");
 dojo.provide("dojox.analytics.plugins.window");
 
 // window startup data
@@ -16,9 +17,9 @@ dojox.analytics.plugins.window = new (function(){
 				switch(i){
 					case "location":
 					case "console":
-						data[i]=window[i];	
+						data[i]=window[i];
 						break;
-					default:	
+					default:
 						break;
 				}
 			}else{

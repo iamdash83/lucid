@@ -44,24 +44,28 @@ if(!doh.robot["_robotLoaded"]){
 	}else{
 		window.onunload=cleanup;
 	}
-	var _keyPress = function(/*Number*/ charCode, /*Number*/ keyCode, /*Boolean*/ alt, /*Boolean*/ ctrl, /*Boolean*/ shift, /*Integer, optional*/ delay, /*Boolean*/ async){
+	var _keyPress = function(/*Number*/ charCode, /*Number*/ keyCode, /*Boolean*/ alt, /*Boolean*/ ctrl, /*Boolean*/ shift, /*Boolean*/ meta, /*Integer, optional*/ delay, /*Boolean*/ async){
 		// internal function to type one non-modifier key
 
 		// typecasting Numbers helps Sun's IE plugin lookup methods that take int arguments
 
 		// otherwise JS will send a double and Sun will complain
-		_robot.typeKey(isSecure(), Number(charCode), Number(keyCode), Boolean(alt), Boolean(ctrl), Boolean(shift), Number(delay||0), Boolean(async||false));
+		_robot.typeKey(isSecure(), Number(charCode), Number(keyCode), Boolean(alt), Boolean(ctrl), Boolean(shift), Boolean(meta), Number(delay||0), Boolean(async||false));
 	};
 
 	doh.robot = {
 	_robotLoaded: true,
 	_robotInitialized: false,
+	// prime the event pump for fast browsers like Google Chrome - it's so fast, it doesn't stop to listen for keypresses!
+	_spaceReceived: false,
+	_primePump: false,
+	
 	_killApplet: function(){}, // overridden by Robot.html
 
 	killRobot: function(){
 		if(doh.robot._robotLoaded){
 			doh.robot._robotLoaded = false;
-			document.documentElement.className = document.documentElement.className.replace(/ ?dohRobot/);
+			document.documentElement.className = document.documentElement.className.replace(/ ?dohRobot/, "");
 			doh.robot._killApplet();
 		}
 	},
@@ -80,7 +84,7 @@ if(!doh.robot["_robotLoaded"]){
 			}catch(e){
 				return null;
 			}
-		}	
+		}
 	},
 	
 	startRobot: function(){
@@ -101,8 +105,13 @@ if(!doh.robot["_robotLoaded"]){
 	_initRobot: function(r){
 		// called from Robot
 		// Robot calls _initRobot in its startup sequence
+
+		// Prevent rerunning the whole test (see #8958 for details)
+		if(doh._initRobotCalled){ return; }
+		doh._initRobotCalled = true;
+
 		// add dohRobot class to HTML element so tests can use that in CSS rules if desired
-		document.documentElement.className = document.documentElement.className.replace(/\S$/, "& ") + "dohRobot";
+		document.documentElement.className += " dohRobot";
 		window.scrollTo(0, 0);
 //		document.documentElement.scrollTop = document.documentElement.scrollLeft = 0;
 		_robot = r;
@@ -175,20 +184,13 @@ if(!doh.robot["_robotLoaded"]){
 		//		Delay to wait after firing.
 		//
 
-		delay = delay || 1;
-		doh.robot._time += delay;
-		setTimeout(function(){
-			doh.robot._time -= delay;
-			f();
-			if(duration){
-				setTimeout(function(){
-					doh.robot._time -= duration;
-				}, duration);
-			}
-		}, doh.robot._time);
-		if(duration){
-			doh.robot._time += duration;
+		var currentTime = (new Date()).getTime();
+		if(currentTime > (doh.robot._time || 0)){
+			doh.robot._time = currentTime;
 		}
+		doh.robot._time += delay || 1;
+		setTimeout(f, doh.robot._time - currentTime);
+		doh.robot._time += duration || 0;
 	},
 
 	typeKeys: function(/*String||Number*/ chars, /*Integer, optional*/ delay, /*Integer, optional*/ duration){
@@ -211,16 +213,19 @@ if(!doh.robot["_robotLoaded"]){
 		//
 		// duration:
 		//		Time, in milliseconds, to spend pressing all of the keys.
+		//		The default is (string length)*50 ms.
 		//
 
 		this._assertRobot();
 		this.sequence(function(){
-			duration=duration||0;
-			if(typeof(chars) == Number){
-				_keyPress(chars, chars, false, false, false, delay);
+			var isNum = typeof(chars) == Number;
+			duration=duration||(isNum?50:chars.length*50);
+			if(isNum){
+				_keyPress(chars, chars, false, false, false, false, 0);
 			}else if(chars.length){
-				for(var i = 0; i<chars.length; i++){
-					_keyPress(chars.charCodeAt(i), 0, false, false, false, duration/chars.length);
+				_keyPress(chars.charCodeAt(0), 0, false, false, false, false, 0);
+				for(var i = 1; i<chars.length; i++){
+					_keyPress(chars.charCodeAt(i), 0, false, false, false, false, Math.max(Math.floor(duration/chars.length), 0));
 				}
 			}
 		}, delay, duration);
@@ -250,6 +255,7 @@ if(!doh.robot["_robotLoaded"]){
 		//			- shift
 		//			- alt
 		//			- ctrl
+		//			- meta
 		//
 		// asynchronous:
 		//		If true, the delay happens asynchronously and immediately, outside of the browser's JavaScript thread and any previous calls.
@@ -258,10 +264,10 @@ if(!doh.robot["_robotLoaded"]){
 
 		this._assertRobot();
 		if(!modifiers){
-			modifiers = {alt:false, ctrl:false, shift:false};
+			modifiers = {alt:false, ctrl:false, shift:false, meta:false};
 		}else{
 			// normalize modifiers
-			var attrs = ["alt", "ctrl", "shift"];
+			var attrs = ["alt", "ctrl", "shift", "meta"];
 			for(var i = 0; i<attrs.length; i++){
 				if(!modifiers[attrs[i]]){
 					modifiers[attrs[i]] = false;
@@ -270,11 +276,11 @@ if(!doh.robot["_robotLoaded"]){
 		}
 		var isChar = typeof(charOrCode)=="string";
 		if(asynchronous){
-			_keyPress(isChar?charOrCode.charCodeAt(0):0, isChar?0:charOrCode, modifiers.alt, modifiers.ctrl, modifiers.shift, delay, true);
+			_keyPress(isChar?charOrCode.charCodeAt(0):0, isChar?0:charOrCode, modifiers.alt, modifiers.ctrl, modifiers.shift, modifiers.meta, delay, true);
 			return;
 		}
 		this.sequence(function(){
-			_keyPress(isChar?charOrCode.charCodeAt(0):0, isChar?0:charOrCode, modifiers.alt, modifiers.ctrl, modifiers.shift, 0);
+			_keyPress(isChar?charOrCode.charCodeAt(0):0, isChar?0:charOrCode, modifiers.alt, modifiers.ctrl, modifiers.shift, modifiers.meta, 0);
 		},delay);
 	},
 
@@ -402,7 +408,8 @@ if(!doh.robot["_robotLoaded"]){
 		//
 		// duration:
 		//		Approximate time Robot will spend moving the mouse
-		//		The default is 100ms.
+		//		The default is 100ms. This also affects how many mousemove events will
+		//		be generated, which is the log of the duration.
 		//
 		// absolute:
 		//		Boolean indicating whether the x and y values are absolute coordinates.
@@ -509,7 +516,7 @@ if(!doh.robot["_robotLoaded"]){
 	var iframesrc;
 	var scripts = document.getElementsByTagName("script");
 	for(var x = 0; x<scripts.length; x++){
-		var s = scripts[x].src;
+		var s = scripts[x].getAttribute('src');
 		if(s && (s.substr(s.length-9) == "runner.js")){
 			iframesrc = s.substr(0, s.length-9)+'Robot.html';
 			break;
@@ -517,9 +524,10 @@ if(!doh.robot["_robotLoaded"]){
 	}
 	// if loaded with dojo, there might not be a runner.js!
 	if(!iframesrc && window["dojo"]){
-		iframesrc = dojo.moduleUrl("util", "doh/")+"Robot.html";
+		// if user set document.domain to something else, send it to the Robot too
+		iframesrc = dojo.moduleUrl("util", "doh/")+"Robot.html?domain="+escape(document.domain);
 	}
 	document.writeln('<div id="dohrobotview" style="border:0px none; margin:0px; padding:0px; position:absolute; bottom:0px; right:0px; width:1px; height:1px; overflow:hidden; visibility:hidden; background-color:red;"></div>'+
-		'<iframe style="border:0px none; z-index:32767; padding:0px; margin:0px; position:absolute; left:0px; top:0px; height:42px; width:200px; overflow:hidden; background-color:transparent;" tabIndex="-1" src="'+iframesrc+'" ALLOWTRANSPARENCY="true"></iframe>');
+		'<iframe application="true" style="border:0px none; z-index:32767; padding:0px; margin:0px; position:absolute; left:0px; top:0px; height:42px; width:200px; overflow:hidden; background-color:transparent;" tabIndex="-1" src="'+iframesrc+'" ALLOWTRANSPARENCY="true"></iframe>');
 })();
 }

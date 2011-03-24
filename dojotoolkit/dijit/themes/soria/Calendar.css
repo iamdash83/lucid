@@ -1,5 +1,5 @@
 /* Calendar*/
-	
+
 .soria .dijitCalendarIncrementControl {
 	/* next/prev month buttons */
 	width:15px;
@@ -8,7 +8,7 @@
 	background-repeat: no-repeat;
 }
 .dj_ie6 .soria .dijitCalendarIncrementControl {
-	font-size:.1em;	
+	font-size:.1em;
 	background-image: url("images/spriteRoundedIconsSmall.gif");
 }
 
@@ -55,12 +55,13 @@
 }
 
 .soria .dijitCalendarBodyContainer {
-	border-bottom: 1px solid #eeeeee;	
+	border-bottom: 1px solid #eeeeee;
 }
 
 .soria .dijitCalendarMonthLabel {
 	color:#293a4b;
 	font-weight: bold;
+	padding: 0 4px;
 }
 
 .soria .dijitCalendarDateTemplate {
@@ -86,26 +87,12 @@
 	border:#fdfdfd solid 1px !important;
 }
 
-.soria .dijitCalendarPreviousMonthDisabled,
-.soria .dijitCalendarNextMonthDisabled	{
-	/* days that are part of the previous or next month - disabled*/
-	background-color:#a4a5a6 !important;
-}
-
 .soria .dijitCalendarCurrentMonth {
 	/* days that are part of this month */
 }
 
-.soria .dijitCalendarCurrentMonthDisabled {
-	/* days that are part of this month - disabled */	
-	background-color:#bbbbbc !important;
-}
-
 .soria .dijitCalendarDisabledDate {
-	/* one or the other? */
-	/* background: url(images/noX.gif) no-repeat center center !important; */
 	text-decoration:line-through !important;
-	cursor:default !important;
 }
 
 .soria .dijitCalendarCurrentDate {
@@ -148,4 +135,25 @@
 	/* label for next/prev years */
 	color:black !important;
 	font-weight:normal;
+}
+
+/* Styling for month DropDownButton */
+
+.soria .dijitCalendar .dijitDropDownButton {
+	margin: 0;
+}
+.soria .dijitCalendar .dijitButtonText {
+	padding: 0;
+}
+.soria .dijitCalendar .dijitDropDownButton .dijitButtonNode {
+	background-color: transparent;
+	background-image: none;
+	padding: 0;
+}
+
+/* Styling for month drop down list */
+
+.soria .dijitCalendarMonthMenu .dijitCalendarMonthLabelHover {
+	background-color: #d9e6f9;
+	color: #243C5F;
 }

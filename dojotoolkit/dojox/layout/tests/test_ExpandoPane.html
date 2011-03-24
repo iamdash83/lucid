@@ -1,11 +1,10 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
-        "http://www.w3.org/TR/html4/strict.dtd">
+<!DOCTYPE html>
 <html>
 <head>
 	<title>dojox.layout.ExpandoPane</title>
 
 	<!-- required: a default theme file -->
-	<link rel="stylesheet" id="themeStyles" href="../../../dijit/themes/tundra/tundra.css">
+	<link rel="stylesheet" id="themeStyles" href="../../../dijit/themes/claro/claro.css">
 	<!-- test file style rollup, you need resources/ExpandoPane.css exclusively -->
 	<link rel="stylesheet" href="_expando.css">	
 
@@ -183,7 +182,7 @@
 
 	</script>
 </head>
-<body class="tundra">
+<body class="claro">
 		<div id="bc" style="width:100%; height:100%; padding: 5px;" dojoType="dijit.layout.BorderContainer">
 			<div id="header" dojoType="dijit.layout.ContentPane" region="top" splitter="true">Dojo Expando Pane Test</div>
 			<div dojoType="dojox.layout.ExpandoPane" 
@@ -191,6 +190,7 @@
 				duration="125" 
 				region="left" 
 				title="Left Section" 
+				previewOnDblClick="true"
 				id="leftPane" 
 				maxWidth="275" 
 				style="width: 275px;">
@@ -208,13 +208,13 @@
 						
 					</div>
 					<div dojoType="dijit.layout.AccordionContainer" title="Panes" style="width:275px;" attachParent="true">
-						<div dojoType="dijit.layout.AccordionPane" title="Dojo">
+						<div dojoType="dijit.layout.ContentPane" title="Dojo">
 							<ul id="dojoList"></ul>
 						</div>
-						<div dojoType="dijit.layout.AccordionPane" title="Dijit">
+						<div dojoType="dijit.layout.ContentPane" title="Dijit">
 							<ul id="dijitList"></ul>
 						</div>
-						<div dojoType="dijit.layout.AccordionPane" title="DojoX">
+						<div dojoType="dijit.layout.ContentPane" title="DojoX">
 							<ul id="dojoxList"></ul>
 						</div>
 					</div>
@@ -228,7 +228,12 @@
 			</div>
 			<div dojoType="dijit.layout.TabContainer" region="center" id="centerPane" tabStrip="true">
 				<div dojoType="dijit.layout.ContentPane" title="tab 1">a</div>
-				<div dojoType="dijit.layout.ContentPane" title="tab 2">b</div>
+				<div dojoType="dijit.layout.ContentPane" title="tab 2">
+					<button dojoType="dijit.form.Button">Preview left
+						<script type="dojo/method" event="onClick">
+							dijit.byId("leftPane").preview();
+						</script>
+				</div>
 				<div dojoType="dijit.layout.ContentPane" title="Results" id="resultsPane">
 					<div class="wrap">
 						<div class="searchStuff">
@@ -248,7 +253,7 @@
 				easeOut="dojo.fx.easing.backInOut">
 
 				<div dojoType="dijit.layout.AccordionContainer" id="rightAccordion" style="width:275px;" attachParent="true">
-					<div dojoType="dijit.layout.AccordionPane" title="Easing Selection">
+					<div dojoType="dijit.layout.ContentPane" title="Easing Selection">
 						<div class="wrap">
 							<p>This select modifies the left Expando's easing function. An Expando can have an easeIn and an easeOut parameter. This sets both.</p> 
 							<select id="easingSelect" name="easingSelect">
@@ -258,7 +263,7 @@
 							<p>Some easing functions break when used with width: (negative width? but how?). <em>Be warned.</em></p>
 						</div>
 					</div>
-					<div dojoType="dijit.layout.AccordionPane" title="Children">
+					<div dojoType="dijit.layout.ContentPane" title="Children">
 						<div class="wrap">
 							<p>This is a BorderContainer (the window). Each of the panes is set to one of
 							"left", "right", or "center". The left and right panes are ExpandoPanes (they collapse).
@@ -290,7 +295,7 @@
 							<p>the end</p>
 						</div>
 					</div>
-					<div dojoType="dijit.layout.AccordionPane" title="Acc 3">c</div>
+					<div dojoType="dijit.layout.ContentPane" title="Acc 3">c</div>
 				</div>
 			</div>
 			<div dojoType="dojox.layout.ExpandoPane" 
@@ -303,7 +308,12 @@
 				style="height: 100px;">
 				<div dojoType="dijit.layout.TabContainer" attachParent="true" tabPosition="bottom" tabStrip="true">
 					<div dojoType="dijit.layout.ContentPane" title="Search">
-												
+						<button dojoType="dijit.form.Button">
+							Change Title
+							<script type="dojo/method" event="onClick">
+								dijit.byId("bottomPane").set("title", new Date())
+							</script>
+						</button>
 					</div>
 					<div dojoType="dijit.layout.AccordionContainer" title="Panes" style="width:275px;" attachParent="true">
 						

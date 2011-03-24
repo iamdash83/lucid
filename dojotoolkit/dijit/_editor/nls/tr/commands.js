@@ -1,3 +1,5 @@
+define(
+//begin v1.x content
 ({
 	'bold': 'Kalın',
 	'copy': 'Kopyala',
@@ -38,6 +40,13 @@
 	'fontSize': 'Yazı Tipi Boyutu',
 	'fontName': 'Yazı Tipi Adı',
 	'tabIndent': 'Sekme Girintisi',
+	"fullScreen": "Tam Ekranı Aç/Kapat",
+	"viewSource": "HTML Kaynağını Görüntüle",
+	"print": "Yazdır",
+	"newPage": "Yeni Sayfa",
 	/* Error messages */
 	'systemShortcut': '"${0}" işlemi yalnızca tarayıcınızda bir klavye kısayoluyla birlikte kullanılabilir. Şunu kullanın: ${1}.'
 })
+
+//end v1.x content
+);

@@ -1,21 +1,7 @@
-dojo.provide("dojo.dnd.autoscroll");
+define("dojo/dnd/autoscroll", ["dojo", "dojo/window"], function(dojo) {
+dojo.getObject("dnd", true, dojo);
 
-dojo.dnd.getViewport = function(){
-	// summary: returns a viewport size (visible part of the window)
-
-	// FIXME: need more docs!!
-	var d = dojo.doc, dd = d.documentElement, w = window, b = dojo.body();
-	if(dojo.isMozilla){
-		return {w: dd.clientWidth, h: w.innerHeight};	// Object
-	}else if(!dojo.isOpera && w.innerWidth){
-		return {w: w.innerWidth, h: w.innerHeight};		// Object
-	}else if (!dojo.isOpera && dd && dd.clientWidth){
-		return {w: dd.clientWidth, h: dd.clientHeight};	// Object
-	}else if (b.clientWidth){
-		return {w: b.clientWidth, h: b.clientHeight};	// Object
-	}
-	return null;	// Object
-};
+dojo.dnd.getViewport = dojo.window.getBox;
 
 dojo.dnd.V_TRIGGER_AUTOSCROLL = 32;
 dojo.dnd.H_TRIGGER_AUTOSCROLL = 32;
@@ -27,11 +13,11 @@ dojo.dnd.autoScroll = function(e){
 	// summary:
 	//		a handler for onmousemove event, which scrolls the window, if
 	//		necesary
-	// e: Event:
+	// e: Event
 	//		onmousemove event
 
 	// FIXME: needs more docs!
-	var v = dojo.dnd.getViewport(), dx = 0, dy = 0;
+	var v = dojo.window.getBox(), dx = 0, dy = 0;
 	if(e.clientX < dojo.dnd.H_TRIGGER_AUTOSCROLL){
 		dx = -dojo.dnd.H_AUTOSCROLL_VALUE;
 	}else if(e.clientX > v.w - dojo.dnd.H_TRIGGER_AUTOSCROLL){
@@ -52,7 +38,7 @@ dojo.dnd.autoScrollNodes = function(e){
 	// summary:
 	//		a handler for onmousemove event, which scrolls the first avaialble
 	//		Dom element, it falls back to dojo.dnd.autoScroll()
-	// e: Event:
+	// e: Event
 	//		onmousemove event
 
 	// FIXME: needs more docs!
@@ -60,16 +46,17 @@ dojo.dnd.autoScrollNodes = function(e){
 		if(n.nodeType == 1 && (n.tagName.toLowerCase() in dojo.dnd._validNodes)){
 			var s = dojo.getComputedStyle(n);
 			if(s.overflow.toLowerCase() in dojo.dnd._validOverflow){
-				var b = dojo._getContentBox(n, s), t = dojo._abs(n, true);
+				var b = dojo._getContentBox(n, s), t = dojo.position(n, true);
 				//console.log(b.l, b.t, t.x, t.y, n.scrollLeft, n.scrollTop);
-				var w = Math.min(dojo.dnd.H_TRIGGER_AUTOSCROLL, b.w / 2), 
+				var w = Math.min(dojo.dnd.H_TRIGGER_AUTOSCROLL, b.w / 2),
 					h = Math.min(dojo.dnd.V_TRIGGER_AUTOSCROLL, b.h / 2),
 					rx = e.pageX - t.x, ry = e.pageY - t.y, dx = 0, dy = 0;
 				if(dojo.isWebKit || dojo.isOpera){
-					// FIXME: this code should not be here, it should be taken into account 
-					// either by the event fixing code, or the dojo._abs()
+					// FIXME: this code should not be here, it should be taken into account
+					// either by the event fixing code, or the dojo.position()
 					// FIXME: this code doesn't work on Opera 9.5 Beta
-					rx += dojo.body().scrollLeft, ry += dojo.body().scrollTop;
+					rx += dojo.body().scrollLeft;
+					ry += dojo.body().scrollTop;
 				}
 				if(rx > 0 && rx < b.w){
 					if(rx < w){
@@ -100,3 +87,6 @@ dojo.dnd.autoScrollNodes = function(e){
 	}
 	dojo.dnd.autoScroll(e);
 };
+
+return dojo.dnd;
+});

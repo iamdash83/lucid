@@ -1,7 +1,8 @@
-dojo.provide("dojo.string");
+define("dojo/string", ["dojo"], function(dojo) {
+dojo.getObject("string", true, dojo);
 
 /*=====
-dojo.string = { 
+dojo.string = {
 	// summary: String utilities for Dojo
 };
 =====*/
@@ -52,38 +53,42 @@ dojo.string.pad = function(/*String*/text, /*Integer*/size, /*String?*/ch, /*Boo
 	return end ? out + pad : pad + out;	// String
 };
 
-dojo.string.substitute = function(	/*String*/		template, 
-									/*Object|Array*/map, 
-									/*Function?*/	transform, 
+dojo.string.substitute = function(	/*String*/		template,
+									/*Object|Array*/map,
+									/*Function?*/	transform,
 									/*Object?*/		thisObject){
 	//	summary:
 	//		Performs parameterized substitutions on a string. Throws an
 	//		exception if any parameter is unmatched.
-	//	template: 
+	//	template:
 	//		a string with expressions in the form `${key}` to be replaced or
-	//		`${key:format}` which specifies a format function. keys are case-sensitive. 
+	//		`${key:format}` which specifies a format function. keys are case-sensitive.
 	//	map:
 	//		hash to search for substitutions
-	//	transform: 
+	//	transform:
 	//		a function to process all parameters before substitution takes
-	//		place, e.g. dojo.string.encodeXML
-	//	thisObject: 
+	//		place, e.g. mylib.encodeXML
+	//	thisObject:
 	//		where to look for optional format function; default to the global
 	//		namespace
 	//	example:
+	//		Substitutes two expressions in a string from an Array or Object
 	//	|	// returns "File 'foo.html' is not found in directory '/temp'."
+	//	|	// by providing substitution data in an Array
 	//	|	dojo.string.substitute(
 	//	|		"File '${0}' is not found in directory '${1}'.",
 	//	|		["foo.html","/temp"]
 	//	|	);
 	//	|
 	//	|	// also returns "File 'foo.html' is not found in directory '/temp'."
+	//	|	// but provides substitution data in an Object structure.  Dotted
+	//	|	// notation may be used to traverse the structure.
 	//	|	dojo.string.substitute(
 	//	|		"File '${name}' is not found in directory '${info.dir}'.",
 	//	|		{ name: "foo.html", info: { dir: "/temp" } }
 	//	|	);
 	//	example:
-	//		use a transform function to modify the values:
+	//		Use a transform function to modify the values:
 	//	|	// returns "file 'foo.html' is not found in directory '/temp'."
 	//	|	dojo.string.substitute(
 	//	|		"${0} is not found in ${1}.",
@@ -95,7 +100,7 @@ dojo.string.substitute = function(	/*String*/		template,
 	//	|		}
 	//	|	);
 	//	example:
-	//		use a formatter
+	//		Use a formatter
 	//	|	// returns "thinger -- howdy"
 	//	|	dojo.string.substitute(
 	//	|		"${0:postfix}", ["thinger"], null, {
@@ -105,18 +110,18 @@ dojo.string.substitute = function(	/*String*/		template,
 	//	|		}
 	//	|	);
 
-	thisObject = thisObject||dojo.global;
-	transform = (!transform) ? 
-					function(v){ return v; } : 
-					dojo.hitch(thisObject, transform);
+	thisObject = thisObject || dojo.global;
+	transform = transform ?
+		dojo.hitch(thisObject, transform) : function(v){ return v; };
 
-	return template.replace(/\$\{([^\s\:\}]+)(?:\:([^\s\:\}]+))?\}/g, function(match, key, format){
-		var value = dojo.getObject(key, false, map);
-		if(format){
-			value = dojo.getObject(format, false, thisObject).call(thisObject, value, key);
-		}
-		return transform(value, key).toString();
-	}); // string
+	return template.replace(/\$\{([^\s\:\}]+)(?:\:([^\s\:\}]+))?\}/g,
+		function(match, key, format){
+			var value = dojo.getObject(key, false, map);
+			if(format){
+				value = dojo.getObject(format, false, thisObject).call(thisObject, value, key);
+			}
+			return transform(value, key).toString();
+		}); // String
 };
 
 /*=====
@@ -147,3 +152,6 @@ dojo.string.trim = String.prototype.trim ?
 		}
 		return str;
 	};
+
+return dojo.string;
+});

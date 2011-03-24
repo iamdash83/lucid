@@ -22,12 +22,16 @@ dojo.declare("dojox.image.Badge", [dijit._Widget, dijit._Templated], {
 	rows: 4,
 	
 	// cols: Integer
-	//		Number of Columns to display 
+	//		Number of Columns to display
 	cols: 5,
 	
 	// cellSize: Integer
 	//		Size in PX of each thumbnail
 	cellSize: 50,
+	
+	// cellMargin: Integer
+	//		Size in PX to adjust for cell margins
+	cellMargin: 1,
 	
 	// delay: Integer
 	//		Time (in ms) to show the image before sizing down again
@@ -53,8 +57,8 @@ dojo.declare("dojox.image.Badge", [dijit._Widget, dijit._Templated], {
 	_init: function(){
 		// summary: Setup and layout the images
 	
-		var _row = 0, 
-			_w = this.cellSize; 
+		var _row = 0,
+			_w = this.cellSize;
 
 		dojo.style(this.domNode, {
 			width: _w * this.cols + "px",
@@ -66,25 +70,28 @@ dojo.declare("dojox.image.Badge", [dijit._Widget, dijit._Templated], {
 
 				var _col = _idx % this.cols,
 					t = _row * _w,
-					l = _col * _w;
+					l = _col * _w,
+					m = this.cellMargin * 2;
 			
 				dojo.style(n, {
 		 			top: t + "px",
 		 			left: l + "px",
-					width: _w - 2 + "px",
-					height: _w - 2 + "px"
+					width: _w - m + "px",
+					height: _w - m + "px"
 		 		});
 
 				if(_col == this.cols - 1){ _row++; }
 				dojo.addClass(n, this.baseClass + "Image");
 				
-			}, this);
+			}, this)
 		;
 		
 		var l = this._nl.length;
 		while(this.threads--){
 			var s = Math.floor(Math.random() * l);
-			setTimeout(dojo.hitch(this,"_enbiggen", { target: this._nl[s] }), this.delay * this.threads);
+			setTimeout(dojo.hitch(this, "_enbiggen", {
+				target: this._nl[s]
+			}), this.delay * this.threads);
 		}
 		
 	},
@@ -113,26 +120,28 @@ dojo.declare("dojox.image.Badge", [dijit._Widget, dijit._Templated], {
 		if (_pos){
 			// we have a node, and know where it is
 
-			var _cc = (this.cellSize * 2) - 2; 
-			var props = {
-				height: _cc,
-				width: _cc
-			};
+			var m = this.cellMargin,
+				_cc = (this.cellSize * 2) - (m * 2),
+				props = {
+					height: _cc,
+					width: _cc
+				}
+			;
 			
 			var _tehDecider = function(){
 				// if we have room, we'll want to decide which direction to go
 				// let "teh decider" decide.
-				return Math.round(Math.random()); 
+				return Math.round(Math.random());
 			};
 			
 			if(_pos.x == this.cols - 1 || (_pos.x > 0 && _tehDecider() )){
 				// we have to go left, at right edge (or we want to and not on left edge)
-				props.left = this.cellSize * (_pos.x - 1);
+				props.left = this.cellSize * (_pos.x - m);
 			}
 			
 			if(_pos.y == this.rows - 1 || (_pos.y > 0 && _tehDecider() )){
 				// we have to go up, at bottom edge (or we want to and not at top)
-				props.top = this.cellSize * (_pos.y - 1);
+				props.top = this.cellSize * (_pos.y - m);
 			}
 
 			var bc = this.baseClass;
@@ -141,14 +150,14 @@ dojo.declare("dojox.image.Badge", [dijit._Widget, dijit._Templated], {
 
 			dojo.animateProperty({ node: _pos.n, properties: props,
 				onEnd: dojo.hitch(this, "_loadUnder", _pos, props),
-				easing: this.easing 
+				easing: this.easing
 			}).play();
 			
 		}
 	},
 	
 	_loadUnder: function(info, props){
-		// summary: figure out which three images are being covered, and 
+		// summary: figure out which three images are being covered, and
 		//		determine if they need loaded or not
 
 		var idx = info.io;
@@ -188,13 +197,13 @@ dojo.declare("dojox.image.Badge", [dijit._Widget, dijit._Templated], {
 			props.top += this.cellSize;
 		}
 		if(props.left >= 0){
-			props.left += this.cellSize; 
+			props.left += this.cellSize;
 		}
-		var _cc = this.cellSize - 2;
+		var _cc = this.cellSize - (this.cellMargin * 2);
 		dojo.animateProperty({
-			node: info.n, 
+			node: info.n,
 			properties: dojo.mixin(props, {
-				width:_cc, 
+				width:_cc,
 				height:_cc
 			}),
 			onEnd: dojo.hitch(this, "_cycle", info, props)
@@ -204,7 +213,7 @@ dojo.declare("dojox.image.Badge", [dijit._Widget, dijit._Templated], {
 	_cycle: function(info, props){
 		// summary: Select an un-viewed image from the list, and show it
 
-		var bc = this.baseClass; 
+		var bc = this.baseClass;
 		dojo.removeClass(info.n, bc + "Top");
 		var ns = this._nl.filter(function(n){
 			return !dojo.hasClass(n, bc + "Seen")

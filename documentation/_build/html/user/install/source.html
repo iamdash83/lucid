@@ -1,0 +1,121 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Installing From Source &mdash; Lucid v1.0 documentation</title>
+    <link rel="stylesheet" href="../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+          URL_ROOT:    '../../',
+          VERSION:     '1.0',
+          COLLAPSE_MODINDEX: false,
+          FILE_SUFFIX: ''
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/interface.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="contents" title="Global table of contents" href="../../contents.html" />
+    <link rel="index" title="Global index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="top" title="Lucid v1.0 documentation" href="../../index.html" />
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../modindex.html" title="Global Module Index"
+             accesskey="M">modules</a> |</li>
+        <li><a href="../../index.html">Lucid v1.0 documentation</a> &raquo;</li>
+      </ul>
+    </div>
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  
+  <div class="section" id="s-installing-from-source">
+<span id="s-user-install-source"></span><h1 id="installing-from-source"><span id="user-install-source"></span>Installing From Source<a class="headerlink" href="#installing-from-source" title="Permalink to this headline">¶</a></h1>
+<p><strong>Note:</strong> The development version of Lucid is cutting/bleeding edge software. You should not use it unless you know what you are doing. You have been warned.</p>
+<div class="section" id="s-checking-out-source-code-from-subversion">
+<h2 id="checking-out-source-code-from-subversion">Checking out source code from subversion<a class="headerlink" href="#checking-out-source-code-from-subversion" title="Permalink to this headline">¶</a></h2>
+<p>In order to get a copy of Lucid&#8217;s source code, you must have <a class="reference" href="http://www.git-scm.com/">Git</a>. installed.</p>
+<p>Our Git repository is located at <a class="reference" href="http://github.com/psychcf/lucid/tree/master">http://github.com/psychcf/lucid/tree/master</a></p>
+<p>To check out a copy, run this command:</p>
+<div class="highlight"><pre>git clone git://github.com/psychcf/lucid.git lucid
+</pre></div>
+</div>
+<div class="section" id="s-building">
+<h2 id="building">Building<a class="headerlink" href="#building" title="Permalink to this headline">¶</a></h2>
+<p>Unless you plan on installing Lucid Desktop locally, you should build it. This compresses the javascript that is sent to the client so the desktop will load faster.
+From a terminal, navigate to the <tt class="docutils literal"><span class="pre">/desktop/dojotoolkit/util/buildscripts/</span></tt> directory. Then run this command (for windows run build.bat instead of build.sh):</p>
+<div class="highlight"><pre>./build.sh <span class="nv">profile</span><span class="o">=</span>desktop <span class="nv">action</span><span class="o">=</span>release <span class="nv">mini</span><span class="o">=</span><span class="nb">true</span>
+</pre></div>
+<p>If you want to prevent the buildscripts from making un-necesary ammounts of optimizing of non-existant translations, you can add the following to the command (it saves a significant ammount of disk space):</p>
+<div class="highlight"><pre><span class="nv">localeList</span><span class="o">=</span><span class="s2">&quot;en-gb,en-us,es-es,fr-fr&quot;</span>
+</pre></div>
+<p>Then, copy all contents of <tt class="docutils literal"><span class="pre">/desktop/dojotoolkit/release/dojo/</span></tt> to <tt class="docutils literal"><span class="pre">/desktop/dojotoolkit/</span></tt>, and delete the release directory.</p>
+<p>If you want to make updating in the future easier, you can edit the paths of the <tt class="docutils literal"><span class="pre">&lt;script&gt;</span></tt> tags on both <tt class="docutils literal"><span class="pre">index.html</span></tt> and <tt class="docutils literal"><span class="pre">desktop/index.html</span></tt> to point to the javascript files in the release directory. Also fix the paths in <tt class="docutils literal"><span class="pre">desktop/dojotoolkit/desktop/login/Form.js</span></tt>.</p>
+<p>Note that if you so an SVN update, and anything in the <tt class="docutils literal"><span class="pre">/desktop/dojotoolkit/</span></tt> directory is updated, you must rebuild and clear your cache.</p>
+</div>
+<div class="section" id="s-installation">
+<h2 id="installation">Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h2>
+<p>From here, you can follow the <a class="reference" href="instructions.html#user-install-instructions"><em>installation instructions</em></a> to get everything set up.</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <h3>Table Of Contents</h3>
+            <ul>
+<li><a class="reference" href="">Installing From Source</a><ul>
+<li><a class="reference" href="#checking-out-source-code-from-subversion">Checking out source code from subversion</a></li>
+<li><a class="reference" href="#building">Building</a></li>
+<li><a class="reference" href="#installation">Installation</a></li>
+</ul>
+</li>
+</ul>
+
+            <h3>This Page</h3>
+            <ul class="this-page-menu">
+              <li><a href="../../_sources/user/install/source.txt">Show Source</a></li>
+            </ul>
+            <h3>Quick search</h3>
+            <form class="search" action="../../search.html" method="get">
+              <input type="text" name="q" size="18" /> <input type="submit" value="Go" />
+              <input type="hidden" name="check_keywords" value="yes" />
+              <input type="hidden" name="area" value="default" />
+            </form>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../modindex.html" title="Global Module Index"
+             accesskey="M">modules</a> |</li>
+        <li><a href="../../index.html">Lucid v1.0 documentation</a> &raquo;</li>
+      </ul>
+    </div>
+    <div class="footer">
+      &copy; Copyright Dojo Foundation and Lucid Contributors.
+      Last updated on May 31, 2009.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>.
+    </div>
+  </body>
+</html>

@@ -1,3 +1,5 @@
+define({ root:
+//begin v1.x content
 ({
 	'bold': 'Bold',
 	'copy': 'Copy',
@@ -38,8 +40,44 @@
 	'fontSize': 'Font Size',
 	'fontName': 'Font Name',
 	'tabIndent': 'Tab Indent',
+	"fullScreen": "Toggle Full Screen",
+	"viewSource": "View HTML Source",
+	"print": "Print",
+	"newPage": "New Page",
 	/* Error messages */
 	'systemShortcut': 'The "${0}" action is only available in your browser using a keyboard shortcut. Use ${1}.',
 	'ctrlKey':'ctrl+${0}',
 	'appleKey':'\u2318${0}' // "command" or open-apple key on Macintosh
 })
+//end v1.x content
+,
+"zh": true,
+"zh-tw": true,
+"tr": true,
+"th": true,
+"sv": true,
+"sl": true,
+"sk": true,
+"ru": true,
+"ro": true,
+"pt": true,
+"pt-pt": true,
+"pl": true,
+"nl": true,
+"nb": true,
+"ko": true,
+"kk": true,
+"ja": true,
+"it": true,
+"hu": true,
+"he": true,
+"fr": true,
+"fi": true,
+"es": true,
+"el": true,
+"de": true,
+"da": true,
+"cs": true,
+"ca": true,
+"ar": true
+});

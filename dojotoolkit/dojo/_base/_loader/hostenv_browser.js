@@ -1,3 +1,14 @@
+//>>includeStart("amdLoader", kwArgs.asynchLoader);
+define(["dojo/lib/backCompat"], function(dojo){
+// Note: if this resource is being loaded *without* an AMD loader, then
+// it is loaded by dojo.js which injects it into the doc with a script element. The simulated
+// AMD define function in _loader.js will cause the factory to be executed.
+//
+// The build util with v1.6 strips all AMD artifacts from this resource and reverts it
+// to look like v1.5. This ensures the built version, with either the sync or xdomain loader, work
+// *exactly* as in v1.5.
+
+//>>includeEnd("amdLoader");
 /*=====
 dojo.isBrowser = {
 	//	example:
@@ -19,9 +30,9 @@ dojo.isIE = {
 dojo.isSafari = {
 	//	example:
 	//	|	if(dojo.isSafari){ ... }
-	//	example: 
+	//	example:
 	//		Detect iPhone:
-	//	|	if(dojo.isSafari && navigator.userAgent.indexOf("iPhone") != -1){ 
+	//	|	if(dojo.isSafari && navigator.userAgent.indexOf("iPhone") != -1){
 	//	|		// we are iPhone. Note, iPod touch reports "iPod" above and fails this test.
 	//	|	}
 };
@@ -56,13 +67,14 @@ dojo = {
 	isOpera: 0,
 	//	isSafari: Number | undefined
 	//		Version as a Number if client is Safari or iPhone. undefined otherwise.
-	isSafari: 0
+	isSafari: 0,
 	//	isChrome: Number | undefined
 	//		Version as a Number if client is Chrome browser. undefined otherwise.
 	isChrome: 0
+	//	isMac: Boolean
+	//		True if the client runs on Mac
 }
 =====*/
-
 //>>excludeStart("webkitMobile", kwArgs.webkitMobile);
 if(typeof window != 'undefined'){
 //>>excludeEnd("webkitMobile");
@@ -93,7 +105,7 @@ if(typeof window != 'undefined'){
 						d.config.baseUrl = src.substring(0, m.index);
 					}
 					// and find out if we need to modify our behavior
-					var cfg = scripts[i].getAttribute("djConfig");
+					var cfg = (scripts[i].getAttribute("djConfig") || scripts[i].getAttribute("data-dojo-config"));
 					if(cfg){
 						var cfgo = eval("({ "+cfg+" })");
 						for(var x in cfgo){
@@ -117,6 +129,7 @@ if(typeof window != 'undefined'){
 		d.isKhtml = (dav.indexOf("Konqueror") >= 0) ? tv : 0;
 		d.isWebKit = parseFloat(dua.split("WebKit/")[1]) || undefined;
 		d.isChrome = parseFloat(dua.split("Chrome/")[1]) || undefined;
+		d.isMac = dav.indexOf("Macintosh") >= 0;
 
 		// safari detection derived from:
 		//		http://developer.apple.com/internet/safari/faq.html#anchor2
@@ -136,16 +149,19 @@ if(typeof window != 'undefined'){
 		if(dua.indexOf("Gecko") >= 0 && !d.isKhtml && !d.isWebKit){ d.isMozilla = d.isMoz = tv; }
 		if(d.isMoz){
 			//We really need to get away from this. Consider a sane isGecko approach for the future.
-			d.isFF = parseFloat(dua.split("Firefox/")[1] || dua.split("Minefield/")[1] || dua.split("Shiretoko/")[1]) || undefined;
+			d.isFF = parseFloat(dua.split("Firefox/")[1] || dua.split("Minefield/")[1]) || undefined;
 		}
 		if(document.all && !d.isOpera){
 			d.isIE = parseFloat(dav.split("MSIE ")[1]) || undefined;
 			//In cases where the page has an HTTP header or META tag with
-			//X-UA-Compatible, then it is in emulation mode, for a previous
-			//version. Make sure isIE reflects the desired version.
+			//X-UA-Compatible, then it is in emulation mode.
+			//Make sure isIE reflects the desired version.
 			//document.documentMode of 5 means quirks mode.
-			if(d.isIE >= 8 && document.documentMode != 5){
-				d.isIE = document.documentMode;
+			//Only switch the value if documentMode's major version
+			//is different from isIE's major version.
+			var mode = document.documentMode;
+			if(mode && mode != 5 && Math.floor(d.isIE) != mode){
+				d.isIE = mode;
 			}
 		}
 
@@ -156,8 +172,7 @@ if(typeof window != 'undefined'){
 		}
 		//>>excludeEnd("webkitMobile");
 
-		var cm = document.compatMode;
-		d.isQuirks = cm == "BackCompat" || cm == "QuirksMode" || d.isIE < 6;
+		d.isQuirks = document.compatMode == "BackCompat";
 
 		// TODO: is the HTML LANG attribute relevant?
 		d.locale = dojo.config.locale || (d.isIE ? n.userLanguage : n.language).toLowerCase();
@@ -168,7 +183,7 @@ if(typeof window != 'undefined'){
 		//>>excludeEnd("webkitMobile");
 
 		d._xhrObj = function(){
-			// summary: 
+			// summary:
 			//		does the work of portably generating a new XMLHTTPRequest object.
 			var http, last_e;
 			//>>excludeStart("webkitMobile", kwArgs.webkitMobile);
@@ -204,9 +219,10 @@ if(typeof window != 'undefined'){
 		d._isDocumentOk = function(http){
 			var stat = http.status || 0;
 			return (stat >= 200 && stat < 300) || 	// Boolean
-				stat == 304 || 						// allow any 2XX response code
-				stat == 1223 || 						// get it out of the cache
-				(!stat && (location.protocol=="file:" || location.protocol=="chrome:") ); // Internet Explorer mangled the status code
+				stat == 304 ||			// allow any 2XX response code
+				stat == 1223 ||			// get it out of the cache
+								// Internet Explorer mangled the status code
+				!stat; // OR we're Titanium/browser chrome/chrome extension requesting a local file
 		}
 
 		//See if base tag is in use.
@@ -233,7 +249,7 @@ if(typeof window != 'undefined'){
 			//		failure and failure is okay (an exception otherwise)
 
 			// NOTE: must be declared before scope switches ie. this._xhrObj()
-			var http = this._xhrObj();
+			var http = d._xhrObj();
 
 			if(!hasBase && dojo._Url){
 				uri = (new dojo._Url(owloc, uri)).toString();
@@ -270,11 +286,11 @@ if(typeof window != 'undefined'){
 			//		evtName handler.
 			// evtName: should be in the form "onclick" for "onclick" handlers.
 			// Make sure you pass in the "on" part.
-			var oldHandler = _w[evtName] || function(){};
-			_w[evtName] = function(){
+			var _a = _w.attachEvent || _w.addEventListener;
+			evtName = _w.attachEvent ? evtName : evtName.substring(2);
+			_a(evtName, function(){
 				fp.apply(_w, arguments);
-				oldHandler.apply(_w, arguments);
-			};
+			}, false);
 		};
 
 
@@ -294,13 +310,14 @@ if(typeof window != 'undefined'){
 			while(mll.length){
 				(mll.pop())();
 			}
+			d = null;
 		};
 
 		var _onWindowUnloadAttached = 0;
 		d.addOnWindowUnload = function(/*Object?|Function?*/obj, /*String|Function?*/functionName){
 			// summary:
 			//		registers a function to be triggered when window.onunload
-			//		fires. 
+			//		fires.
 			//	description:
 			//		The first time that addOnWindowUnload is called Dojo
 			//		will register a page listener to trigger your unload
@@ -331,7 +348,7 @@ if(typeof window != 'undefined'){
 			//	description:
 			//		The first time that addOnUnload is called Dojo will
 			//		register a page listener to trigger your unload handler
-			//		with. 
+			//		with.
 			//
 			//		In a browser enviroment, the functions will be triggered
 			//		during the window.onbeforeunload event. Be careful of doing
@@ -344,7 +361,7 @@ if(typeof window != 'undefined'){
 			//
 			//		Further note that calling dojo.addOnUnload will prevent
 			//		browsers from using a "fast back" cache to make page
-			//		loading via back button instantaneous. 
+			//		loading via back button instantaneous.
 			// example:
 			//	|	dojo.addOnUnload(functionPointer)
 			//	|	dojo.addOnUnload(object, "functionName")
@@ -361,81 +378,80 @@ if(typeof window != 'undefined'){
 	})();
 //>>excludeEnd("webkitMobile");
 
+	//START DOMContentLoaded
 	dojo._initFired = false;
-	//	BEGIN DOMContentLoaded, from Dean Edwards (http://dean.edwards.name/weblog/2006/06/again/)
 	dojo._loadInit = function(e){
-		dojo._initFired = true;
-		// allow multiple calls, only first one will take effect
-		// A bug in khtml calls events callbacks for document for event which isnt supported
-		// for example a created contextmenu event calls DOMContentLoaded, workaround
-		var type = e && e.type ? e.type.toLowerCase() : "load";
-		if(arguments.callee.initialized || (type != "domcontentloaded" && type != "load")){ return; }
-		arguments.callee.initialized = true;
-		if("_khtmlTimer" in dojo){
-			clearInterval(dojo._khtmlTimer);
-			delete dojo._khtmlTimer;
+		if(dojo._scrollIntervalId){
+			clearInterval(dojo._scrollIntervalId);
+			dojo._scrollIntervalId = 0;
 		}
 
-		if(dojo._inFlightCount == 0){
-			dojo._modulesLoaded();
+		if(!dojo._initFired){
+			dojo._initFired = true;
+
+			//Help out IE to avoid memory leak.
+			if(!dojo.config.afterOnLoad && window.detachEvent){
+				window.detachEvent("onload", dojo._loadInit);
+			}
+
+			if(dojo._inFlightCount == 0){
+				dojo._modulesLoaded();
+			}
 		}
 	}
 
 	if(!dojo.config.afterOnLoad){
-		//	START DOMContentLoaded
-		// Mozilla and Opera 9 expose the event we could use
-		//>>excludeStart("webkitMobile", kwArgs.webkitMobile);
 		if(document.addEventListener){
-			// NOTE: 
-			//		due to a threading issue in Firefox 2.0, we can't enable
-			//		DOMContentLoaded on that platform. For more information, see:
-			//		http://trac.dojotoolkit.org/ticket/1704
-			if(dojo.isWebKit > 525 || dojo.isOpera || dojo.isFF >= 3 || (dojo.isMoz && dojo.config.enableMozDomContentLoaded === true)){
-		//>>excludeEnd("webkitMobile");
-				document.addEventListener("DOMContentLoaded", dojo._loadInit, null);
-		//>>excludeStart("webkitMobile", kwArgs.webkitMobile);
+			//Standards. Hooray! Assumption here that if standards based,
+			//it knows about DOMContentLoaded. It is OK if it does not, the fall through
+			//to window onload should be good enough.
+			document.addEventListener("DOMContentLoaded", dojo._loadInit, false);
+			window.addEventListener("load", dojo._loadInit, false);
+		}else if(window.attachEvent){
+			window.attachEvent("onload", dojo._loadInit);
+
+			//DOMContentLoaded approximation. Diego Perini found this MSDN article
+			//that indicates doScroll is available after DOM ready, so do a setTimeout
+			//to check when it is available.
+			//http://msdn.microsoft.com/en-us/library/ms531426.aspx
+			if(!dojo.config.skipIeDomLoaded && self === self.top){
+				dojo._scrollIntervalId = setInterval(function (){
+					try{
+						//When dojo is loaded into an iframe in an IE HTML Application
+						//(HTA), such as in a selenium test, javascript in the iframe
+						//can't see anything outside of it, so self===self.top is true,
+						//but the iframe is not the top window and doScroll will be
+						//available before document.body is set. Test document.body
+						//before trying the doScroll trick
+						if(document.body){
+							document.documentElement.doScroll("left");
+							dojo._loadInit();
+						}
+					}catch (e){}
+				}, 30);
 			}
-	
-			//	mainly for Opera 8.5, won't be fired if DOMContentLoaded fired already.
-			//  also used for Mozilla because of trac #1640
-			window.addEventListener("load", dojo._loadInit, null);
 		}
-		//>>excludeEnd("webkitMobile");
-	
-		//>>excludeStart("webkitMobile", kwArgs.webkitMobile);
-		if(dojo.isAIR){
-			window.addEventListener("load", dojo._loadInit, null);
-		}else if((dojo.isWebKit < 525) || dojo.isKhtml){
-			dojo._khtmlTimer = setInterval(function(){
-				if(/loaded|complete/.test(document.readyState)){
-					dojo._loadInit(); // call the onload handler
-				}
-			}, 10);
-		}
-		//>>excludeEnd("webkitMobile");
-		//	END DOMContentLoaded
 	}
 
 	//>>excludeStart("webkitMobile", kwArgs.webkitMobile);
 	if(dojo.isIE){
-		// 	for Internet Explorer. readyState will not be achieved on init
-		// 	call, but dojo doesn't need it however, we'll include it
-		// 	because we don't know if there are other functions added that
-		// 	might.  Note that this has changed because the build process
-		// 	strips all comments -- including conditional ones.
-		if(!dojo.config.afterOnLoad){
-			document.write('<scr'+'ipt defer src="//:" '
-				+ 'onreadystatechange="if(this.readyState==\'complete\'){' + dojo._scopeName + '._loadInit();}">'
-				+ '</scr'+'ipt>'
-			);
-		}
-
 		try{
-			document.namespaces.add("v","urn:schemas-microsoft-com:vml");
-			document.createStyleSheet().addRule("v\\:*", "behavior:url(#default#VML);  display:inline-block");
+			(function(){
+				document.namespaces.add("v", "urn:schemas-microsoft-com:vml");
+				var vmlElems = ["*", "group", "roundrect", "oval", "shape", "rect", "imagedata", "path", "textpath", "text"],
+					i = 0, l = 1, s = document.createStyleSheet();
+				if(dojo.isIE >= 8){
+					i = 1;
+					l = vmlElems.length;
+				}
+				for(; i < l; ++i){
+					s.addRule("v\\:" + vmlElems[i], "behavior:url(#default#VML); display:inline-block");
+				}
+			})();
 		}catch(e){}
 	}
 	//>>excludeEnd("webkitMobile");
+	//END DOMContentLoaded
 
 
 	/*
@@ -473,8 +489,15 @@ if(dojo.config.isDebug){
 }
 
 if(dojo.config.debugAtAllCosts){
-	dojo.config.useXDomain = true;
-	dojo.require("dojo._base._loader.loader_xd");
+	// this breaks the new AMD based module loader. The XDomain won't be necessary
+	// anyway if you switch to the asynchronous loader
+	//dojo.config.useXDomain = true;
+	//dojo.require("dojo._base._loader.loader_xd");
 	dojo.require("dojo._base._loader.loader_debug");
 	dojo.require("dojo.i18n");
 }
+
+//>>includeStart("amdLoader", kwArgs.asynchLoader);
+return dojo;
+});
+//>>includeEnd("amdLoader");

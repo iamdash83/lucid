@@ -1,6 +1,7 @@
 dojo.provide("dojox.data.tests.stores.OpmlStore");
 dojo.require("dojox.data.OpmlStore");
 dojo.require("dojo.data.api.Read");
+dojo.require("dojo.data.api.Identity");
 
 dojox.data.tests.stores.OpmlStore.getDatasource = function(filepath){
 	//  summary:
@@ -10,7 +11,7 @@ dojox.data.tests.stores.OpmlStore.getDatasource = function(filepath){
 	
 	var dataSource = {};
 	if(dojo.isBrowser){
-		dataSource.url = dojo.moduleUrl("dojox.data.tests", filepath).toString();            
+		dataSource.url = dojo.moduleUrl("dojox.data.tests", filepath).toString();
 	}else{
 		// When running tests in Rhino, xhrGet is not available,
 		// so we have the file data in the code below.
@@ -145,13 +146,13 @@ dojox.data.tests.stores.OpmlStore.verifyItems = function(opmlStore, items, attri
 dojox.data.tests.stores.OpmlStore.error = function(t, d, errData){
 	//  summary:
 	//		The error callback function to be used for all of the tests.
-	d.errback(errData);	
+	d.errback(errData);
 }
 
-doh.register("dojox.data.tests.stores.OpmlStore", 
+doh.register("dojox.data.tests.stores.OpmlStore",
 	[
 		function testReadAPI_fetch_all(t){
-			//	summary: 
+			//	summary:
 			//		Simple test of a basic fetch on OpmlStore.
 			//	description:
 			//		Simple test of a basic fetch on OpmlStore.
@@ -170,7 +171,7 @@ doh.register("dojox.data.tests.stores.OpmlStore",
 			return d; //Object
 		},
 		function testReadAPI_fetch_one(t){
-			//	summary: 
+			//	summary:
 			//		Simple test of a basic fetch on OpmlStore of a single item.
 			//	description:
 			//		Simple test of a basic fetch on OpmlStore of a single item.
@@ -183,15 +184,15 @@ doh.register("dojox.data.tests.stores.OpmlStore",
 				t.is(1, items.length);
 				d.callback(true);
 			}
-			opmlStore.fetch({ 	query: {text: "Asia"}, 
-								onComplete: onComplete, 
+			opmlStore.fetch({ 	query: {text: "Asia"},
+								onComplete: onComplete,
 								onError: dojo.partial(dojox.data.tests.stores.OpmlStore.error, t, d)
 							});
 			return d; //Object
 		},
 
 		function testReadAPI_fetch_one_Multiple(t){
-			//	summary: 
+			//	summary:
 			//		Simple test of a basic fetch on OpmlStore of a single item.
 			//	description:
 			//		Simple test of a basic fetch on OpmlStore of a single item.
@@ -216,13 +217,13 @@ doh.register("dojox.data.tests.stores.OpmlStore",
 				}
 			}
 
-			opmlStore.fetch({ 	query: {text: "Asia"}, 
-								onComplete: onCompleteOne, 
+			opmlStore.fetch({ 	query: {text: "Asia"},
+								onComplete: onCompleteOne,
 								onError: dojo.partial(dojox.data.tests.stores.OpmlStore.error, t, d)
 							});
 
-			opmlStore.fetch({ 	query: {text: "North America"}, 
-								onComplete: onCompleteTwo, 
+			opmlStore.fetch({ 	query: {text: "North America"},
+								onComplete: onCompleteTwo,
 								onError: dojo.partial(dojox.data.tests.stores.OpmlStore.error, t, d)
 							});
 
@@ -230,7 +231,7 @@ doh.register("dojox.data.tests.stores.OpmlStore",
 		},
 
 		function testReadAPI_fetch_one_MultipleMixed(t){
-			//	summary: 
+			//	summary:
 			//		Simple test of a basic fetch on OpmlStore of a single item mixing two fetch types.
 			//	description:
 			//		Simple test of a basic fetch on Cpmltore of a single item mixing two fetch types.
@@ -256,14 +257,14 @@ doh.register("dojox.data.tests.stores.OpmlStore",
 				t.assertTrue(item !== null);
 				console.log("Found item: " + opmlStore.getValue(item,"text"));
 				t.is('Egypt', opmlStore.getValue(item,"text")); //Should be the second node parsed, ergo id 1, first node is id 0.
-				t.is(1, opmlStore.getIdentity(item)); 
+				t.is(1, opmlStore.getIdentity(item));
 				if(done[0] && done[1]){
 					d.callback(true);
 				}
 			}
 
-			opmlStore.fetch({ 	query: {text: "Africa"}, 
-								onComplete: onComplete, 
+			opmlStore.fetch({ 	query: {text: "Africa"},
+								onComplete: onComplete,
 								onError: dojo.partial(dojox.data.tests.stores.OpmlStore.error, t, d)
 							});
 			
@@ -273,7 +274,7 @@ doh.register("dojox.data.tests.stores.OpmlStore",
 		},
 
 		function testReadAPI_fetch_one_deep(t){
-			//	summary: 
+			//	summary:
 			//		Simple test of a basic fetch on OpmlStore of a single item that's nested down as a child item.
 			//	description:
 			//		Simple test of a basic fetch on OpmlStore of a single item that's nested down as a child item.
@@ -286,16 +287,16 @@ doh.register("dojox.data.tests.stores.OpmlStore",
 				t.is(1, items.length);
 				d.callback(true);
 			}
-			opmlStore.fetch({ 	query: {text: "Mexico City"}, 
+			opmlStore.fetch({ 	query: {text: "Mexico City"},
 								queryOptions: {deep:true},
-								onComplete: onComplete, 
+								onComplete: onComplete,
 								onError: dojo.partial(dojox.data.tests.stores.OpmlStore.error, t, d)
 							});
 			return d; //Object
 		},
 
 		function testReadAPI_fetch_one_deep_off(t){
-			//	summary: 
+			//	summary:
 			//		Simple test of a basic fetch on OpmlStore of a single item that's nested down as a child item.
 			//	description:
 			//		Simple test of a basic fetch on OpmlStore of a single item that's nested down as a child item.
@@ -309,15 +310,15 @@ doh.register("dojox.data.tests.stores.OpmlStore",
 				t.is(0, items.length);
 				d.callback(true);
 			}
-			opmlStore.fetch({ 	query: {text: "Mexico City"}, 
-								onComplete: onComplete, 
+			opmlStore.fetch({ 	query: {text: "Mexico City"},
+								onComplete: onComplete,
 								onError: dojo.partial(dojox.data.tests.stores.OpmlStore.error, t, d)
 							});
 			return d; //Object
 		},
 
 		function testReadAPI_fetch_all_streaming(t){
-			//	summary: 
+			//	summary:
 			//		Simple test of a basic fetch on OpmlStore.
 			//	description:
 			//		Simple test of a basic fetch on OpmlStore.
@@ -343,14 +344,14 @@ doh.register("dojox.data.tests.stores.OpmlStore",
 
 			//Get everything...
 			opmlStore.fetch({	onBegin: onBegin,
-								onItem: onItem, 
+								onItem: onItem,
 								onComplete: onComplete,
 								onError: dojo.partial(dojox.data.tests.stores.OpmlStore.error, t, d)
 							});
 			return d; //Object
 		},
 		function testReadAPI_fetch_paging(t){
-			 //	summary: 
+			 //	summary:
 			 //		Test of multiple fetches on a single result.  Paging, if you will.
 			 //	description:
 			 //		Test of multiple fetches on a single result.  Paging, if you will.
@@ -417,7 +418,7 @@ doh.register("dojox.data.tests.stores.OpmlStore",
 
 		},
 		function testReadAPI_getLabel(t){
-			//	summary: 
+			//	summary:
 			//		Simple test of the getLabel function against a store set that has a label defined.
 			//	description:
 			//		Simple test of the getLabel function against a store set that has a label defined.
@@ -433,14 +434,14 @@ doh.register("dojox.data.tests.stores.OpmlStore",
 				t.assertEqual("Asia", label);
 				d.callback(true);
 			}
-			opmlStore.fetch({ 	query: {text: "Asia"}, 
-						   		onComplete: onComplete, 
+			opmlStore.fetch({ 	query: {text: "Asia"},
+						   		onComplete: onComplete,
 						   		onError: dojo.partial(dojox.data.tests.stores.OpmlStore.error, t, d)
 						   	});
 			return d;
 		},
 		function testReadAPI_getLabelAttributes(t){
-			//	summary: 
+			//	summary:
 			//		Simple test of the getLabelAttributes function against a store set that has a label defined.
 			//	description:
 			//		Simple test of the getLabelAttributes function against a store set that has a label defined.
@@ -456,15 +457,15 @@ doh.register("dojox.data.tests.stores.OpmlStore",
 				t.assertEqual("text", labelList[0]);
 				d.callback(true);
 			}
-			opmlStore.fetch({ 	query: {text: "Asia"}, 
-							   	onComplete: onComplete, 
+			opmlStore.fetch({ 	query: {text: "Asia"},
+							   	onComplete: onComplete,
 							   	onError: dojo.partial(dojox.data.tests.stores.OpmlStore.error, t, d)
 							});
 			return d;
 		},
 
 		function testReadAPI_getLabel_nondefault(t){
-			//	summary: 
+			//	summary:
 			//		Simple test of the getLabel function against a store set that has a label defined.
 			//	description:
 			//		Simple test of the getLabel function against a store set that has a label defined.
@@ -481,14 +482,14 @@ doh.register("dojox.data.tests.stores.OpmlStore",
 				t.assertEqual("Continent/Asia", label);
 				d.callback(true);
 			}
-			opmlStore.fetch({ 	query: {text: "Asia"}, 
-						   		onComplete: onComplete, 
+			opmlStore.fetch({ 	query: {text: "Asia"},
+						   		onComplete: onComplete,
 						   		onError: dojo.partial(dojox.data.tests.stores.OpmlStore.error, t, d)
 						   	});
 			return d;
 		},
 		function testReadAPI_getLabelAttributes_nondefault(t){
-			//	summary: 
+			//	summary:
 			//		Simple test of the getLabelAttributes function against a store set that has a label defined.
 			//	description:
 			//		Simple test of the getLabelAttributes function against a store set that has a label defined.
@@ -505,15 +506,15 @@ doh.register("dojox.data.tests.stores.OpmlStore",
 				t.assertEqual("label", labelList[0]);
 				d.callback(true);
 			}
-			opmlStore.fetch({ 	query: {text: "Asia"}, 
-							   	onComplete: onComplete, 
+			opmlStore.fetch({ 	query: {text: "Asia"},
+							   	onComplete: onComplete,
 							   	onError: dojo.partial(dojox.data.tests.stores.OpmlStore.error, t, d)
 							});
 			return d;
 		},
 
 		function testReadAPI_getValue(t){
-			//	summary: 
+			//	summary:
 			//		Simple test of the getValue function of the store.
 			//	description:
 			//		Simple test of the getValue function of the store.
@@ -555,9 +556,9 @@ doh.register("dojox.data.tests.stores.OpmlStore",
 			//Get everything...
 			opmlStore.fetch({ onComplete: completedAll, onError: dojo.partial(dojox.data.tests.stores.OpmlStore.error, t, d)});
 			return d; //Object
-		},	
+		},
 		function testReadAPI_getValues(t){
-			//	summary: 
+			//	summary:
 			//		Simple test of the getValues function of the store.
 			//	description:
 			//		Simple test of the getValues function of the store.
@@ -596,12 +597,12 @@ doh.register("dojox.data.tests.stores.OpmlStore",
 
 			//Get one item...
 			opmlStore.fetch({	query: {text: "North America"},
-								onComplete: completed, 
+								onComplete: completed,
 								onError: dojo.partial(dojox.data.tests.stores.OpmlStore.error, t, d)});
 			return d; //Object
 		},
 		function testReadAPI_isItem(t){
-			//	summary: 
+			//	summary:
 			//		Simple test of the isItem function of the store
 			//	description:
 			//		Simple test of the isItem function of the store
@@ -628,7 +629,7 @@ doh.register("dojox.data.tests.stores.OpmlStore",
 			return d; //Object
 		},
 		function testReadAPI_hasAttribute(t){
-			//	summary: 
+			//	summary:
 			//		Simple test of the hasAttribute function of the store
 			//	description:
 			//		Simple test of the hasAttribute function of the store
@@ -659,14 +660,14 @@ doh.register("dojox.data.tests.stores.OpmlStore",
 			}
 
 			//Get one item...
-			opmlStore.fetch({ 	query: {text: "Asia"}, 
-								onComplete: onComplete, 
+			opmlStore.fetch({ 	query: {text: "Asia"},
+								onComplete: onComplete,
 								onError: dojo.partial(dojox.data.tests.stores.OpmlStore.error, t, d)
 							});
 			return d; //Object
 		},
 		function testReadAPI_containsValue(t){
-			//	summary: 
+			//	summary:
 			//		Simple test of the containsValue function of the store
 			//	description:
 			//		Simple test of the containsValue function of the store
@@ -702,14 +703,14 @@ doh.register("dojox.data.tests.stores.OpmlStore",
 			}
 
 			//Get one item...
-			opmlStore.fetch({ 	query: {text: "North America"}, 
-								onComplete: onComplete, 
+			opmlStore.fetch({ 	query: {text: "North America"},
+								onComplete: onComplete,
 								onError: dojo.partial(dojox.data.tests.stores.OpmlStore.error, t, d)
 							});
 			return d; //Object
 		},
 		function testReadAPI_getAttributes(t){
-			//	summary: 
+			//	summary:
 			//		Simple test of the getAttributes function of the store
 			//	description:
 			//		Simple test of the getAttributes function of the store
@@ -736,7 +737,7 @@ doh.register("dojox.data.tests.stores.OpmlStore",
 			return d; //Object
 		},
 		function testReadAPI_getFeatures(t){
-			//	summary: 
+			//	summary:
 			//		Simple test of the getFeatures function of the store
 			//	description:
 			//		Simple test of the getFeatures function of the store
@@ -744,7 +745,7 @@ doh.register("dojox.data.tests.stores.OpmlStore",
 			var args = dojox.data.tests.stores.OpmlStore.getDatasource("stores/geography.xml");
 			var opmlStore = new dojox.data.OpmlStore(args);
 
-			var features = opmlStore.getFeatures(); 
+			var features = opmlStore.getFeatures();
 			var count = 0;
 			for(i in features){
 				t.assertTrue((i === "dojo.data.api.Read") || (i === "dojo.data.api.Identity"));
@@ -753,7 +754,7 @@ doh.register("dojox.data.tests.stores.OpmlStore",
 			t.assertTrue(count === 2);
 		},
 		function testReadAPI_fetch_patternMatch0(t){
-			//	summary: 
+			//	summary:
 			//		Function to test pattern matching of everything starting with Capital A
 			//	description:
 			//		Function to test pattern matching of everything starting with Capital A
@@ -773,7 +774,7 @@ doh.register("dojox.data.tests.stores.OpmlStore",
 			return d; //Object
 		},
 		function testReadAPI_fetch_patternMatch1(t){
-			//	summary: 
+			//	summary:
 			//		Function to test pattern matching of everything with America in it.
 			//	description:
 			//		Function to test pattern matching of everything with America in it.
@@ -793,7 +794,7 @@ doh.register("dojox.data.tests.stores.OpmlStore",
 			return d; //Object
 		},
 		function testReadAPI_fetch_patternMatch2(t){
-			//	summary: 
+			//	summary:
 			//		Function to test exact pattern match
 			//	description:
 			//		Function to test exact pattern match
@@ -812,7 +813,7 @@ doh.register("dojox.data.tests.stores.OpmlStore",
 			return d; //Object
 		},
 		function testReadAPI_fetch_patternMatch_caseInsensitive(t){
-			//	summary: 
+			//	summary:
 			//		Function to test exact pattern match with case insensitivity set.
 			//	description:
 			//		Function to test exact pattern match with case insensitivity set.
@@ -831,7 +832,7 @@ doh.register("dojox.data.tests.stores.OpmlStore",
 			return d; //Object
 		},
 		function testReadAPI_fetch_patternMatch_caseSensitive(t){
-			//	summary: 
+			//	summary:
 			//		Function to test exact pattern match with case sensitivity set.
 			//	description:
 			//		Function to test exact pattern match with case sensitivity set.
@@ -849,7 +850,7 @@ doh.register("dojox.data.tests.stores.OpmlStore",
 			return d; //Object
 		},
 		function testReadAPI_fetch_sortAlphabetic(t){
-			//	summary: 
+			//	summary:
 			//		Function to test sorting alphabetic ordering.
 			//	description:
 			//		Function to test sorting alphabetic ordering.
@@ -871,7 +872,7 @@ doh.register("dojox.data.tests.stores.OpmlStore",
 			return d; //Object
 		},
 		function testReadAPI_fetch_sortAlphabeticDescending(t){
-			//	summary: 
+			//	summary:
 			//		Function to test sorting alphabetic ordering in descending mode.
 			//	description:
 			//		Function to test sorting alphabetic ordering in descending mode.
@@ -894,7 +895,7 @@ doh.register("dojox.data.tests.stores.OpmlStore",
 			return d; //Object
 		},
 		function testReadAPI_fetch_sortAlphabeticWithCount(t){
-			//	summary: 
+			//	summary:
 			//		Function to test sorting numerically in descending order, returning only a specified number of them.
 			//	description:
 			//		Function to test sorting numerically in descending order, returning only a specified number of them.
@@ -913,14 +914,14 @@ doh.register("dojox.data.tests.stores.OpmlStore",
 			}
 			
 			var sortAttributes = [{attribute: "text", descending: true}];
-			opmlStore.fetch({sort: sortAttributes, 
+			opmlStore.fetch({sort: sortAttributes,
 							count: 4,
 							onComplete: completed,
 							onError: dojo.partial(dojox.data.tests.stores.OpmlStore.error, t, d)});
 			return d; //Object
 		},
 		function testReadAPI_functionConformance(t){
-			//	summary: 
+			//	summary:
 			//		Simple test read API conformance.  Checks to see all declared functions are actual functions on the instances.
 			//	description:
 			//		Simple test read API conformance.  Checks to see all declared functions are actual functions on the instances.
@@ -946,7 +947,7 @@ doh.register("dojox.data.tests.stores.OpmlStore",
 			t.assertTrue(passed);
 		},
 		function testIdentityAPI_fetchItemByIdentity(t){
-			//	summary: 
+			//	summary:
 			//		Simple test of the fetchItemByIdentity function of the store.
 			//	description:
 			//		Simple test of the fetchItemByIdentity function of the store.
@@ -957,14 +958,14 @@ doh.register("dojox.data.tests.stores.OpmlStore",
 			var d = new doh.Deferred();
 			function onItem(item){
 				t.assertTrue(item !== null);
-				d.callback(true);	
+				d.callback(true);
 			}
             opmlStore.fetchItemByIdentity({identity: "1", onItem: onItem, onError: dojo.partial(dojox.data.tests.stores.OpmlStore.error, t, d)});
 			return d;
 		},
 
 		function testIdentityAPI_fetchItemByIdentity_bad1(t){
-			//	summary: 
+			//	summary:
 			//		Simple test of the fetchItemByIdentity function of the store.
 			//	description:
 			//		Simple test of the fetchItemByIdentity function of the store.
@@ -975,13 +976,13 @@ doh.register("dojox.data.tests.stores.OpmlStore",
 			var d = new doh.Deferred();
 			function onItem(item){
 				t.assertTrue(item === null);
-				d.callback(true);	
+				d.callback(true);
 			}
             opmlStore.fetchItemByIdentity({identity: "200", onItem: onItem, onError: dojo.partial(dojox.data.tests.stores.OpmlStore.error, t, d)});
 			return d;
 		},
 		function testIdentityAPI_fetchItemByIdentity_bad2(t){
-			//	summary: 
+			//	summary:
 			//		Simple test of the fetchItemByIdentity function of the store.
 			//	description:
 			//		Simple test of the fetchItemByIdentity function of the store.
@@ -991,13 +992,13 @@ doh.register("dojox.data.tests.stores.OpmlStore",
 			var d = new doh.Deferred();
 			function onItem(item){
 				t.assertTrue(item === null);
-				d.callback(true);	
+				d.callback(true);
 			}
             opmlStore.fetchItemByIdentity({identity: "-1", onItem: onItem, onError: dojo.partial(dojox.data.tests.stores.OpmlStore.error, t, d)});
 			return d;
 		},
 		function testIdentityAPI_fetchItemByIdentity_bad3(t){
-			//	summary: 
+			//	summary:
 			//		Simple test of the fetchItemByIdentity function of the store.
 			//	description:
 			//		Simple test of the fetchItemByIdentity function of the store.
@@ -1007,13 +1008,13 @@ doh.register("dojox.data.tests.stores.OpmlStore",
 			var d = new doh.Deferred();
 			function onItem(item){
 				t.assertTrue(item === null);
-				d.callback(true);	
+				d.callback(true);
 			}
             opmlStore.fetchItemByIdentity({identity: "999999", onItem: onItem, onError: dojo.partial(dojox.data.tests.stores.OpmlStore.error, t, d)});
 			return d;
 		},
 		function testIdentityAPI_getIdentity(t){
-			//	summary: 
+			//	summary:
 			//		Simple test of the fetchItemByIdentity function of the store.
 			//	description:
 			//		Simple test of the fetchItemByIdentity function of the store.
@@ -1040,12 +1041,12 @@ doh.register("dojox.data.tests.stores.OpmlStore",
 			return d; //Object
 		},
 		function testIdentityAPI_functionConformance(t){
-			//	summary: 
+			//	summary:
 			//		Simple test identity API conformance.  Checks to see all declared functions are actual functions on the instances.
 			//	description:
 			//		Simple test identity API conformance.  Checks to see all declared functions are actual functions on the instances.
 
-			var testStore = new dojox.data.OpmlStore(dojox.data.tests.stores.CsvStore.getDatasource("stores/geography.xml"));
+			var testStore = new dojox.data.OpmlStore(dojox.data.tests.stores.OpmlStore.getDatasource("stores/geography.xml"));
 			var identityApi = new dojo.data.api.Identity();
 			var passed = true;
 

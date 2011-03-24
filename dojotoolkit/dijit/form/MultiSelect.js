@@ -1,8 +1,6 @@
-dojo.provide("dijit.form.MultiSelect");
+define("dijit/form/MultiSelect", ["dojo", "dijit", "dijit/form/_FormWidget"], function(dojo, dijit) {
 
-dojo.require("dijit.form._FormWidget");
-
-dojo.declare("dijit.form.MultiSelect", dijit.form._FormWidget, {
+dojo.declare("dijit.form.MultiSelect", dijit.form._FormValueWidget, {
 	// summary:
 	//		Widget version of a <select multiple=true> element,
 	//		for selecting multiple options.
@@ -12,8 +10,8 @@ dojo.declare("dijit.form.MultiSelect", dijit.form._FormWidget, {
 	//		NOTE: may be removed in version 2.0, since elements may have variable height;
 	//		set the size via style="..." or CSS class names instead.
 	size: 7,
-	
-	templateString: "<select multiple='true' ${nameAttrSetting} dojoAttachPoint='containerNode,focusNode' dojoAttachEvent='onchange: _onChange'></select>",
+
+	templateString: "<select multiple='true' ${!nameAttrSetting} dojoAttachPoint='containerNode,focusNode' dojoAttachEvent='onchange: _onChange'></select>",
 
 	attributeMap: dojo.delegate(dijit.form._FormWidget.prototype.attributeMap, {
 		size: "focusNode"
@@ -28,7 +26,7 @@ dojo.declare("dijit.form.MultiSelect", dijit.form._FormWidget, {
 		this._setValueAttr(this._resetValue, true);
 	},
 
-	addSelected: function(/* dijit.form.MultiSelect */ select){
+	addSelected: function(/*dijit.form.MultiSelect*/ select){
 		// summary:
 		//		Move the selected nodes of a passed Select widget
 		//		instance to this Select widget.
@@ -36,7 +34,7 @@ dojo.declare("dijit.form.MultiSelect", dijit.form._FormWidget, {
 		// example:
 		// |	// move all the selected values from "bar" to "foo"
 		// | 	dijit.byId("foo").addSelected(dijit.byId("bar"));
-		
+
 		select.getSelected().forEach(function(n){
 			this.containerNode.appendChild(n);
 			// scroll to bottom to see item
@@ -49,7 +47,7 @@ dojo.declare("dijit.form.MultiSelect", dijit.form._FormWidget, {
 			select.domNode.scrollTop = oldscroll;
 		},this);
 	},
-					
+
 	getSelected: function(){
 		// summary:
 		//		Access the NodeList of the selected options directly
@@ -57,29 +55,29 @@ dojo.declare("dijit.form.MultiSelect", dijit.form._FormWidget, {
 			return n.selected; // Boolean
 		}); // dojo.NodeList
 	},
-	
+
 	_getValueAttr: function(){
 		// summary:
-		//		Hook so attr('value') works.
+		//		Hook so get('value') works.
 		// description:
 		//		Returns an array of the selected options' values.
 		return this.getSelected().map(function(n){
 			return n.value;
 		});
 	},
-	
-	_multiValue: true, // for Form
 
-	_setValueAttr: function(/* Array */values){
+	multiple: true, // for Form
+
+	_setValueAttr: function(/*Array*/ values){
 		// summary:
-		//		Hook so attr('value', values) works.
+		//		Hook so set('value', values) works.
 		// description:
 		//		Set the value(s) of this Select based on passed values
 		dojo.query("option",this.containerNode).forEach(function(n){
 			n.selected = (dojo.indexOf(values,n.value) != -1);
 		});
 	},
-		
+
 	invertSelection: function(onChange){
 		// summary:
 		//		Invert the selection
@@ -88,21 +86,25 @@ dojo.declare("dijit.form.MultiSelect", dijit.form._FormWidget, {
 		dojo.query("option",this.containerNode).forEach(function(n){
 			n.selected = !n.selected;
 		});
-		this._handleOnChange(this.attr('value'), onChange==true);
+		this._handleOnChange(this.get('value'), onChange == true);
 	},
 
 	_onChange: function(/*Event*/ e){
-		this._handleOnChange(this.attr('value'), true);
+		this._handleOnChange(this.get('value'), true);
 	},
-	
+
 	// for layout widgets:
-	resize: function(/* Object */size){
+	resize: function(/*Object*/ size){
 		if(size){
 			dojo.marginBox(this.domNode, size);
 		}
 	},
-	
+
 	postCreate: function(){
 		this._onChange();
 	}
+});
+
+
+return dijit.form.MultiSelect;
 });

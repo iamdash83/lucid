@@ -1,3 +1,5 @@
+define(
+//begin v1.x content
 ({
 	'bold': 'Полужирный',
 	'copy': 'Копировать',
@@ -30,7 +32,7 @@
 	'toggleTableBorder': 'Переключить рамку таблицы',
 	'deleteTable': 'Удалить таблицу',
 	'tableProp': 'Свойства таблицы',
-	'htmlToggle': 'Исходный текст HTML',
+	'htmlToggle': 'Код HTML',
 	'foreColor': 'Цвет текста',
 	'hiliteColor': 'Цвет фона',
 	'plainFormatBlock': 'Стиль абзаца',
@@ -38,6 +40,13 @@
 	'fontSize': 'Размер шрифта',
 	'fontName': 'Название шрифта',
 	'tabIndent': 'Табуляция',
+	"fullScreen": "Переключить полноэкранный режим",
+	"viewSource": "Показать исходный код HTML",
+	"print": "Печать",
+	"newPage": "Создать страницу",
 	/* Error messages */
-	'systemShortcut': 'Действие "${0}" доступно в вашем браузере только через сочетание клавиш. Нажмите ${1}.'
+	'systemShortcut': 'Действие "${0}" можно выполнить в браузере только путем нажатия клавиш ${1}.'
 })
+
+//end v1.x content
+);

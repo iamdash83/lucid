@@ -1,6 +1,13 @@
-dojo.provide("dojo.dnd.TimedMoveable");
+define("dojo/dnd/TimedMoveable", ["dojo", "dojo/dnd/Moveable"], function(dojo) {
 
-dojo.require("dojo.dnd.Moveable");
+/*=====
+dojo.declare("dojo.dnd.__TimedMoveableArgs", [dojo.dnd.__MoveableArgs], {
+	// timeout: Number
+	//		delay move by this number of ms,
+	//		accumulating position changes during the timeout
+	timeout: 0
+});
+=====*/
 
 (function(){
 	// precalculate long expressions
@@ -8,22 +15,21 @@ dojo.require("dojo.dnd.Moveable");
 		
 	dojo.declare("dojo.dnd.TimedMoveable", dojo.dnd.Moveable, {
 		// summary:
-		//	A specialized version of Moveable to support an FPS throttling.
-		//	This class puts an upper restriction on FPS, which may reduce 
-		//	the CPU load. The additional parameter "timeout" regulates
-		//	the delay before actually moving the moveable object.
+		//		A specialized version of Moveable to support an FPS throttling.
+		//		This class puts an upper restriction on FPS, which may reduce
+		//		the CPU load. The additional parameter "timeout" regulates
+		//		the delay before actually moving the moveable object.
 		
 		// object attributes (for markup)
 		timeout: 40,	// in ms, 40ms corresponds to 25 fps
 	
 		constructor: function(node, params){
-			// summary: an object, which makes a node moveable with a timer
-			// node: Node: a node (or node's id) to be moved
-			// params: Object: an optional object with additional parameters.
-			//	See dojo.dnd.Moveable for details on general parameters.
-			//	Following parameters are specific for this class:
-			//		timeout: Number: delay move by this number of ms
-			//			accumulating position changes during the timeout
+			// summary:
+			//		an object that makes a node moveable with a timer
+			// node: Node||String
+			//		a node (or node's id) to be moved
+			// params: dojo.dnd.__TimedMoveableArgs
+			//		object with additional parameters.
 			
 			// sanitize parameters
 			if(!params){ params = {}; }
@@ -60,3 +66,6 @@ dojo.require("dojo.dnd.Moveable");
 		}
 	});
 })();
+
+return dojo.dnd.TimedMoveable;
+});

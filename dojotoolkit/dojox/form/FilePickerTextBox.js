@@ -1,28 +1,25 @@
 dojo.provide("dojox.form.FilePickerTextBox");
 
-dojo.require("dojox.widget.FilePicker");
+dojo.require("dojo.window");
 dojo.require("dijit.form.ValidationTextBox");
-dojo.require("dojox.form._HasDropDown");
+dojo.require("dijit._HasDropDown");
+dojo.require("dojox.widget.FilePicker");
 
 dojo.declare(
 	"dojox.form.FilePickerTextBox",
-	[dijit.form.ValidationTextBox, dojox.form._HasDropDown],
+	[dijit.form.ValidationTextBox, dijit._HasDropDown],
 	{
 		// summary:
 		//		A validating text box tied to a file picker popup
 		
 		baseClass: "dojoxFilePickerTextBox",
 		
-		templatePath: dojo.moduleUrl("dojox.form", "resources/FilePickerTextBox.html"),
+		templateString: dojo.cache("dojox.form", "resources/FilePickerTextBox.html"),
 		
 		// searchDelay: Integer
 		//		Delay in milliseconds between when user types something and we start
 		//		searching based on that value
 		searchDelay: 500,
-		
-		// _stopClickEvent: boolean
-		//		Set to false since we want to handle our own click events
-		_stopClickEvents: false,
 		
 		// valueItem: item
 		//		The item, in our store, of the directory relating to our value
@@ -53,12 +50,12 @@ dojo.declare(
 			// summary: sets the value of this widget
 			if(!this._searchInProgress){
 				this.inherited(arguments);
-				value = value||"";
-				var tVal = this.dropDown.attr("pathValue")||"";
+				value = value || "";
+				var tVal = this.dropDown.get("pathValue") || "";
 				if(value !== tVal){
 					this._skip = true;
 					var fx = dojo.hitch(this, "_setBlurValue");
-					this.dropDown._setPathValueAttr(value, !fromWidget, 
+					this.dropDown._setPathValueAttr(value, !fromWidget,
 											this._settingBlurValue ? fx : null);
 				}
 			}
@@ -94,7 +91,7 @@ dojo.declare(
 			// set width to 0 so that it will resize automatically
 			this.dropDown.domNode.style.width="0px";
 			if(!("minPaneWidth" in (this.constraints||{}))){
-				this.dropDown.attr("minPaneWidth", (this.domNode.offsetWidth / this.numPanes));
+				this.dropDown.set("minPaneWidth", (this.domNode.offsetWidth / this.numPanes));
 			}
 			this.inherited(arguments);
 		},
@@ -102,8 +99,8 @@ dojo.declare(
 		toggleDropDown: function(){
 			this.inherited(arguments);
 			// Make sure our display is up-to-date with our value
-			if(this._opened){ 
-				this.dropDown.attr("pathValue", this.attr("value"));
+			if(this._opened){
+				this.dropDown.set("pathValue", this.get("value"));
 			}
 		},
 		
@@ -151,7 +148,7 @@ dojo.declare(
 			// summary: sets the value of the widget once focus has left
 			if(this.dropDown && !this._settingBlurValue){
 				this._settingBlurValue = true;
-				this.attr("value", this.focusNode.value);
+				this.set("value", this.focusNode.value);
 			}else{
 				delete this._settingBlurValue;
 				this.inherited(arguments);
@@ -166,7 +163,7 @@ dojo.declare(
 				return value;
 			}
 			var dd = this.dropDown, topDir = dd.topDir, sep = dd.pathSeparator;
-			var ddVal = dd.attr("pathValue");
+			var ddVal = dd.get("pathValue");
 			var norm = function(v){
 				if(topDir.length && v.indexOf(topDir) === 0){
 					v = v.substring(topDir.length);
@@ -220,8 +217,8 @@ dojo.declare(
 						var first = dojo.filter(children, function(i){
 							return (i.label.indexOf(dir) === 0);
 						})[0];
-						if(exact && 
-							((dirs.length > idx + 1 && exact.children) || 
+						if(exact &&
+							((dirs.length > idx + 1 && exact.children) ||
 							(!exact.children))){
 							idx++;
 							child._menu.onItemClick(exact, {type: "internal",
@@ -244,7 +241,7 @@ dojo.declare(
 								}
 								targetString = targetString.substring(dir.length);
 								window.setTimeout(function(){
-									dijit.scrollIntoView(first.domNode);
+									dojo.window.scrollIntoView(first.domNode);
 								}, 1);
 								fn.value = oVal + targetString;
 								dijit.selectInputText(fn, oVal.length);
@@ -254,7 +251,7 @@ dojo.declare(
 								if(this._menuFocus){
 									this.dropDown._updateClass(this._menuFocus, "Item", {"Hover": false, "Focus": false});
 								}
-								delete this._menuFocus;							
+								delete this._menuFocus;
 							}
 							_cleanup();
 						}

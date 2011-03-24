@@ -2,13 +2,13 @@ dojo.provide("dojox.data.demos.widgets.FlickrViewList");
 dojo.require("dojox.dtl._Templated");
 dojo.require("dijit._Widget");
 
-dojo.declare("dojox.data.demos.widgets.FlickrViewList", 
+dojo.declare("dojox.data.demos.widgets.FlickrViewList",
 	[ dijit._Widget, dojox.dtl._Templated ],
 	{
 		store: null,
 		items: null,
 
-		templatePath: dojo.moduleUrl("dojox", "data/demos/widgets/templates/FlickrViewList.html"),
+		templateString: dojo.cache("dojox", "data/demos/widgets/templates/FlickrViewList.html"),
 	
 		fetch: function(request){
 			request.onComplete = dojo.hitch(this, "onComplete");

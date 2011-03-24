@@ -7,22 +7,23 @@
 </style>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <script type="text/javascript" src="../../../dojo/dojo.js" djConfig="isDebug: true"></script>
-<!--<script type="text/javascript" src="../vml.js"></script>-->
-<!--<script type="text/javascript" src="../svg.js"></script>-->
-<!--<script type="text/javascript" src="../silverlight.js"></script>-->
 <script type="text/javascript">
 dojo.require("dojox.gfx");
 
 var image = null, grid_size = 500, grid_step = 50,
 	m = dojox.gfx.matrix;
 
-makeShapes = function(){
+createSurface = function(){
 	var surface = dojox.gfx.createSurface("test", 800, 600);
+	surface.whenLoaded(makeShapes);
+};
+
+makeShapes = function(surface){
 	for(var i = 0; i <= grid_size; i += grid_step){
 		surface.createLine({x1: 0, x2: grid_size, y1: i, y2: i}).setStroke("black");
 		surface.createLine({y1: 0, y2: grid_size, x1: i, x2: i}).setStroke("black");
 	}
-    image = surface.createImage({width: 157, height: 53, src: "http://archive.dojotoolkit.org/nightly/checkout/util/resources/dojotoolkit.org/mini-dtk/images/logo.png"});
+    image = surface.createImage({width: 150, height: 100, src: "images/eugene-sm.jpg"});
     image.connect("onclick", function(){ alert("You didn't expect a download, did you?"); });
 };
 
@@ -50,7 +51,7 @@ transformImage = function(){
 	}
 };
 
-dojo.addOnLoad(makeShapes);
+dojo.addOnLoad(createSurface);
 
 </script>
 </head>

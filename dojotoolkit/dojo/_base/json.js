@@ -1,14 +1,18 @@
-dojo.provide("dojo._base.json");
+define("dojo/_base/json", ["dojo/lib/kernel"], function(dojo){
 
 dojo.fromJson = function(/*String*/ json){
 	// summary:
-	// 		Parses a [JSON](http://json.org) string to return a JavaScript object.  Throws for invalid JSON strings.
-	// json: 
+	// 		Parses a [JSON](http://json.org) string to return a JavaScript object.
+	// description:
+	// 		Throws for invalid JSON strings, but it does not use a strict JSON parser. It
+	// 		delegates to eval().  The content passed to this method must therefore come
+	//		from a trusted source.
+	// json:
 	//		a string literal of a JSON item, for instance:
 	//			`'{ "foo": [ "bar", 1, { "baz": "thud" } ] }'`
 
 	return eval("(" + json + ")"); // Object
-}
+};
 
 dojo._escapeString = function(/*String*/str){
 	//summary:
@@ -18,31 +22,39 @@ dojo._escapeString = function(/*String*/str){
 	return ('"' + str.replace(/(["\\])/g, '\\$1') + '"').
 		replace(/[\f]/g, "\\f").replace(/[\b]/g, "\\b").replace(/[\n]/g, "\\n").
 		replace(/[\t]/g, "\\t").replace(/[\r]/g, "\\r"); // string
-}
+};
 
 dojo.toJsonIndentStr = "\t";
 dojo.toJson = function(/*Object*/ it, /*Boolean?*/ prettyPrint, /*String?*/ _indentStr){
-	// summary:
+	//	summary:
 	//		Returns a [JSON](http://json.org) serialization of an object.
-	//
-	// description:
+	//	description:
 	//		Returns a [JSON](http://json.org) serialization of an object.
 	//		Note that this doesn't check for infinite recursion, so don't do that!
-	//
-	// it:
+	//	it:
 	//		an object to be serialized. Objects may define their own
 	//		serialization via a special "__json__" or "json" function
 	//		property. If a specialized serializer has been defined, it will
 	//		be used as a fallback.
-	//
-	// prettyPrint:
+	//	prettyPrint:
 	//		if true, we indent objects and arrays to make the output prettier.
-	//		The variable dojo.toJsonIndentStr is used as the indent string 
-	//		-- to use something other than the default (tab), 
-	//		change that variable before calling dojo.toJson().
-	//
-	// _indentStr:
+	//		The variable `dojo.toJsonIndentStr` is used as the indent string --
+	//		to use something other than the default (tab), change that variable
+	//		before calling dojo.toJson().
+	//	_indentStr:
 	//		private variable for recursive calls when pretty printing, do not use.
+	//	example:
+	//		simple serialization of a trivial object
+	//		|	var jsonStr = dojo.toJson({ howdy: "stranger!", isStrange: true });
+	//		|	doh.is('{"howdy":"stranger!","isStrange":true}', jsonStr);
+	//	example:
+	//		a custom serializer for an objects of a particular class:
+	//		|	dojo.declare("Furby", null, {
+	//		|		furbies: "are strange",
+	//		|		furbyCount: 10,
+	//		|		__json__: function(){
+	//		|		},
+	//		|	});
 
 	if(it === undefined){
 		return "undefined";
@@ -54,8 +66,8 @@ dojo.toJson = function(/*Object*/ it, /*Boolean?*/ prettyPrint, /*String?*/ _ind
 	if(it === null){
 		return "null";
 	}
-	if(dojo.isString(it)){ 
-		return dojo._escapeString(it); 
+	if(dojo.isString(it)){
+		return dojo._escapeString(it);
 	}
 	// recurse
 	var recurse = arguments.callee;
@@ -128,4 +140,7 @@ dojo.toJson = function(/*Object*/ it, /*Boolean?*/ prettyPrint, /*String?*/ _ind
 		output.push(newLine + nextIndent + keyStr + ":" + sep + val);
 	}
 	return "{" + output.join("," + sep) + newLine + _indentStr + "}"; // String
-}
+};
+
+return dojo;
+});

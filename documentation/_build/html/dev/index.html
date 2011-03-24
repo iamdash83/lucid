@@ -1,0 +1,165 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Developer Documentation &mdash; Lucid v1.0 documentation</title>
+    <link rel="stylesheet" href="../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+          URL_ROOT:    '../',
+          VERSION:     '1.0',
+          COLLAPSE_MODINDEX: false,
+          FILE_SUFFIX: ''
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/interface.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="contents" title="Global table of contents" href="../contents.html" />
+    <link rel="index" title="Global index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="top" title="Lucid v1.0 documentation" href="../index.html" />
+    <link rel="prev" title="User Documentation" href="../user/index.html" />
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../modindex.html" title="Global Module Index"
+             accesskey="M">modules</a> |</li>
+        <li class="right" >
+          <a href="../user/index.html" title="User Documentation"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../index.html">Lucid v1.0 documentation</a> &raquo;</li>
+      </ul>
+    </div>
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  
+  <div class="section" id="s-developer-documentation">
+<span id="s-dev-index"></span><h1 id="developer-documentation"><span id="dev-index"></span>Developer Documentation<a class="headerlink" href="#developer-documentation" title="Permalink to this headline">¶</a></h1>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Starting in 1.0 RC2, the <tt class="docutils literal"><span class="pre">desktop</span></tt> namespace was renamed to <tt class="docutils literal"><span class="pre">lucid</span></tt>. There is some code in place for backwards compatibility, but it will be removed in 1.1. Please update your apps.</p>
+</div>
+<div class="section" id="s-getting-started">
+<h2 id="getting-started">Getting Started<a class="headerlink" href="#getting-started" title="Permalink to this headline">¶</a></h2>
+<dl class="docutils">
+<dt><a class="reference" href="intro/getting-started.html#dev-intro-getting-started"><em>Getting Started</em></a></dt>
+<dd>Quick blurbs about how to get started with developing themes or applications.</dd>
+<dt><a class="reference" href="intro/application-tutorial.html#dev-intro-application-tutorial"><em>Application Tutorial</em></a></dt>
+<dd>Learn how to write applications for Lucid</dd>
+<dt><a class="reference" href="intro/application-structure.html#dev-intro-application-structure"><em>Application Structure</em></a></dt>
+<dd>How Lucid applications are structured</dd>
+</dl>
+</div>
+<div class="section" id="s-reference">
+<h2 id="reference">Reference<a class="headerlink" href="#reference" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="s-libraries">
+<h3 id="libraries">Libraries<a class="headerlink" href="#libraries" title="Permalink to this headline">¶</a></h3>
+<dl class="docutils">
+<dt><a class="reference" href="ref/registry.html#dev-ref-registry"><em>Registry</em></a></dt>
+<dd>Use the registry to store application data</dd>
+<dt><a class="reference" href="ref/filesystem.html#dev-ref-filesystem"><em>Filesystem</em></a></dt>
+<dd>Read and write to files</dd>
+<dt><a class="reference" href="ref/sound.html#dev-ref-sound"><em>Sound</em></a></dt>
+<dd>Play audio files in applications</dd>
+<dt><a class="reference" href="ref/crosstalk.html#dev-ref-crosstalk"><em>Crosstalk</em></a></dt>
+<dd>Communicate between two instances of an app, regardless of user</dd>
+<dt><a class="reference" href="ref/app.html#dev-ref-app"><em>App</em></a></dt>
+<dd>Launch other applications from your application</dd>
+</dl>
+</div>
+<div class="section" id="s-widgets">
+<h3 id="widgets">Widgets<a class="headerlink" href="#widgets" title="Permalink to this headline">¶</a></h3>
+<dl class="docutils">
+<dt><a class="reference" href="ref/widget/window.html#dev-ref-widget-window"><em>Window</em></a></dt>
+<dd>The standard window widget</dd>
+<dt><a class="reference" href="ref/widget/statusbar.html#dev-ref-widget-statusbar"><em>Statusbar</em></a></dt>
+<dd>A status bar widget that can be used in windows</dd>
+<dt><a class="reference" href="ref/widget/console.html#dev-ref-widget-console"><em>Console</em></a></dt>
+<dd>A bash-like console widget</dd>
+<dt><a class="reference" href="ref/widget/filearea.html#dev-ref-widget-filearea"><em>File Area</em></a></dt>
+<dd>A widget that displays files and folders in a given path</dd>
+</dl>
+</div>
+</div>
+<div class="section" id="s-how-to-guides">
+<h2 id="how-to-guides">How-to guides<a class="headerlink" href="#how-to-guides" title="Permalink to this headline">¶</a></h2>
+<dl class="docutils">
+<dt><a class="reference" href="howto/translations.html#dev-howto-translations"><em>Translations</em></a></dt>
+<dd>Learn how to translate Lucid and it&#8217;s applications</dd>
+<dt><a class="reference" href="howto/packages.html#dev-howto-packages"><em>Packaging</em></a></dt>
+<dd>Make packages that can be installed easily</dd>
+<dt><a class="reference" href="howto/custom-widgets.html#dev-howto-custom-widgets"><em>Writing Custom Widgets</em></a></dt>
+<dd>How to bundle custom dijit widgets in your application</dd>
+</dl>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <h3>Table Of Contents</h3>
+            <ul>
+<li><a class="reference" href="">Developer Documentation</a><ul>
+<li><a class="reference" href="#getting-started">Getting Started</a></li>
+<li><a class="reference" href="#reference">Reference</a><ul>
+<li><a class="reference" href="#libraries">Libraries</a></li>
+<li><a class="reference" href="#widgets">Widgets</a></li>
+</ul>
+</li>
+<li><a class="reference" href="#how-to-guides">How-to guides</a></li>
+</ul>
+</li>
+</ul>
+
+            <h4>Previous topic</h4>
+            <p class="topless"><a href="../user/index.html" title="previous chapter">User Documentation</a></p>
+            <h3>This Page</h3>
+            <ul class="this-page-menu">
+              <li><a href="../_sources/dev/index.txt">Show Source</a></li>
+            </ul>
+            <h3>Quick search</h3>
+            <form class="search" action="../search.html" method="get">
+              <input type="text" name="q" size="18" /> <input type="submit" value="Go" />
+              <input type="hidden" name="check_keywords" value="yes" />
+              <input type="hidden" name="area" value="default" />
+            </form>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../modindex.html" title="Global Module Index"
+             accesskey="M">modules</a> |</li>
+        <li class="right" >
+          <a href="../user/index.html" title="User Documentation"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../index.html">Lucid v1.0 documentation</a> &raquo;</li>
+      </ul>
+    </div>
+    <div class="footer">
+      &copy; Copyright Dojo Foundation and Lucid Contributors.
+      Last updated on May 31, 2009.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>.
+    </div>
+  </body>
+</html>

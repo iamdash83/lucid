@@ -1,0 +1,163 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>lucid.Sound &mdash; Lucid v1.0 documentation</title>
+    <link rel="stylesheet" href="../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+          URL_ROOT:    '../../',
+          VERSION:     '1.0',
+          COLLAPSE_MODINDEX: false,
+          FILE_SUFFIX: ''
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/interface.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="contents" title="Global table of contents" href="../../contents.html" />
+    <link rel="index" title="Global index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="top" title="Lucid v1.0 documentation" href="../../index.html" />
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../modindex.html" title="Global Module Index"
+             accesskey="M">modules</a> |</li>
+        <li><a href="../../index.html">Lucid v1.0 documentation</a> &raquo;</li>
+      </ul>
+    </div>
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  
+  <div class="section" id="s-module-lucid.Sound">
+<span id="s-dev-ref-sound"></span><h1 id="module-lucid.Sound"><span id="dev-ref-sound"></span>lucid.Sound<a class="headerlink" href="#module-lucid.Sound" title="Permalink to this headline">¶</a></h1>
+<p>The sound module can be used to stream audio from both the web and from the filesystem. It abstracts between flash, html5 &lt;audio&gt;, and &lt;embed&gt; to play the sounds.</p>
+<div class="section" id="s-creating-a-sound-object">
+<h2 id="creating-a-sound-object">Creating a sound object<a class="headerlink" href="#creating-a-sound-object" title="Permalink to this headline">¶</a></h2>
+<p>Before we can play the sound, we need to create a sound object. To start, we&#8217;ll just stream an audio file that we have in our application&#8217;s folder.</p>
+<div class="highlight"><pre><span class="k">var</span> <span class="nx">sound</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">lucid</span><span class="p">.</span><span class="nx">Sound</span><span class="p">({</span>
+    <span class="nx">src</span><span class="o">:</span> <span class="nx">dojo</span><span class="p">.</span><span class="nx">moduleUrl</span><span class="p">(</span><span class="s2">&quot;lucid.apps.&quot;</span><span class="o">+</span><span class="k">this</span><span class="p">.</span><span class="nx">sysname</span><span class="o">,</span> <span class="s2">&quot;media/sound.wav&quot;</span><span class="p">)</span>
+<span class="p">});</span>
+</pre></div>
+<p>There's some additional parameters we can pass to the sound object:</p>
+<dl class="docutils">
+<dt>loop <span class="classifier-delimiter">:</span> <span class="classifier">boolean</span></dt>
+<dd>Weather or not the sound should loop (defaults to false)</dd>
+<dt>autoStart <span class="classifier-delimiter">:</span> <span class="classifier">boolean</span></dt>
+<dd>Weather or not the sound starts once it's loaded (defaults to false)</dd>
+</dl>
+</div>
+<div class="section" id="s-controlling-audio-playback">
+<h2 id="controlling-audio-playback">Controlling audio playback<a class="headerlink" href="#controlling-audio-playback" title="Permalink to this headline">¶</a></h2>
+<p>We can control playback of the sound pretty easily:</p>
+<div class="highlight"><pre><span class="nx">sound</span><span class="p">.</span><span class="nx">play</span><span class="p">();</span>
+<span class="nx">sound</span><span class="p">.</span><span class="nx">pause</span><span class="p">();</span>
+<span class="nx">sound</span><span class="p">.</span><span class="nx">stop</span><span class="p">();</span>
+</pre></div>
+</div>
+<div class="section" id="s-detecting-capabilities">
+<h2 id="detecting-capabilities">Detecting capabilities<a class="headerlink" href="#detecting-capabilities" title="Permalink to this headline">¶</a></h2>
+<p>You can detect the sound backend's capabilities using the <tt class="docutils literal"><span class="pre">capabilities</span></tt> property:</p>
+<div class="highlight"><pre><span class="c">// capabilities: Object</span>
+<span class="c">//     What can the current backend do/have access to?</span>
+<span class="nx">capabilities</span><span class="o">:</span> <span class="p">{</span>
+    <span class="nx">play</span><span class="o">:</span> <span class="kc">true</span><span class="o">,</span>
+    <span class="nx">pause</span><span class="o">:</span> <span class="kc">true</span><span class="o">,</span>
+    <span class="nx">stop</span><span class="o">:</span> <span class="kc">true</span><span class="o">,</span>
+    <span class="nx">duration</span><span class="o">:</span> <span class="kc">true</span><span class="o">,</span>
+    <span class="nx">position</span><span class="o">:</span> <span class="kc">true</span><span class="o">,</span>
+    <span class="nx">volume</span><span class="o">:</span> <span class="kc">true</span><span class="o">,</span>
+    <span class="nx">id3</span><span class="o">:</span> <span class="kc">true</span>
+<span class="p">}</span><span class="o">,</span>
+</pre></div>
+</div>
+<div class="section" id="s-position-duration-and-volume">
+<h2 id="position-duration-and-volume">Position, duration, and volume<a class="headerlink" href="#position-duration-and-volume" title="Permalink to this headline">¶</a></h2>
+<p>For position, duration, and volume, there are functions that act the same (except for duration). If you call them without argumens, the function will return it's current value. If you call them with a number as the first argument, you can set the property's value (except for duration, which cannot be set). For functions that define time, values will be in miliseconds. For volume, the number will be a floating point (1 would be full volume, 0 would be muted, 0.5 would be 50% volume).</p>
+<div class="highlight"><pre><span class="k">var</span> <span class="nx">pos</span> <span class="o">=</span> <span class="nx">sound</span><span class="p">.</span><span class="nx">position</span><span class="p">();</span>
+<span class="k">var</span> <span class="nx">dur</span> <span class="o">=</span> <span class="nx">sound</span><span class="p">.</span><span class="nx">duration</span><span class="p">();</span>
+<span class="nx">sound</span><span class="p">.</span><span class="nx">position</span><span class="p">(</span><span class="nx">dur</span><span class="o">/</span><span class="mi">2</span><span class="p">);</span>
+<span class="k">var</span> <span class="nx">vol</span> <span class="o">=</span> <span class="nx">sound</span><span class="p">.</span><span class="nx">volume</span><span class="p">();</span>
+<span class="nx">sound</span><span class="p">.</span><span class="nx">volume</span><span class="p">(</span><span class="mf">0.75</span><span class="p">);</span>
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">pos</span><span class="o">,</span> <span class="nx">dur</span><span class="o">,</span> <span class="nx">vol</span><span class="p">);</span>
+</pre></div>
+</div>
+<div class="section" id="s-reading-id3-information">
+<h2 id="reading-id3-information">Reading ID3 information<a class="headerlink" href="#reading-id3-information" title="Permalink to this headline">¶</a></h2>
+<p>If the browser is using the flash sound backend, you can read the audio file's ID3 information:</p>
+<div class="highlight"><pre><span class="k">if</span><span class="p">(</span><span class="nx">sound</span><span class="p">.</span><span class="nx">capabilities</span><span class="p">.</span><span class="nx">id3</span><span class="p">)</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">sound</span><span class="p">.</span><span class="nx">capabilites</span><span class="p">.</span><span class="nx">id3</span><span class="p">());</span>
+</pre></div>
+<p>This function's return value is the same thing you would get back in flash. See the <a class="reference" href="http://livedocs.adobe.com/flash/9.0/ActionScriptLangRefV3/flash/media/ID3Info.html">flash's documentation on id3 tags</a>. for more info.</p>
+</div>
+<div class="section" id="s-cleaning-up">
+<h2 id="cleaning-up">Cleaning up<a class="headerlink" href="#cleaning-up" title="Permalink to this headline">¶</a></h2>
+<p>To stop all playback and unload the sound, you can use the <tt class="docutils literal"><span class="pre">destroy</span></tt> method:</p>
+<div class="highlight"><pre><span class="nx">sound</span><span class="p">.</span><span class="nx">destroy</span><span class="p">();</span>
+</pre></div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <h3>Table Of Contents</h3>
+            <ul>
+<li><a class="reference" href="">lucid.Sound</a><ul>
+<li><a class="reference" href="#creating-a-sound-object">Creating a sound object</a></li>
+<li><a class="reference" href="#controlling-audio-playback">Controlling audio playback</a></li>
+<li><a class="reference" href="#detecting-capabilities">Detecting capabilities</a></li>
+<li><a class="reference" href="#position-duration-and-volume">Position, duration, and volume</a></li>
+<li><a class="reference" href="#reading-id3-information">Reading ID3 information</a></li>
+<li><a class="reference" href="#cleaning-up">Cleaning up</a></li>
+</ul>
+</li>
+</ul>
+
+            <h3>This Page</h3>
+            <ul class="this-page-menu">
+              <li><a href="../../_sources/dev/ref/sound.txt">Show Source</a></li>
+            </ul>
+            <h3>Quick search</h3>
+            <form class="search" action="../../search.html" method="get">
+              <input type="text" name="q" size="18" /> <input type="submit" value="Go" />
+              <input type="hidden" name="check_keywords" value="yes" />
+              <input type="hidden" name="area" value="default" />
+            </form>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../modindex.html" title="Global Module Index"
+             accesskey="M">modules</a> |</li>
+        <li><a href="../../index.html">Lucid v1.0 documentation</a> &raquo;</li>
+      </ul>
+    </div>
+    <div class="footer">
+      &copy; Copyright Dojo Foundation and Lucid Contributors.
+      Last updated on May 31, 2009.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>.
+    </div>
+  </body>
+</html>

@@ -33,28 +33,35 @@ dojo.require("dijit.Editor");
 			return "<div></div>";
 		},
 		getValue: function(inRowIndex){
-			return this.widget.attr('value');
+			return this.widget.get('value');
 		},
 		setValue: function(inRowIndex, inValue){
-			if(this.widget&&this.widget.attr){
+			if(this.widget&&this.widget.set){
 				//Look for lazy-loading editor and handle it via its deferred.
 				if(this.widget.onLoadDeferred){
 					var self = this;
 					this.widget.onLoadDeferred.addCallback(function(){
-						self.widget.attr("value",inValue==null?"":inValue); 
+						self.widget.set("value",inValue===null?"":inValue);
 					});
 				}else{
-					this.widget.attr("value", inValue); 
+					this.widget.set("value", inValue);
 				}
 			}else{
 				this.inherited(arguments);
 			}
 		},
 		getWidgetProps: function(inDatum){
-			return dojo.mixin({}, this.widgetProps||{}, {
-				constraints: dojo.mixin({}, this.constraint) || {}, //TODO: really just for ValidationTextBoxes
-				value: inDatum
-			});
+			return dojo.mixin(
+				{
+					dir: this.dir,
+					lang: this.lang
+				},
+				this.widgetProps||{},
+				{
+					constraints: dojo.mixin({}, this.constraint) || {}, //TODO: really just for ValidationTextBoxes
+					value: inDatum
+				}
+			);
 		},
 		createWidget: function(inNode, inDatum, inRowIndex){
 			return new this.widgetClass(this.getWidgetProps(inDatum), inNode);
@@ -73,8 +80,10 @@ dojo.require("dijit.Editor");
 				this.attachWidget.apply(this, arguments);
 			}
 			this.sizeWidget.apply(this, arguments);
-			this.grid.rowHeightChanged(inRowIndex);
+			this.grid.views.renormalizeRow(inRowIndex);
+			this.grid.scroller.rowHeightChanged(inRowIndex, true/*fix #11101*/);
 			this.focus();
+			return undefined;
 		},
 		sizeWidget: function(inNode, inDatum, inRowIndex){
 			var
@@ -92,6 +101,9 @@ dojo.require("dijit.Editor");
 		_finish: function(inRowIndex){
 			this.inherited(arguments);
 			dojox.grid.util.removeNode(this.widget.domNode);
+			if(dojo.isIE){
+				dojo.setSelectable(this.widget.domNode, true);
+			}
 		}
 	});
 	dgc._Widget.markupFactory = function(node, cell){
@@ -109,7 +121,7 @@ dojo.require("dijit.Editor");
 		if(widgetClass){
 			cell.widgetClass = d.getObject(widgetClass);
 		}
-	}
+	};
 
 	dojo.declare("dojox.grid.cells.ComboBox", dgc._Widget, {
 		widgetClass: dijit.form.ComboBox,
@@ -127,8 +139,8 @@ dojo.require("dijit.Editor");
 		getValue: function(){
 			var e = this.widget;
 			// make sure to apply the displayed value
-			e.attr('displayedValue', e.attr('displayedValue'));
-			return e.attr('value');
+			e.set('displayedValue', e.get('displayedValue'));
+			return e.get('value');
 		}
 	});
 	dgc.ComboBox.markupFactory = function(node, cell){
@@ -141,13 +153,13 @@ dojo.require("dijit.Editor");
 				cell.options = o;
 			}
 		}
-	}
+	};
 
 	dojo.declare("dojox.grid.cells.DateTextBox", dgc._Widget, {
 		widgetClass: dijit.form.DateTextBox,
 		setValue: function(inRowIndex, inValue){
 			if(this.widget){
-				this.widget.attr('value', new Date(inValue));
+				this.widget.set('value', new Date(inValue));
 			}else{
 				this.inherited(arguments);
 			}
@@ -160,7 +172,7 @@ dojo.require("dijit.Editor");
 	});
 	dgc.DateTextBox.markupFactory = function(node, cell){
 		dgc._Widget.markupFactory(node, cell);
-	}
+	};
 
 	dojo.declare("dojox.grid.cells.CheckBox", dgc._Widget, {
 		widgetClass: dijit.form.CheckBox,
@@ -169,7 +181,7 @@ dojo.require("dijit.Editor");
 		},
 		setValue: function(inRowIndex, inValue){
 			if(this.widget&&this.widget.attributeMap.checked){
-				this.widget.attr("checked", inValue);
+				this.widget.set("checked", inValue);
 			}else{
 				this.inherited(arguments);
 			}
@@ -180,7 +192,7 @@ dojo.require("dijit.Editor");
 	});
 	dgc.CheckBox.markupFactory = function(node, cell){
 		dgc._Widget.markupFactory(node, cell);
-	}
+	};
 
 	dojo.declare("dojox.grid.cells.Editor", dgc._Widget, {
 		widgetClass: dijit.Editor,
@@ -208,7 +220,7 @@ dojo.require("dijit.Editor");
 			}
 		},
 		populateEditor: function(){
-			this.widget.attr('value', this.content);
+			this.widget.set('value', this.content);
 			this.widget.placeCursorAtEnd();
 		}
 	});
@@ -218,9 +230,9 @@ dojo.require("dijit.Editor");
 		var h = dojo.trim(dojo.attr(node, "widgetHeight")||"");
 		if(h){
 			if((h != "auto")&&(h.substr(-2) != "em")){
-				h = parseInt(h)+"px";
+				h = parseInt(h, 10)+"px";
 			}
 			cell.widgetHeight = h;
 		}
-	}
+	};
 })();

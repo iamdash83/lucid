@@ -1,0 +1,170 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Custom Widgets &mdash; Lucid v1.0 documentation</title>
+    <link rel="stylesheet" href="../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+          URL_ROOT:    '../../',
+          VERSION:     '1.0',
+          COLLAPSE_MODINDEX: false,
+          FILE_SUFFIX: ''
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/interface.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="contents" title="Global table of contents" href="../../contents.html" />
+    <link rel="index" title="Global index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="top" title="Lucid v1.0 documentation" href="../../index.html" />
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../modindex.html" title="Global Module Index"
+             accesskey="M">modules</a> |</li>
+        <li><a href="../../index.html">Lucid v1.0 documentation</a> &raquo;</li>
+      </ul>
+    </div>
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  
+  <div class="section" id="s-custom-widgets">
+<span id="s-dev-howto-custom-widgets"></span><h1 id="custom-widgets"><span id="dev-howto-custom-widgets"></span>Custom Widgets<a class="headerlink" href="#custom-widgets" title="Permalink to this headline">¶</a></h1>
+<p>Since Lucid applications are essentially dojo modules, you can include custom widgets in your app.</p>
+<div class="section" id="s-folder-structure">
+<h2 id="folder-structure">Folder Structure<a class="headerlink" href="#folder-structure" title="Permalink to this headline">¶</a></h2>
+<p>In your app, make the following directory structure:</p>
+<pre>MyApp/
+    templates/
+        widget.html
+    _base.js
+    widget.js
+MyApp.js</pre>
+<p>Now we need to put some code in each file.</p>
+<div class="section" id="s-myapp-js">
+<h3 id="myapp-js">MyApp.js<a class="headerlink" href="#myapp-js" title="Permalink to this headline">¶</a></h3>
+<div class="highlight"><pre><span class="nx">dojo</span><span class="p">.</span><span class="nx">provide</span><span class="p">(</span><span class="s2">&quot;lucid.apps.MyApp&quot;</span><span class="p">);</span>
+<span class="nx">dojo</span><span class="p">.</span><span class="nx">require</span><span class="p">(</span><span class="s2">&quot;lucid.apps.MyApp._base&quot;</span><span class="p">);</span>
+</pre></div>
+</div>
+<div class="section" id="s-base-js">
+<h3 id="base-js">_base.js<a class="headerlink" href="#base-js" title="Permalink to this headline">¶</a></h3>
+<div class="highlight"><pre><span class="nx">dojo</span><span class="p">.</span><span class="nx">provide</span><span class="p">(</span><span class="s2">&quot;lucid.apps.MyApp._base&quot;</span><span class="p">);</span>
+
+<span class="nx">dojo</span><span class="p">.</span><span class="nx">declare</span><span class="p">(</span><span class="s2">&quot;lucid.apps.MyApp&quot;</span><span class="o">,</span> <span class="nx">desktop</span><span class="p">.</span><span class="nx">apps</span><span class="p">.</span><span class="nx">_App</span><span class="o">,</span> <span class="p">{</span>
+    <span class="nx">init</span><span class="o">:</span> <span class="k">function</span><span class="p">(</span><span class="nx">args</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">win</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">lucid</span><span class="p">.</span><span class="nx">widget</span><span class="p">.</span><span class="nx">Window</span><span class="p">({</span>
+            <span class="nx">title</span><span class="o">:</span> <span class="s2">&quot;My App&quot;</span><span class="o">,</span>
+            <span class="nx">onClose</span><span class="o">:</span> <span class="nx">dojo</span><span class="p">.</span><span class="nx">hitch</span><span class="p">(</span><span class="k">this</span><span class="o">,</span> <span class="s2">&quot;kill&quot;</span><span class="p">)</span>
+        <span class="p">});</span>
+        <span class="k">var</span> <span class="nx">widget</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">lucid</span><span class="p">.</span><span class="nx">apps</span><span class="p">.</span><span class="nx">MyApp</span><span class="p">.</span><span class="nx">widget</span><span class="p">({</span>
+            <span class="nx">region</span><span class="o">:</span> <span class="s2">&quot;center&quot;</span>
+        <span class="p">});</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">win</span><span class="p">.</span><span class="nx">addChild</span><span class="p">(</span><span class="nx">widget</span><span class="p">);</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">win</span><span class="p">.</span><span class="nx">show</span><span class="p">();</span>
+    <span class="p">}</span><span class="o">,</span>
+    <span class="nx">kill</span><span class="o">:</span> <span class="k">function</span><span class="p">()</span> <span class="p">{</span>
+        <span class="k">if</span><span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">win</span><span class="p">.</span><span class="nx">closed</span><span class="p">)</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">win</span><span class="p">.</span><span class="nx">close</span><span class="p">();</span>
+    <span class="p">}</span>
+<span class="p">});</span>
+
+<span class="nx">dojo</span><span class="p">.</span><span class="nx">require</span><span class="p">(</span><span class="s2">&quot;lucid.apps.MyApp.widget&quot;</span><span class="p">);</span>
+</pre></div>
+<p>Now that we've got our app written, we can move on to the next part.</p>
+</div>
+</div>
+<div class="section" id="s-writing-the-widget">
+<h2 id="writing-the-widget">Writing the widget<a class="headerlink" href="#writing-the-widget" title="Permalink to this headline">¶</a></h2>
+<p>This is just like writing any other dojo widget, you're just confined to the namespace that your app lives in. This is just an example widget, you can customize your widget however you'd like.</p>
+<div class="section" id="s-widget-js">
+<h3 id="widget-js">widget.js<a class="headerlink" href="#widget-js" title="Permalink to this headline">¶</a></h3>
+<div class="highlight"><pre><span class="nx">dojo</span><span class="p">.</span><span class="nx">provide</span><span class="p">(</span><span class="s2">&quot;lucid.apps.MyApp.widget&quot;</span><span class="p">);</span>
+
+<span class="nx">dojo</span><span class="p">.</span><span class="nx">declare</span><span class="p">(</span><span class="s2">&quot;lucid.apps.MyApp.widget&quot;</span><span class="o">,</span> <span class="p">[</span><span class="nx">dijit</span><span class="p">.</span><span class="nx">_Widget</span><span class="o">,</span> <span class="nx">dijit</span><span class="p">.</span><span class="nx">_Templated</span><span class="o">,</span> <span class="nx">dijit</span><span class="p">.</span><span class="nx">_Contained</span><span class="p">]</span><span class="o">,</span> <span class="p">{</span>
+    <span class="nx">templatePath</span><span class="o">:</span> <span class="nx">dojo</span><span class="p">.</span><span class="nx">moduleUrl</span><span class="p">(</span><span class="s2">&quot;lucid.apps.MyApp.templates&quot;</span><span class="o">,</span> <span class="s2">&quot;widget.html&quot;</span><span class="p">)</span><span class="o">,</span>
+    <span class="nx">doSomething</span><span class="o">:</span> <span class="k">function</span><span class="p">(</span><span class="nx">e</span><span class="p">){</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">textNode</span><span class="p">.</span><span class="nx">innerHTML</span> <span class="o">=</span> <span class="s2">&quot;Link was clicked on &quot;</span><span class="o">+</span><span class="p">(</span><span class="k">new</span> <span class="nb">Date</span><span class="p">())</span><span class="o">+</span><span class="s2">&quot;!&quot;</span><span class="o">;</span>
+    <span class="p">}</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+<div class="section" id="s-widget-html">
+<h3 id="widget-html">widget.html<a class="headerlink" href="#widget-html" title="Permalink to this headline">¶</a></h3>
+<div class="highlight"><pre><span class="nt">&lt;div&gt;</span>
+   <span class="nt">&lt;div</span> <span class="na">dojoAttachPoint=</span><span class="s">&quot;textNode&quot;</span><span class="nt">&gt;</span>The link hasn&#39;t been clicked yet!<span class="nt">&lt;/div&gt;</span>
+   <span class="nt">&lt;a</span> <span class="na">href=</span><span class="s">&quot;javascript://&quot;</span> <span class="na">dojoAttachEvent=</span><span class="s">&quot;onclick:doSomething&quot;</span><span class="nt">&gt;</span>Change text<span class="nt">&lt;/a&gt;</span>
+<span class="nt">&lt;/div&gt;</span>
+</pre></div>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <h3>Table Of Contents</h3>
+            <ul>
+<li><a class="reference" href="">Custom Widgets</a><ul>
+<li><a class="reference" href="#folder-structure">Folder Structure</a><ul>
+<li><a class="reference" href="#myapp-js">MyApp.js</a></li>
+<li><a class="reference" href="#base-js">_base.js</a></li>
+</ul>
+</li>
+<li><a class="reference" href="#writing-the-widget">Writing the widget</a><ul>
+<li><a class="reference" href="#widget-js">widget.js</a></li>
+<li><a class="reference" href="#widget-html">widget.html</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+            <h3>This Page</h3>
+            <ul class="this-page-menu">
+              <li><a href="../../_sources/dev/howto/custom-widgets.txt">Show Source</a></li>
+            </ul>
+            <h3>Quick search</h3>
+            <form class="search" action="../../search.html" method="get">
+              <input type="text" name="q" size="18" /> <input type="submit" value="Go" />
+              <input type="hidden" name="check_keywords" value="yes" />
+              <input type="hidden" name="area" value="default" />
+            </form>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../modindex.html" title="Global Module Index"
+             accesskey="M">modules</a> |</li>
+        <li><a href="../../index.html">Lucid v1.0 documentation</a> &raquo;</li>
+      </ul>
+    </div>
+    <div class="footer">
+      &copy; Copyright Dojo Foundation and Lucid Contributors.
+      Last updated on May 31, 2009.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>.
+    </div>
+  </body>
+</html>

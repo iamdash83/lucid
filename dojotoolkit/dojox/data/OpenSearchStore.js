@@ -9,7 +9,7 @@ dojo.experimental("dojox.data.OpenSearchStore");
 dojo.declare("dojox.data.OpenSearchStore", null, {
 	constructor: function(/*Object*/args){
 		//	summary:
-		//		Initializer for the OpenSearchStore store.  
+		//		Initializer for the OpenSearchStore store.
 		//	description:
 		//		The OpenSearchStore is a Datastore interface to any search
 		//		engine that implements the open search specifications.
@@ -17,15 +17,19 @@ dojo.declare("dojox.data.OpenSearchStore", null, {
 			this.label = args.label;
 			this.url = args.url;
 			this.itemPath = args.itemPath;
+			if("urlPreventCache" in args){
+				this.urlPreventCache = args.urlPreventCache?true:false;
+			}
 		}
 		var def = dojo.xhrGet({
 			url: this.url,
 			handleAs: "xml",
-			sync: true
+			sync: true,
+			preventCache: this.urlPreventCache
 		});
 		def.addCallback(this, "_processOsdd");
-		def.addErrback(function() {
-			throw new Error("Unable to load OpenSearch Description document from " . args.url);					
+		def.addErrback(function(){
+			throw new Error("Unable to load OpenSearch Description document from " . args.url);
 		});
 	},
 	
@@ -35,6 +39,10 @@ dojo.declare("dojox.data.OpenSearchStore", null, {
 	_storeRef: "_S",
 	urlElement: null,
 	iframeElement: null,
+
+	//urlPreventCache: boolean
+	//Flag denoting if xhrGet calls should use the preventCache option.
+	urlPreventCache: true,
 	
 	ATOM_CONTENT_TYPE: 3,
 	ATOM_CONTENT_TYPE_STRING: "atom",
@@ -46,9 +54,9 @@ dojo.declare("dojox.data.OpenSearchStore", null, {
 	_assertIsItem: function(/* item */ item){
 		//	summary:
 		//      This function tests whether the item passed in is indeed an item in the store.
-		//	item: 
+		//	item:
 		//		The item to test for being contained by the store.
-		if(!this.isItem(item)){ 
+		if(!this.isItem(item)){
 			throw new Error("dojox.data.OpenSearchStore: a function was passed an item argument that was not an item");
 		}
 	},
@@ -56,15 +64,15 @@ dojo.declare("dojox.data.OpenSearchStore", null, {
 	_assertIsAttribute: function(/* attribute-name-string */ attribute){
 		//	summary:
 		//		This function tests whether the item passed in is indeed a valid 'attribute' like type for the store.
-		//	attribute: 
+		//	attribute:
 		//		The attribute to test for being contained by the store.
-		if(typeof attribute !== "string"){ 
+		if(typeof attribute !== "string"){
 			throw new Error("dojox.data.OpenSearchStore: a function was passed an attribute argument that was not an attribute name string");
 		}
 	},
 
 	getFeatures: function(){
-		//	summary: 
+		//	summary:
 		//      See dojo.data.api.Read.getFeatures()
 		return {
 			'dojo.data.api.Read': true
@@ -72,7 +80,7 @@ dojo.declare("dojox.data.OpenSearchStore", null, {
 	},
 
 	getValue: function(item, attribute, defaultValue){
-		//	summary: 
+		//	summary:
 		//      See dojo.data.api.Read.getValue()
 		var values = this.getValues(item, attribute);
 		if(values){
@@ -82,13 +90,13 @@ dojo.declare("dojox.data.OpenSearchStore", null, {
 	},
 
 	getAttributes: function(item){
-		//	summary: 
+		//	summary:
 		//      See dojo.data.api.Read.getAttributes()
-		return ["content"]; 
+		return ["content"];
 	},
 
 	hasAttribute: function(item, attribute){
-		//	summary: 
+		//	summary:
 		//      See dojo.data.api.Read.hasAttributes()
 		if(this.getValue(item,attribute)){
 			return true;
@@ -97,30 +105,30 @@ dojo.declare("dojox.data.OpenSearchStore", null, {
 	},
 
 	isItemLoaded: function(item){
-		 //	summary: 
+		 //	summary:
 		 //      See dojo.data.api.Read.isItemLoaded()
 		 return this.isItem(item);
 	},
 
 	loadItem: function(keywordArgs){
-		//	summary: 
+		//	summary:
 		//      See dojo.data.api.Read.loadItem()
 	},
 
 	getLabel: function(item){
-		//	summary: 
+		//	summary:
 		//      See dojo.data.api.Read.getLabel()
 		return undefined;
 	},
 	
 	getLabelAttributes: function(item){
-		//	summary: 
+		//	summary:
 		//      See dojo.data.api.Read.getLabelAttributes()
 		return null;
 	},
 
 	containsValue: function(item, attribute, value){
-		//	summary: 
+		//	summary:
 		//      See dojo.data.api.Read.containsValue()
 		var values = this.getValues(item,attribute);
 		for(var i = 0; i < values.length; i++){
@@ -132,7 +140,7 @@ dojo.declare("dojox.data.OpenSearchStore", null, {
 	},
 
 	getValues: function(item, attribute){
-		//	summary: 
+		//	summary:
 		//      See dojo.data.api.Read.getValue()
 
 		this._assertIsItem(item);
@@ -145,7 +153,7 @@ dojo.declare("dojox.data.OpenSearchStore", null, {
 	},
 
 	isItem: function(item){
-		//	summary: 
+		//	summary:
 		//      See dojo.data.api.Read.isItem()
 		if(item && item[this._storeRef] === this){
 			return true;
@@ -154,19 +162,19 @@ dojo.declare("dojox.data.OpenSearchStore", null, {
 	},
 	
 	close: function(request){
-		//	summary: 
+		//	summary:
 		//      See dojo.data.api.Read.close()
 	},
 	
 	process: function(data){
-		// This should return an array of items.  This would be the function to override if the 
+		// This should return an array of items.  This would be the function to override if the
 		// developer wanted to customize the processing/parsing of the entire batch of search
 		// results.
 		return this["_processOSD"+this.contentType](data);
 	},
 	
 	processItem: function(item, attribute){
-		// This returns the text that represents the item.  If a developer wanted to customize 
+		// This returns the text that represents the item.  If a developer wanted to customize
 		// how an individual item is rendered/parsed, they'd override this function.
 		return this["_processItem"+this.contentType](item.node, attribute);
 	},
@@ -204,12 +212,12 @@ dojo.declare("dojox.data.OpenSearchStore", null, {
 			request.query={};
 		}
 
-		//Build up the content using information from the request 
+		//Build up the content using information from the request
 		var self = this;
 		var url = this._createSearchUrl(request);
 		var getArgs = {
 			url: url,
-			preventCache: true
+			preventCache: this.urlPreventCache
 		};
 
 		// Change to fetch the query results.
@@ -221,7 +229,7 @@ dojo.declare("dojox.data.OpenSearchStore", null, {
 
 		xhr.addCallback(function(data){
 			var items = [];
-			if(data) {
+			if(data){
 				//Process the items...
 				items = self.process(data);
 				for(var i=0; i < items.length; i++){
@@ -282,10 +290,10 @@ dojo.declare("dojox.data.OpenSearchStore", null, {
 	
 	_getNodeXml: function(node, skipFirst){
 		var i;
-		switch(node.nodeType) {
+		switch(node.nodeType){
 			case 1:
 				var xml = [];
-				if(!skipFirst) {
+				if(!skipFirst){
 					xml.push("<"+node.tagName);
 					var attr;
 					for(i=0; i<node.attributes.length; i++){
@@ -331,7 +339,7 @@ dojo.declare("dojox.data.OpenSearchStore", null, {
 		var index = 0;
 		var currentType = types[0];
 		for(i=1; i<urlnodes.length; i++){
-			if(types[i]>currentType) {
+			if(types[i]>currentType){
 				index = i;
 				currentType = types[i];
 			}
@@ -353,7 +361,7 @@ dojo.declare("dojox.data.OpenSearchStore", null, {
 					this.contentType = this.XML_CONTENT_TYPE_STRING;
 					break;
 			}
-		} 
+		}
 	}
 });
 dojo.extend(dojox.data.OpenSearchStore,dojo.data.util.simpleFetch);

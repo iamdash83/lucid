@@ -11,7 +11,7 @@ dojo.declare("dojox.av.widget.Player", [dijit._Widget, dijit._Templated], {
 	// description:
 	//		Currently for markup only. All controls should reside as child
 	//		nodes within the Player node. 'controlType' is used to determine
-	//		the placement of the control. If no type or an unrecoginized type 
+	//		the placement of the control. If no type or an unrecoginized type
 	//		is used, it will be left-aligned in the same row as the volume.
 	//	Note:
 	//		Be sure to use 'controlType' as a node attribute. It is not a
@@ -20,7 +20,7 @@ dojo.declare("dojox.av.widget.Player", [dijit._Widget, dijit._Templated], {
 	// example:
 	//		|	<div dojoType="dojox.av.widget.Player" playerWidth="100%">
     //		| 		<div controlType="video" initialVolume=".1"
-	//		| 			mediaUrl="video/Grog.flv" autoPlay="true" 
+	//		| 			mediaUrl="video/Grog.flv" autoPlay="true"
 	//		|			isDebug="false" dojoType="dojox.av.FLVideo"></div>
     //		|     	<div controlType="play" dojoType="dojox.av.widget.PlayButton"></div>
     //		|     	<div controlType="volume" dojoType="dojox.av.widget.VolumeButton"></div>
@@ -32,7 +32,7 @@ dojo.declare("dojox.av.widget.Player", [dijit._Widget, dijit._Templated], {
 	//		Sets the width of the player (not the video size)
 	//		Number will be converted to pixels
 	//		String will be used literally. EX: "320px" or "100%"
-	playerWidth: "480px", 
+	playerWidth: "480px",
 	//
 	// TODO:
 	//playerHeight
@@ -40,9 +40,9 @@ dojo.declare("dojox.av.widget.Player", [dijit._Widget, dijit._Templated], {
 	//videoHeight: 240,
 	
 	widgetsInTemplate:true,
-	templatePath: dojo.moduleUrl("dojox.av.widget","resources/Player.html"),
+	templateString: dojo.cache("dojox.av.widget","resources/Player.html"),
 	
-	_fillContent: function(){ 
+	_fillContent: function(){
 		// summary
 		//		Finding and collecting child nodes
 		if(!this.items && this.srcNodeRef){
@@ -61,7 +61,7 @@ dojo.declare("dojox.av.widget.Player", [dijit._Widget, dijit._Templated], {
 		dojo.style(this.domNode, "width", this.playerWidth+(dojo.isString(this.playerWidth)?"":"px"));
 		
 		if(dojo.isString(this.playerWidth) && this.playerWidth.indexOf("%")){
-			dojo.connect(window, "resize", this, "onResize");	
+			dojo.connect(window, "resize", this, "onResize");
 		}
 		this.children = [];
 		var domNode;
@@ -89,7 +89,7 @@ dojo.declare("dojox.av.widget.Player", [dijit._Widget, dijit._Templated], {
 	},
 	startup: function(){
 		// summary:
-		//		Fired when all children are ready. Set the media in 
+		//		Fired when all children are ready. Set the media in
 		//		all children with setMedia()
 		//
 		this.media = dijit.byId(this.mediaNode.id);
@@ -97,35 +97,25 @@ dojo.declare("dojox.av.widget.Player", [dijit._Widget, dijit._Templated], {
 			dojo.style(this.media.domNode, "width", "100%");
 			dojo.style(this.media.domNode, "height", "100%");
 		}
-		
-		//dojo.style(this.media.domNode, "width", this.videoWidth+(dojo.isString(this.playerWidth)?"":"px"));
-		//dojo.style(this.media.domNode, "height", this.videoHeight+(dojo.isString(this.playerWidth)?"":"px"));
-		//return
-		//setTimeout(dojo.hitch(this, function(){
 		dojo.forEach(this.items, function(id){
-			//console.log("    ids:", id , this.mediaNode.id)
 			if(id !== this.mediaNode.id){
 				var child = dijit.byId(id);
-				this.children.push(child);	
+				this.children.push(child);
 				if(child){
-					console.log("child:", child.declaredClass, "this.media:", this.media)	
 					child.setMedia(this.media, this);
 				}
 			}
 		}, this);
-		//}),1000)
 	},
+	
 	onResize: function(evt){
 		// summary:
 		//		If a player size is a percentage, this will fire an onResize
 		//		event for all children, passing the size of the player.
 		//
 		var dim = dojo.marginBox(this.domNode);
-		
-		
-		
 		if(this.media && this.media.onResize !== null){
-			this.media.onResize(dim);	
+			this.media.onResize(dim);
 		}
 		dojo.forEach(this.children, function(child){
 			if(child.onResize){

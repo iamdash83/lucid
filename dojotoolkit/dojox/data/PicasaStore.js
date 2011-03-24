@@ -1,21 +1,26 @@
-dojo.provide("dojox.data.PicasaStore");
-
-dojo.require("dojo.data.util.simpleFetch");
-dojo.require("dojo.io.script");
-dojo.require("dojo.date.stamp");
+define("dojox/data/PicasaStore", ["dojo", "dojox", "dojo/io/script", "dojo/data/util/simpleFetch", "dojo/date/stamp"], function(dojo, dojox) {
 
 dojo.declare("dojox.data.PicasaStore", null, {
 	constructor: function(/*Object*/args){
 		//	summary:
-		//		Initializer for the PicasaStore store.  
+		//		Initializer for the PicasaStore store.
 		//	description:
 		//		The PicasaStore is a Datastore interface to one of the basic services
 		//		of the Picasa service, the public photo feed.  This does not provide
 		//		access to all the services of Picasa.
-		//		This store cannot do * and ? filtering as the picasa service 
+		//		This store cannot do * and ? filtering as the picasa service
 		//		provides no interface for wildcards.
 		if(args && args.label){
 			this.label = args.label;
+		}
+		if(args && "urlPreventCache" in args){
+			this.urlPreventCache = args.urlPreventCache?true:false;
+		}
+		if(args && "maxResults" in args){
+			this.maxResults = parseInt(args.maxResults);
+			if(!this.maxResults){
+				this.maxResults = 20;
+			}
 		}
 	},
 
@@ -23,14 +28,23 @@ dojo.declare("dojox.data.PicasaStore", null, {
 
 	_storeRef: "_S",
 
+	//label: string
+	//The attribute to use from the picasa item as its label.
 	label: "title",
+
+	//urlPreventCache: boolean
+	//Flag denoting if preventCache should be passed to dojo.io.script.
+	urlPreventCache: false,
+
+	//maxResults:  Define out how many results to return for a fetch.
+	maxResults: 20,
 
 	_assertIsItem: function(/* item */ item){
 		//	summary:
 		//      This function tests whether the item passed in is indeed an item in the store.
-		//	item: 
+		//	item:
 		//		The item to test for being contained by the store.
-		if(!this.isItem(item)){ 
+		if(!this.isItem(item)){
 			throw new Error("dojox.data.PicasaStore: a function was passed an item argument that was not an item");
 		}
 	},
@@ -38,15 +52,15 @@ dojo.declare("dojox.data.PicasaStore", null, {
 	_assertIsAttribute: function(/* attribute-name-string */ attribute){
 		//	summary:
 		//		This function tests whether the item passed in is indeed a valid 'attribute' like type for the store.
-		//	attribute: 
+		//	attribute:
 		//		The attribute to test for being contained by the store.
-		if(typeof attribute !== "string"){ 
+		if(typeof attribute !== "string"){
 			throw new Error("dojox.data.PicasaStore: a function was passed an attribute argument that was not an attribute name string");
 		}
 	},
 
 	getFeatures: function(){
-		//	summary: 
+		//	summary:
 		//      See dojo.data.api.Read.getFeatures()
 		return {
 			'dojo.data.api.Read': true
@@ -54,7 +68,7 @@ dojo.declare("dojox.data.PicasaStore", null, {
 	},
 
 	getValue: function(item, attribute, defaultValue){
-		//	summary: 
+		//	summary:
 		//      See dojo.data.api.Read.getValue()
 		var values = this.getValues(item, attribute);
 		if(values && values.length > 0){
@@ -64,13 +78,16 @@ dojo.declare("dojox.data.PicasaStore", null, {
 	},
 
 	getAttributes: function(item){
-		//	summary: 
+		//	summary:
 		//      See dojo.data.api.Read.getAttributes()
-		return ["id", "published", "updated", "category", "title$type", "title", "summary$type", "summary", "rights$type", "rights", "link", "author", "gphoto$id", "gphoto$name", "location"]; 
+		 return ["id", "published", "updated", "category", "title$type", "title",
+			 "summary$type", "summary", "rights$type", "rights", "link", "author",
+			 "gphoto$id", "gphoto$name", "location", "imageUrlSmall", "imageUrlMedium",
+			 "imageUrl", "datePublished", "dateTaken","description"];
 	},
 
 	hasAttribute: function(item, attribute){
-		//	summary: 
+		//	summary:
 		//      See dojo.data.api.Read.hasAttributes()
 		if(this.getValue(item,attribute)){
 			return true;
@@ -79,30 +96,30 @@ dojo.declare("dojox.data.PicasaStore", null, {
 	},
 
 	isItemLoaded: function(item){
-		 //	summary: 
+		 //	summary:
 		 //      See dojo.data.api.Read.isItemLoaded()
 		 return this.isItem(item);
 	},
 
 	loadItem: function(keywordArgs){
-		//	summary: 
+		//	summary:
 		//      See dojo.data.api.Read.loadItem()
 	},
 
 	getLabel: function(item){
-		//	summary: 
+		//	summary:
 		//      See dojo.data.api.Read.getLabel()
 		return this.getValue(item,this.label);
 	},
 	
 	getLabelAttributes: function(item){
-		//	summary: 
+		//	summary:
 		//      See dojo.data.api.Read.getLabelAttributes()
 		return [this.label];
 	},
 
 	containsValue: function(item, attribute, value){
-		//	summary: 
+		//	summary:
 		//      See dojo.data.api.Read.containsValue()
 		var values = this.getValues(item,attribute);
 		for(var i = 0; i < values.length; i++){
@@ -114,7 +131,7 @@ dojo.declare("dojox.data.PicasaStore", null, {
 	},
 
 	getValues: function(item, attribute){
-		//	summary: 
+		//	summary:
 		//      See dojo.data.api.Read.getValue()
 
 		this._assertIsItem(item);
@@ -126,7 +143,9 @@ dojo.declare("dojox.data.PicasaStore", null, {
 		}else if(attribute === "datePublished"){
 			return [dojo.date.stamp.fromISOString(item.published)];
 		}else if(attribute === "dateTaken"){
-			return [dojo.date.stamp.fromISOString(item.date_taken)];
+			return [dojo.date.stamp.fromISOString(item.published)];
+		}else if(attribute === "updated"){
+			return [dojo.date.stamp.fromISOString(item.updated)];
 		}else if(attribute === "imageUrlSmall"){
 			return [item.media.thumbnail[1].url];
 		}else if(attribute === "imageUrl"){
@@ -144,7 +163,7 @@ dojo.declare("dojox.data.PicasaStore", null, {
 	},
 
 	isItem: function(item){
-		//	summary: 
+		//	summary:
 		//      See dojo.data.api.Read.isItem()
 		if(item && item[this._storeRef] === this){
 			return true;
@@ -153,7 +172,7 @@ dojo.declare("dojox.data.PicasaStore", null, {
 	},
 	
 	close: function(request){
-		//	summary: 
+		//	summary:
 		//      See dojo.data.api.Read.close()
 	},
 
@@ -173,6 +192,7 @@ dojo.declare("dojox.data.PicasaStore", null, {
 
 		//Build up the content to send the request for.
 		var content = {alt: "jsonm", pp: "1", psc: "G"};
+
 		content['start-index'] = "1";
 		if(request.query.start){
 			content['start-index'] = request.query.start;
@@ -189,11 +209,7 @@ dojo.declare("dojox.data.PicasaStore", null, {
 		if(request.query.lang){
 			content.hl = request.query.lang;
 		}
-		if(request.count){
-			content['max-results'] = request.count;
-		}else{
-			content['max-results'] = "20";
-		}
+		content['max-results'] = this.maxResults;
 
 		//Linking this up to Picasa is a JOY!
 		var self = this;
@@ -208,7 +224,7 @@ dojo.declare("dojox.data.PicasaStore", null, {
 		};
 		var getArgs = {
 			url: this._picasaUrl,
-			// preventCache: true,
+			preventCache: this.urlPreventCache,
 			content: content,
 			callbackParamName: 'callback',
 			handle: myHandler
@@ -242,9 +258,15 @@ dojo.declare("dojox.data.PicasaStore", null, {
 		// returns: HTML String converted back to the normal text (unescaped) characters (<,>,&, ", etc,).
 		//
 		//TODO: Check to see if theres already compatible escape() in dojo.string or dojo.html
-		str = str.replace(/&amp;/gm, "&").replace(/&lt;/gm, "<").replace(/&gt;/gm, ">").replace(/&quot;/gm, "\"");
-		str = str.replace(/&#39;/gm, "'"); 
+		if(str){
+			str = str.replace(/&amp;/gm, "&").replace(/&lt;/gm, "<").replace(/&gt;/gm, ">").replace(/&quot;/gm, "\"");
+			str = str.replace(/&#39;/gm, "'");
+		}
 		return str;
 	}
 });
-dojo.extend(dojox.data.PicasaStore,dojo.data.util.simpleFetch);										  
+dojo.extend(dojox.data.PicasaStore,dojo.data.util.simpleFetch);
+
+return dojox.data.PicasaStore;
+
+});

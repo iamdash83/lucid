@@ -6,7 +6,7 @@ dojo.experimental("dojox.widget.gauge.AnalogArcIndicator");
 dojo.declare("dojox.widget.gauge.AnalogArcIndicator",[dojox.widget.gauge.AnalogLineIndicator],{
 	_createArc: function(val){
 		// Creating the Arc Path string manually.  This is instead of creating new dojox.gfx.Path object
-		// each time since we really just need the Path string (to use with setShape) and we don't want to 
+		// each time since we really just need the Path string (to use with setShape) and we don't want to
 		// have to redo the connects, etc.
 		if(this.shapes[0]){
 			var a = this._gauge._getRadians(this._gauge._getAngle(val));
@@ -33,7 +33,7 @@ dojo.declare("dojox.widget.gauge.AnalogArcIndicator",[dojox.widget.gauge.AnalogL
 		}
 	},
 	draw: function(/*Boolean?*/ dontAnimate){
-		// summary: 
+		// summary:
 		//		Override of dojox.widget._Indicator.draw
 		var v = this.value;
 		if(v < this._gauge.min){v = this._gauge.min;}
@@ -42,7 +42,7 @@ dojo.declare("dojox.widget.gauge.AnalogArcIndicator",[dojox.widget.gauge.AnalogL
 			if(dontAnimate){
 				this._createArc(v);
 			}else{
-				var anim = new dojo._Animation({curve: [this.currentValue, v], duration: this.duration, easing: this.easing});
+				var anim = new dojo.Animation({curve: [this.currentValue, v], duration: this.duration, easing: this.easing});
 				dojo.connect(anim, "onAnimate", dojo.hitch(this, this._createArc));
 				anim.play();
 			}

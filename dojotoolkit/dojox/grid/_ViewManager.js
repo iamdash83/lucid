@@ -71,22 +71,35 @@ dojo.declare('dojox.grid._ViewManager', null, {
 	},
 
 	normalizeRowNodeHeights: function(inRowNodes){
-		var h = 0; 
-		for(var i=0, n, o; (n=inRowNodes[i]); i++){
-			h = Math.max(h, dojo.marginBox(n.firstChild).h);
+		var h = 0;
+		var currHeights = [];
+		if(this.grid.rowHeight){
+			h = this.grid.rowHeight;
+		}else{
+			if(inRowNodes.length <= 1){
+				// no need to normalize if we are the only one...
+				return;
+			}
+			for(var i=0, n; (n=inRowNodes[i]); i++){
+				// We only care about the height - so don't use marginBox.  This
+				// depends on the container not having any margin (which it shouldn't)
+				// Also - we only look up the height if the cell doesn't have the
+				// dojoxGridNonNormalizedCell class (like for row selectors)
+				if(!dojo.hasClass(n, "dojoxGridNonNormalizedCell")){
+					currHeights[i] = n.firstChild.offsetHeight;
+					h =  Math.max(h, currHeights[i]);
+				}
+			}
+			h = (h >= 0 ? h : 0);
+	
+			//Work around odd FF3 rendering bug: #8864.
+			//A one px increase fixes FireFox 3's rounding bug for fractional font sizes.
+			if(dojo.isMoz && h){h++;}
 		}
-		h = (h >= 0 ? h : 0);
-		//
-		//
-		for(var i=0, n; (n=inRowNodes[i]); i++){
-			dojo.marginBox(n.firstChild, {h:h});
-		}
-		//
-		//console.log('normalizeRowNodeHeights ', h);
-		//
-		// querying the height here seems to help scroller measure the page on IE
-		if(inRowNodes&&inRowNodes[0]&&inRowNodes[0].parentNode){
-			inRowNodes[0].parentNode.offsetHeight;
+		for(i=0; (n=inRowNodes[i]); i++){
+			if(currHeights[i] != h){
+				n.firstChild.style.height = h + "px";
+			}
 		}
 	},
 	
@@ -171,16 +184,22 @@ dojo.declare('dojox.grid._ViewManager', null, {
 
 			if(!dojo._isBodyLtr()){
 				ds.right = l + 'px';
-				hs.right = l + 'px';
+				// fixed rtl, the scrollbar is on the right side in FF
+				if (dojo.isMoz) {
+					hs.right = l + v.getScrollbarWidth() + 'px';
+					hs.width = parseInt(hs.width, 10) - v.getScrollbarWidth() + 'px';
+				}else{
+					hs.right = l + 'px';
+				}
 			}else{
 				ds.left = l + 'px';
 				hs.left = l + 'px';
 			}
 			ds.top = 0 + 'px';
 			hs.top = 0;
-		}
+		};
 		// for views left of the client
-		//BiDi TODO: The left and right should not appear in BIDI environment. Should be replaced with 
+		//BiDi TODO: The left and right should not appear in BIDI environment. Should be replaced with
 		//leading and tailing concept.
 		for(i=0; (v=this.views[i])&&(i<c); i++){
 			// get width
@@ -196,7 +215,7 @@ dojo.declare('dojox.grid._ViewManager', null, {
 			// update position
 			l += vw;
 		}
-		// next view (is the client, i++ == c) 
+		// next view (is the client, i++ == c)
 		i++;
 		// start from the right edge
 		var r = w;
@@ -215,7 +234,7 @@ dojo.declare('dojox.grid._ViewManager', null, {
 		}
 		if(c<len){
 			v = this.views[c];
-			// position the client box between left and right boxes	
+			// position the client box between left and right boxes
 			vw = Math.max(1, r-l);
 			// set size
 			v.setSize(vw + 'px', 0);
@@ -225,14 +244,16 @@ dojo.declare('dojox.grid._ViewManager', null, {
 	},
 
 	// rendering
-	renderRow: function(inRowIndex, inNodes){
+	renderRow: function(inRowIndex, inNodes, skipRenorm){
 		var rowNodes = [];
 		for(var i=0, v, n, rowNode; (v=this.views[i])&&(n=inNodes[i]); i++){
 			rowNode = v.renderRow(inRowIndex);
 			n.appendChild(rowNode);
 			rowNodes.push(rowNode);
 		}
-		this.normalizeRowNodeHeights(rowNodes);
+		if(!skipRenorm){
+			this.normalizeRowNodeHeights(rowNodes);
+		}
 	},
 	
 	rowRemoved: function(inRowIndex){
@@ -240,11 +261,13 @@ dojo.declare('dojox.grid._ViewManager', null, {
 	},
 	
 	// updating
-	updateRow: function(inRowIndex){
+	updateRow: function(inRowIndex, skipRenorm){
 		for(var i=0, v; v=this.views[i]; i++){
 			v.updateRow(inRowIndex);
 		}
-		this.renormalizeRow(inRowIndex);
+		if(!skipRenorm){
+			this.renormalizeRow(inRowIndex);
+		}
 	},
 	
 	updateRowStyles: function(inRowIndex){
@@ -267,12 +290,13 @@ dojo.declare('dojox.grid._ViewManager', null, {
 	},
 	
 	getFirstScrollingView: function(){
-		// summary: Returns the first grid view with a scroll bar 
+		// summary: Returns the first grid view with a scroll bar
 		for(var i=0, v; (v=this.views[i]); i++){
 			if(v.hasHScrollbar() || v.hasVScrollbar()){
 				return v;
 			}
 		}
+		return null;
 	}
 	
 });

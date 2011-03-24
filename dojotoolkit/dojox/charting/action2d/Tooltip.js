@@ -1,24 +1,49 @@
 dojo.provide("dojox.charting.action2d.Tooltip");
 
-dojo.require("dojox.charting.action2d.Base");
 dojo.require("dijit.Tooltip");
+
+dojo.require("dojox.charting.action2d.Base");
+dojo.require("dojox.gfx.matrix");
 
 dojo.require("dojox.lang.functional");
 dojo.require("dojox.lang.functional.scan");
 dojo.require("dojox.lang.functional.fold");
 
+/*=====
+dojo.declare("dojox.charting.action2d.__TooltipCtorArgs", dojox.charting.action2d.__BaseCtorArgs, {
+	//	summary:
+	//		Additional arguments for tooltip actions.
+
+	//	text: Function?
+	//		The function that produces the text to be shown within a tooltip.  By default this will be
+	//		set by the plot in question, by returning the value of the element.
+	text: null
+});
+=====*/
 (function(){
 	var DEFAULT_TEXT = function(o){
 		var t = o.run && o.run.data && o.run.data[o.index];
-		if(t && typeof t == "object" && t.tooltip){
-			return t.tooltip;
+		if(t && typeof t != "number" && (t.tooltip || t.text)){
+			return t.tooltip || t.text;
+		}
+		if(o.element == "candlestick"){
+			return '<table cellpadding="1" cellspacing="0" border="0" style="font-size:0.9em;">'
+				+ '<tr><td>Open:</td><td align="right"><strong>' + o.data.open + '</strong></td></tr>'
+				+ '<tr><td>High:</td><td align="right"><strong>' + o.data.high + '</strong></td></tr>'
+				+ '<tr><td>Low:</td><td align="right"><strong>' + o.data.low + '</strong></td></tr>'
+				+ '<tr><td>Close:</td><td align="right"><strong>' + o.data.close + '</strong></td></tr>'
+				+ (o.data.mid !== undefined ? '<tr><td>Mid:</td><td align="right"><strong>' + o.data.mid + '</strong></td></tr>' : '')
+				+ '</table>';
 		}
 		return o.element == "bar" ? o.x : o.y;
 	};
-	
-	var df = dojox.lang.functional, pi4 = Math.PI / 4, pi2 = Math.PI / 2;
+
+	var df = dojox.lang.functional, m = dojox.gfx.matrix, pi4 = Math.PI / 4, pi2 = Math.PI / 2;
 	
 	dojo.declare("dojox.charting.action2d.Tooltip", dojox.charting.action2d.Base, {
+		//	summary:
+		//		Create an action on a plot where a tooltip is shown when hovering over an element.
+
 		// the data description block for the widget parser
 		defaultParams: {
 			text: DEFAULT_TEXT	// the function to produce a tooltip from the object
@@ -26,16 +51,30 @@ dojo.require("dojox.lang.functional.fold");
 		optionalParams: {},	// no optional parameters
 
 		constructor: function(chart, plot, kwArgs){
-			// process optional named parameters
+			//	summary:
+			//		Create the tooltip action and connect it to the plot.
+			//	chart: dojox.charting.Chart2D
+			//		The chart this action belongs to.
+			//	plot: String?
+			//		The plot this action is attached to.  If not passed, "default" is assumed.
+			//	kwArgs: dojox.charting.action2d.__TooltipCtorArgs?
+			//		Optional keyword arguments object for setting parameters.
 			this.text = kwArgs && kwArgs.text ? kwArgs.text : DEFAULT_TEXT;
 			
 			this.connect();
 		},
 		
 		process: function(o){
+			//	summary:
+			//		Process the action on the given object.
+			//	o: dojox.gfx.Shape
+			//		The object on which to process the highlighting action.
 			if(o.type === "onplotreset" || o.type === "onmouseout"){
-				dijit.hideTooltip(this.aroundRect);
+                dijit.hideTooltip(this.aroundRect);
 				this.aroundRect = null;
+				if(o.type === "onplotreset"){
+					delete this.angles;
+				}
 				return;
 			}
 			
@@ -56,8 +95,15 @@ dojo.require("dojox.lang.functional.fold");
 					break;
 				case "column":
 					position = ["above", "below"];
+					// intentional fall down
 				case "bar":
 					aroundRect = dojo.clone(o.shape.getShape());
+					break;
+				case "candlestick":
+					aroundRect.x = o.x;
+					aroundRect.y = o.y;
+					aroundRect.width = o.width;
+					aroundRect.height = o.height;
 					break;
 				default:
 				//case "slice":
@@ -71,7 +117,8 @@ dojo.require("dojox.lang.functional.fold");
 								"* 2 * Math.PI / this", df.foldl(o.run.data, "a + b.y", 0));
 						}
 					}
-					var angle = (this.angles[o.index] + this.angles[o.index + 1]) / 2;
+					var startAngle = m._degToRad(o.plot.opt.startAngle),
+						angle = (this.angles[o.index] + this.angles[o.index + 1]) / 2 + startAngle;
 					aroundRect.x = o.cx + o.cr * Math.cos(angle);
 					aroundRect.y = o.cy + o.cr * Math.sin(angle);
 					aroundRect.width = aroundRect.height = 1;
@@ -89,7 +136,7 @@ dojo.require("dojox.lang.functional.fold");
 					else{
 						// do nothing: the position is right
 					}
-					 */
+					*/
 					break;
 			}
 			
@@ -102,8 +149,11 @@ dojo.require("dojox.lang.functional.fold");
 			aroundRect.width = Math.ceil(aroundRect.width);
 			aroundRect.height = Math.ceil(aroundRect.height);
 			this.aroundRect = aroundRect;
-			
-			dijit.showTooltip(this.text(o), this.aroundRect, position);
+
+			var tooltip = this.text(o);
+			if(tooltip){
+                dijit.showTooltip(tooltip, this.aroundRect, position);
+			}
 		}
 	});
 })();

@@ -1,3 +1,5 @@
+define(
+//begin v1.x content
 ({
 	'bold': 'Fetstil',
 	'copy': 'Kopiera',
@@ -38,7 +40,15 @@
 	'fontSize': 'Teckenstorlek',
 	'fontName': 'Teckensnittsnamn',
 	'tabIndent': 'Tabbindrag',
+	"fullScreen": "Växla helskärm",
+	"viewSource": "Visa HTML-kod",
+	"print": "Skriv ut",
+	"newPage": "Ny sida",
 	/* Error messages */
-	'systemShortcut': 'Åtgärden "${0}" är endast tillgänglig i webbläsarenmed hjälp av ett kortkommando. Använd ${1}.',
-	'ctrlKey':'Ctrl+${0}'
+	'systemShortcut': 'Åtgärden "${0}" är endast tillgänglig i webbläsaren med hjälp av ett kortkommando. Använd ${1}.',
+	'ctrlKey':'Ctrl+${0}',
+	'appleKey':'\u2318+${0}' // "command" or open-apple key on Macintosh
 })
+
+//end v1.x content
+);

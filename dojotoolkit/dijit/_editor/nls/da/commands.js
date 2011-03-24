@@ -1,3 +1,5 @@
+define(
+//begin v1.x content
 ({
 	'bold': 'Fed',
 	'copy': 'Kopiér',
@@ -38,7 +40,12 @@
 	'fontSize': 'Skriftstørrelse',
 	'fontName': 'Skriftnavn',
 	'tabIndent': 'Indrykning med tabulator',
+	"fullScreen": "Aktivér/deaktivér fuldskærm",
+	"viewSource": "Vis HTML-kilde",
+	"print": "Udskriv",
+	"newPage": "Ny side",
 	/* Error messages */
-	'systemShortcut': 'Funktionen "${0}" kan kun bruges i your browser med en tastaturgenvej. Brug ${1}.',
-	'ctrlKey':'Ctrl+${0}'
+	'systemShortcut': 'Funktionen "${0}" kan kun bruges i din browser med en tastaturgenvej. Brug ${1}.'
 })
+//end v1.x content
+);

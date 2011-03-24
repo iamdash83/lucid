@@ -1,4 +1,4 @@
-dojo.provide("dojo._base.window");
+define("dojo/_base/window", ["dojo/lib/kernel"], function(dojo){
 
 /*=====
 dojo.doc = {
@@ -25,7 +25,7 @@ dojo.body = function(){
 	// Note: document.body is not defined for a strict xhtml document
 	// Would like to memoize this, but dojo.doc can change vi dojo.withDoc().
 	return dojo.doc.body || dojo.doc.getElementsByTagName("body")[0]; // Node
-}
+};
 
 dojo.setContext = function(/*Object*/globalObject, /*DocumentElement*/globalDocument){
 	// summary:
@@ -38,9 +38,9 @@ dojo.setContext = function(/*Object*/globalObject, /*DocumentElement*/globalDocu
 	dojo.doc = globalDocument;
 };
 
-dojo.withGlobal = function(	/*Object*/globalObject, 
-							/*Function*/callback, 
-							/*Object?*/thisObject, 
+dojo.withGlobal = function(	/*Object*/globalObject,
+							/*Function*/callback,
+							/*Object?*/thisObject,
 							/*Array?*/cbArguments){
 	// summary:
 	//		Invoke callback with globalObject as dojo.global and
@@ -59,11 +59,11 @@ dojo.withGlobal = function(	/*Object*/globalObject,
 	}finally{
 		dojo.global = oldGlob;
 	}
-}
+};
 
-dojo.withDoc = function(	/*DocumentElement*/documentObject, 
-							/*Function*/callback, 
-							/*Object?*/thisObject, 
+dojo.withDoc = function(	/*DocumentElement*/documentObject,
+							/*Function*/callback,
+							/*Object?*/thisObject,
 							/*Array?*/cbArguments){
 	// summary:
 	//		Invoke callback with documentObject as dojo.doc.
@@ -74,20 +74,26 @@ dojo.withDoc = function(	/*DocumentElement*/documentObject,
 	//		be restored to its previous state.
 
 	var oldDoc = dojo.doc,
-		oldLtr = dojo._bodyLtr;
+		oldLtr = dojo._bodyLtr,
+		oldQ = dojo.isQuirks;
 
 	try{
 		dojo.doc = documentObject;
 		delete dojo._bodyLtr; // uncache
+		dojo.isQuirks = dojo.doc.compatMode == "BackCompat"; // no need to check for QuirksMode which was Opera 7 only
 
-		if(thisObject && dojo.isString(callback)){
+		if(thisObject && typeof callback == "string"){
 			callback = thisObject[callback];
 		}
 
 		return callback.apply(thisObject, cbArguments || []);
 	}finally{
 		dojo.doc = oldDoc;
+		delete dojo._bodyLtr; // in case it was undefined originally, and set to true/false by the alternate document
 		if(oldLtr !== undefined){ dojo._bodyLtr = oldLtr; }
+		dojo.isQuirks = oldQ;
 	}
 };
-	
+
+return dojo;
+});

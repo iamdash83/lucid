@@ -1,18 +1,10 @@
-dojo.provide("dijit._base.place");
-
-dojo.require("dojo.AdapterRegistry");
-
-// ported from dojo.html.util
+define("dijit/_base/place", ["dojo", "dijit", "dojo/window", "dojo/AdapterRegistry"], function(dojo, dijit) {
 
 dijit.getViewport = function(){
 	// summary:
 	//		Returns the dimensions and scroll position of the viewable area of a browser window
 
-	var scrollRoot = (dojo.doc.compatMode == 'BackCompat')? dojo.body() : dojo.doc.documentElement;
-
-	// get scroll position
-	var scroll = dojo._docScroll(); // scrollRoot.scrollTop/Left should work
-	return { w: scrollRoot.clientWidth, h: scrollRoot.clientHeight, l: scroll.x, t: scroll.y };
+	return dojo.window.getBox();
 };
 
 /*=====
@@ -33,10 +25,10 @@ dijit.placeOnScreen = function(
 	/* dijit.__Position */	pos,
 	/* String[] */			corners,
 	/* dijit.__Position? */	padding){
-	//	summary:
+	// summary:
 	//		Positions one of the node's corners at specified position
 	//		such that node is fully visible in viewport.
-	//	description:
+	// description:
 	//		NOTE: node is assumed to be absolutely or relatively positioned.
 	//	pos:
 	//		Object like {x: 10, y: 20}
@@ -49,7 +41,7 @@ dijit.placeOnScreen = function(
 	//			* "TR" - top right
 	//	padding:
 	//		set padding to put some buffer around the element you want to position.
-	//	example:	
+	// example:
 	//		Try to place node's top right corner at (10,20).
 	//		If that makes node go (partially) off screen, then try placing
 	//		bottom left corner at (10,20).
@@ -61,26 +53,32 @@ dijit.placeOnScreen = function(
 			c.pos.x += corner.charAt(1) == 'L' ? padding.x : -padding.x;
 			c.pos.y += corner.charAt(0) == 'T' ? padding.y : -padding.y;
 		}
-		return c; 
+		return c;
 	});
 
 	return dijit._place(node, choices);
 }
 
-dijit._place = function(/*DomNode*/ node, /* Array */ choices, /* Function */ layoutNode){
+dijit._place = function(/*DomNode*/ node, choices, layoutNode, /*Object*/ aroundNodeCoords){
 	// summary:
 	//		Given a list of spots to put node, put it at the first spot where it fits,
 	//		of if it doesn't fit anywhere then the place with the least overflow
 	// choices: Array
 	//		Array of elements like: {corner: 'TL', pos: {x: 10, y: 20} }
 	//		Above example says to put the top-left corner of the node at (10,20)
-	// layoutNode: Function(node, aroundNodeCorner, nodeCorner)
+	// layoutNode: Function(node, aroundNodeCorner, nodeCorner, size)
 	//		for things like tooltip, they are displayed differently (and have different dimensions)
 	//		based on their orientation relative to the parent.   This adjusts the popup based on orientation.
+	//		It also passes in the available size for the popup, which is useful for tooltips to
+	//		tell them that their width is limited to a certain amount.   layoutNode() may return a value expressing
+	//		how much the popup had to be modified to fit into the available space.   This is used to determine
+	//		what the best placement is.
+	// aroundNodeCoords: Object
+	//		Size of aroundNode, ex: {w: 200, h: 50}
 
 	// get {x: 10, y: 10, w: 100, h:100} type obj representing position of
 	// viewport over document
-	var view = dijit.getViewport();
+	var view = dojo.window.getBox();
 
 	// This won't work if the node is inside a <div style="position: relative">,
 	// so reattach it to dojo.doc.body.   (Otherwise, the positioning will be wrong
@@ -93,12 +91,20 @@ dijit._place = function(/*DomNode*/ node, /* Array */ choices, /* Function */ la
 	dojo.some(choices, function(choice){
 		var corner = choice.corner;
 		var pos = choice.pos;
+		var overflow = 0;
+
+		// calculate amount of space available given specified position of node
+		var spaceAvailable = {
+			w: corner.charAt(1) == 'L' ? (view.l + view.w) - pos.x : pos.x - view.l,
+			h: corner.charAt(1) == 'T' ? (view.t + view.h) - pos.y : pos.y - view.t
+		};
 
 		// configure node to be displayed in given position relative to button
 		// (need to do this in order to get an accurate size for the node, because
-		// a tooltips size changes based on position, due to triangle)
+		// a tooltip's size changes based on position, due to triangle)
 		if(layoutNode){
-			layoutNode(node, choice.aroundCorner, corner);
+			var res = layoutNode(node, choice.aroundCorner, corner, spaceAvailable, aroundNodeCoords);
+			overflow = typeof res == "undefined" ? 0 : res;
 		}
 
 		// get node's size
@@ -113,13 +119,14 @@ dijit._place = function(/*DomNode*/ node, /* Array */ choices, /* Function */ la
 
 		// coordinates and size of node with specified corner placed at pos,
 		// and clipped by viewport
-		var startX = (corner.charAt(1) == 'L' ? pos.x : Math.max(view.l, pos.x - mb.w)),
-			startY = (corner.charAt(0) == 'T' ? pos.y : Math.max(view.t, pos.y -  mb.h)),
-			endX = (corner.charAt(1) == 'L' ? Math.min(view.l + view.w, startX + mb.w) : pos.x),
-			endY = (corner.charAt(0) == 'T' ? Math.min(view.t + view.h, startY + mb.h) : pos.y),
+		var startX = Math.max(view.l, corner.charAt(1) == 'L' ? pos.x : (pos.x - mb.w)),
+			startY = Math.max(view.t, corner.charAt(0) == 'T' ? pos.y : (pos.y - mb.h)),
+			endX = Math.min(view.l + view.w, corner.charAt(1) == 'L' ? (startX + mb.w) : pos.x),
+			endY = Math.min(view.t + view.h, corner.charAt(0) == 'T' ? (startY + mb.h) : pos.y),
 			width = endX - startX,
-			height = endY - startY,
-			overflow = (mb.w - width) + (mb.h - height);
+			height = endY - startY;
+
+		overflow += (mb.w - width) + (mb.h - height);
 
 		if(best == null || overflow < best.overflow){
 			best = {
@@ -129,17 +136,32 @@ dijit._place = function(/*DomNode*/ node, /* Array */ choices, /* Function */ la
 				y: startY,
 				w: width,
 				h: height,
-				overflow: overflow
+				overflow: overflow,
+				spaceAvailable: spaceAvailable
 			};
 		}
+		
 		return !overflow;
 	});
 
-	node.style.left = best.x + "px";
-	node.style.top = best.y + "px";
+	// In case the best position is not the last one we checked, need to call
+	// layoutNode() again.
 	if(best.overflow && layoutNode){
-		layoutNode(node, best.aroundCorner, best.corner);
+		layoutNode(node, best.aroundCorner, best.corner, best.spaceAvailable, aroundNodeCoords);
 	}
+
+	// And then position the node.   Do this last, after the layoutNode() above
+	// has sized the node, due to browser quirks when the viewport is scrolled
+	// (specifically that a Tooltip will shrink to fit as though the window was
+	// scrolled to the left).
+	//
+	// In RTL mode, set style.right rather than style.left so in the common case,
+	// window resizes move the popup along with the aroundNode.
+	var l = dojo._isBodyLtr(),
+		s = node.style;
+	s.top = best.y + "px";
+	s[l ? "left" : "right"] = (l ? best.x : view.w - best.x - best.w) + "px";
+	
 	return best;
 }
 
@@ -163,7 +185,7 @@ dijit.placeOnScreenAroundNode = function(
 	//		where the key corresponds to the aroundNode's corner, and
 	//		the value corresponds to the node's corner:
 	//
-	//	|	{ aroundNodeCorner1: nodeCorner1, aroundNodeCorner2: nodeCorner2,  ...}
+	//	|	{ aroundNodeCorner1: nodeCorner1, aroundNodeCorner2: nodeCorner2, ...}
 	//
 	//		The following strings are used to represent the four corners:
 	//			* "BL" - bottom left
@@ -176,7 +198,7 @@ dijit.placeOnScreenAroundNode = function(
 	//		based on their orientation relative to the parent.   This adjusts the popup based on orientation.
 	//
 	// example:
-	//	|	dijit.placeOnScreenAroundNode(node, aroundNode, {'BL':'TL', 'TR':'BR'}); 
+	//	|	dijit.placeOnScreenAroundNode(node, aroundNode, {'BL':'TL', 'TR':'BR'});
 	//		This will try to position node such that node's top-left corner is at the same position
 	//		as the bottom left corner of the aroundNode (ie, put node below
 	//		aroundNode, with left edges aligned).  If that fails it will try to put
@@ -186,17 +208,11 @@ dijit.placeOnScreenAroundNode = function(
 
 	// get coordinates of aroundNode
 	aroundNode = dojo.byId(aroundNode);
-	var oldDisplay = aroundNode.style.display;
-	aroundNode.style.display="";
-	// #3172: use the slightly tighter border box instead of marginBox
-	var aroundNodeW = aroundNode.offsetWidth; //mb.w; 
-	var aroundNodeH = aroundNode.offsetHeight; //mb.h;
-	var aroundNodePos = dojo.coords(aroundNode, true);
-	aroundNode.style.display=oldDisplay;
+	var aroundNodePos = dojo.position(aroundNode, true);
 
 	// place the node around the calculated rectangle
-	return dijit._placeOnScreenAroundRect(node, 
-		aroundNodePos.x, aroundNodePos.y, aroundNodeW, aroundNodeH,	// rectangle
+	return dijit._placeOnScreenAroundRect(node,
+		aroundNodePos.x, aroundNodePos.y, aroundNodePos.w, aroundNodePos.h,	// rectangle
 		aroundCorners, layoutNode);
 };
 
@@ -211,9 +227,9 @@ dijit.__Rectangle = function(){
 	// height: Integer
 	//		height in pixels
 
-	thix.x = x;
+	this.x = x;
 	this.y = y;
-	thix.width = width;
+	this.width = width;
 	this.height = height;
 }
 =====*/
@@ -230,7 +246,7 @@ dijit.placeOnScreenAroundRectangle = function(
 	//		parameter is an arbitrary rectangle on the screen (x, y, width, height)
 	//		instead of a dom node.
 
-	return dijit._placeOnScreenAroundRect(node, 
+	return dijit._placeOnScreenAroundRect(node,
 		aroundRect.x, aroundRect.y, aroundRect.width, aroundRect.height,	// rectangle
 		aroundCorners, layoutNode);
 };
@@ -263,10 +279,10 @@ dijit._placeOnScreenAroundRect = function(
 		});
 	}
 
-	return dijit._place(node, choices, layoutNode);
+	return dijit._place(node, choices, layoutNode, {w: width, h: height});
 };
 
-dijit.placementRegistry = new dojo.AdapterRegistry();
+dijit.placementRegistry= new dojo.AdapterRegistry();
 dijit.placementRegistry.register("node",
 	function(n, x){
 		return typeof x == "object" &&
@@ -292,3 +308,59 @@ dijit.placeOnScreenAroundElement = function(
 
 	return dijit.placementRegistry.match.apply(dijit.placementRegistry, arguments);
 };
+
+dijit.getPopupAroundAlignment = function(/*Array*/ position, /*Boolean*/ leftToRight){
+	// summary:
+	//		Transforms the passed array of preferred positions into a format suitable for passing as the aroundCorners argument to dijit.placeOnScreenAroundElement.
+	//
+	// position: String[]
+	//		This variable controls the position of the drop down.
+	//		It's an array of strings with the following values:
+	//
+	//			* before: places drop down to the left of the target node/widget, or to the right in
+	//			  the case of RTL scripts like Hebrew and Arabic
+	//			* after: places drop down to the right of the target node/widget, or to the left in
+	//			  the case of RTL scripts like Hebrew and Arabic
+	//			* above: drop down goes above target node
+	//			* below: drop down goes below target node
+	//
+	//		The list is positions is tried, in order, until a position is found where the drop down fits
+	//		within the viewport.
+	//
+	// leftToRight: Boolean
+	//		Whether the popup will be displaying in leftToRight mode.
+	//
+	var align = {};
+	dojo.forEach(position, function(pos){
+		switch(pos){
+			case "after":
+				align[leftToRight ? "BR" : "BL"] = leftToRight ? "BL" : "BR";
+				break;
+			case "before":
+				align[leftToRight ? "BL" : "BR"] = leftToRight ? "BR" : "BL";
+				break;
+			case "below-alt":
+				leftToRight = !leftToRight;
+				// fall through
+			case "below":
+				// first try to align left borders, next try to align right borders (or reverse for RTL mode)
+				align[leftToRight ? "BL" : "BR"] = leftToRight ? "TL" : "TR";
+				align[leftToRight ? "BR" : "BL"] = leftToRight ? "TR" : "TL";
+				break;
+			case "above-alt":
+				leftToRight = !leftToRight;
+				// fall through
+			case "above":
+			default:
+				// first try to align left borders, next try to align right borders (or reverse for RTL mode)
+				align[leftToRight ? "TL" : "TR"] = leftToRight ? "BL" : "BR";
+				align[leftToRight ? "TR" : "TL"] = leftToRight ? "BR" : "BL";
+				break;
+		}
+	});
+	return align;
+};
+
+
+return dijit;
+});

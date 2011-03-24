@@ -1,15 +1,18 @@
 dojo.provide("dojox.widget.RollingList");
 dojo.experimental("dojox.widget.RollingList");
 
-dojo.require("dijit._Templated");
+dojo.require("dojo.window");
+
 dojo.require("dijit.layout.ContentPane");
+dojo.require("dijit._Templated");
+dojo.require("dijit._Contained");
 dojo.require("dijit.layout._LayoutWidget");
 dojo.require("dijit.Menu");
-dojo.require("dojox.html.metrics");
 dojo.require("dijit.form.Button");
 
-dojo.require("dojo.i18n"); 
-dojo.requireLocalization("dojox.widget", "RollingList"); 
+dojo.require("dojox.html.metrics");
+
+dojo.require("dojo.i18n");
 dojo.requireLocalization("dijit", "common");
 
 dojo.declare("dojox.widget._RollingListPane",
@@ -57,7 +60,7 @@ dojo.declare("dojox.widget._RollingListPane",
 	//	the width (in px) for this pane
 	minWidth: 0,
 	
-	_setContentAndScroll: function(/*String|DomNode|Nodelist*/cont, isFakeContent){
+	_setContentAndScroll: function(/*String|DomNode|Nodelist*/cont, /*Boolean?*/isFakeContent){
 		// summary: sets the value of the content and scrolls it into view
 		this._setContent(cont, isFakeContent);
 		this.parentWidget.scrollIntoView(this);
@@ -89,7 +92,7 @@ dojo.declare("dojox.widget._RollingListPane",
 		if(this.store && this.store.getFeatures()["dojo.data.api.Notification"]){
 			window.setTimeout(dojo.hitch(this, function(){
 				// Set connections after a slight timeout to avoid getting in the
-				// condition where we are setting them while events are still 
+				// condition where we are setting them while events are still
 				// being fired
 				this.connect(this.store, "onSet", "_onSetItem");
 				this.connect(this.store, "onNew", "_onNewItem");
@@ -126,21 +129,14 @@ dojo.declare("dojox.widget._RollingListPane",
 		}
 	},
 	
-	_loadCheck: function(){
+	_onShow: function(){
 		// summary: checks that the store is loaded
-		if(!this._started){
-			var c = this.connect(this, "startup", function(){
-				this.disconnect(c);
-				this._loadCheck();
-			});
-		}
-		var displayState = this.domNode && this._isShown();
-		if((this.store || this.items) && ((this.refreshOnShow && displayState) || (!this.isLoaded && displayState))){
-			this._loadQuery();
+		if((this.store || this.items) && ((this.refreshOnShow && this.domNode) || (!this.isLoaded && this.domNode))){
+			this.refresh();
 		}
 	},
 	
-	_loadQuery: function(){
+	_load: function(){
 		// summary: sets the "loading" message and then kicks off a query asyncronously
 		this.isLoaded = false;
 		if(this.items){
@@ -155,7 +151,7 @@ dojo.declare("dojox.widget._RollingListPane",
 		// summary: loads the given items, and then calls the callback when they
 		//		are finished.
 		var _waitCount = 0, store = this.store;
-		dojo.forEach(items, function(item){ 
+		dojo.forEach(items, function(item){
 			if(!store.isItemLoaded(item)){ _waitCount++; }
 		});
 		if(_waitCount === 0){
@@ -172,11 +168,12 @@ dojo.declare("dojox.widget._RollingListPane",
 					store.loadItem({item: item, onItem: onItem});
 				}
 			});
-		}	
+		}
 	},
 	
 	_doQuery: function(){
 		// summary: either runs the query or loads potentially not-yet-loaded items.
+		if(!this.domNode){return;}
 		var preload = this.parentWidget.preloadItems;
 		preload = (preload === true || (this.items && this.items.length <= Number(preload)));
 		if(this.items && preload){
@@ -185,11 +182,11 @@ dojo.declare("dojox.widget._RollingListPane",
 			this.onItems();
 		}else{
 			this._setContentAndScroll(this.onFetchStart(), true);
-			this.store.fetch({query: this.query, 
+			this.store.fetch({query: this.query,
 				onComplete: function(items){
 					this.items = items;
 					this.onItems();
-				}, 
+				},
 				onError: function(e){
 					this._onError("Fetch", e);
 				},
@@ -198,7 +195,7 @@ dojo.declare("dojox.widget._RollingListPane",
 	},
 
 	_hasItem: function(/* item */ item){
-		// summary: returns whether or not the given item is handled by this 
+		// summary: returns whether or not the given item is handled by this
 		//  pane
 		var items = this.items || [];
 		for(var i = 0, myItem; (myItem = items[i]); i++){
@@ -209,13 +206,13 @@ dojo.declare("dojox.widget._RollingListPane",
 		return false;
 	},
 	
-	_onSetItem: function(/* item */ item, 
-					/* attribute-name-string */ attribute, 
+	_onSetItem: function(/* item */ item,
+					/* attribute-name-string */ attribute,
 					/* object | array */ oldValue,
-					/* object | array */ newValue){	
+					/* object | array */ newValue){
 		// Summary: called when an item in the store has changed
 		if(this._hasItem(item)){
-			this._loadCheck(true);
+			this.refresh();
 		}
 	},
 	
@@ -226,9 +223,9 @@ dojo.declare("dojox.widget._RollingListPane",
 			(parentInfo && this.parentPane && this.parentPane._hasItem(parentInfo.item) &&
 			(sel = this.parentPane._getSelected()) && this.parentWidget._itemsMatch(sel.item, parentInfo.item))){
 			this.items.push(newItem);
-			this._loadCheck(true);
+			this.refresh();
 		}else if(parentInfo && this.parentPane && this._hasItem(parentInfo.item)){
-			this._loadCheck(true);
+			this.refresh();
 		}
 	},
 	
@@ -238,7 +235,7 @@ dojo.declare("dojox.widget._RollingListPane",
 			this.items = dojo.filter(this.items, function(i){
 				return (i != deletedItem);
 			});
-			this._loadCheck(true);
+			this.refresh();
 		}
 	},
 	
@@ -270,7 +267,11 @@ dojo.declare("dojox.widget._RollingListPane",
 		// summary:
 		//	called after a fetch or load - at this point, this.items should be
 		//  set and loaded.  Override this function to "do your stuff"
-		this._onLoadHandler();		
+		if(!this.onLoadDeferred){
+			this.cancel();
+			this.onLoadDeferred = new dojo.Deferred(dojo.hitch(this, "cancel"));
+		}
+		this._onLoadHandler();
 	}
 			
 });
@@ -289,14 +290,6 @@ dojo.declare("dojox.widget._RollingListGroupPane",
 	// _menu: dijit.Menu
 	//  The menu that we will call addChild() on for adding items
 	_menu: null,
-	
-	_loadCheck: function(){
-		// summary: checks that the store is loaded
-		var displayState = this._isShown();
-		if((this.store || this.items) && ((this.refreshOnShow && displayState) || (!this.isLoaded && displayState))){
-			this._loadQuery();
-		}
-	},
 	
 	_setContent: function(/*String|DomNode|Nodelist*/cont){
 		if(!this._menu){
@@ -363,7 +356,7 @@ dojo.declare("dojox.widget._RollingListGroupPane",
 	},
 	
 	_checkScrollConnection: function(doLoad){
-		// summary: checks whether or not we need to connect to our onscroll 
+		// summary: checks whether or not we need to connect to our onscroll
 		//		function
 		var store = this.store
 		if(this._scrollConn){
@@ -375,7 +368,7 @@ dojo.declare("dojox.widget._RollingListGroupPane",
 				this._loadVisibleItems();
 			}
 			this._scrollConn = this.connect(this.domNode, "onscroll", "_onScrollPane");
-		}	
+		}
 	},
 	
 	startup: function(){
@@ -410,7 +403,7 @@ dojo.declare("dojox.widget._RollingListGroupPane",
 				}
 				window.setTimeout(function(){
 					try{
-						dijit.scrollIntoView(focusWidget.focusNode);
+						dojo.window.scrollIntoView(focusWidget.focusNode);
 					}catch(e){}
 				}, 1);
 			}else if(focusWidget.focus){
@@ -431,7 +424,7 @@ dojo.declare("dojox.widget._RollingListGroupPane",
 		var self = this;
 		var menu = new dijit.Menu({
 			parentMenu: this.parentPane ? this.parentPane._menu : null,
-			onCancel: function(/*Boolean*/ closeAll){ 
+			onCancel: function(/*Boolean*/ closeAll){
 				if(self.parentPane){
 					self.parentPane.focus(true);
 				}
@@ -445,7 +438,7 @@ dojo.declare("dojox.widget._RollingListGroupPane",
 		this.connect(menu, "onItemClick", function(/*dijit.MenuItem*/ item, /*Event*/ evt){
 			if(item.disabled){ return; }
 			evt.alreadySelected = dojo.hasClass(item.domNode, "dojoxRollingListItemSelected");
-			if(evt.alreadySelected && 
+			if(evt.alreadySelected &&
 				((evt.type == "keypress" && evt.charOrCode != dojo.keys.ENTER) ||
 				(evt.type == "internal"))){
 				var p = this.parentWidget.getChildren()[this.getIndexInParent() + 1];
@@ -477,20 +470,6 @@ dojo.declare("dojox.widget._RollingListGroupPane",
 		this._visibleLoadPending = window.setTimeout(dojo.hitch(this, "_loadVisibleItems"), 500);
 	},
 	
-	_layoutHack: function(){
-		// summary: work around table sizing bugs on FF2 by forcing redraw
-		//		note - this function is taken from dijit.form._FormWidget
-		if(dojo.isFF == 2 && !this._layoutHackHandle){
-			var node=this.domNode;
-			var old = node.style.opacity;
-			node.style.opacity = "0.999";
-			this._layoutHackHandle = setTimeout(dojo.hitch(this, function(){
-				this._layoutHackHandle = null;
-				node.style.opacity = old;
-			}), 0);
-		}
-	},
-	
 	_loadVisibleItems: function(){
 		// summary: loads the items that are currently visible in the pane
 		delete this._visibleLoadPending
@@ -505,8 +484,8 @@ dojo.declare("dojox.widget._RollingListGroupPane",
 			if(pb){ r += dojo._getPadBorderExtents(n, s).t; }
 			return r;
 		};
-		var topOffset = gpbme(this.domNode, false, true) + 
-						gpbme(this.containerNode, true, true) + 
+		var topOffset = gpbme(this.domNode, false, true) +
+						gpbme(this.containerNode, true, true) +
 						gpbme(menu.domNode, true, true) +
 						gpbme(children[0].domNode, true, false);
 		var h = dojo.contentBox(this.domNode).h;
@@ -541,7 +520,6 @@ dojo.declare("dojox.widget._RollingListGroupPane",
 				oItem.destroy();
 			}, this);
 			this._checkScrollConnection(false);
-			this._layoutHack();
 		});
 		this._doLoadItems(itemsToLoad, onItems);
 	},
@@ -570,13 +548,6 @@ dojo.declare("dojox.widget._RollingListGroupPane",
 				this.parentWidget._updateClass(i.domNode, "Item", {"Selected": (item && (i == item && !i.disabled))});
 			}, this);
 		}
-	},
-	
-	destroy: function(){
-		if(this._layoutHackHandle){
-			clearTimeout(this._layoutHackHandle);
-		}
-		this.inherited(arguments);
 	}
 });
 
@@ -584,9 +555,9 @@ dojo.declare("dojox.widget.RollingList",
 	[dijit._Widget, dijit._Templated, dijit._Container], {
 	// summary: a rolling list that can be tied to a data store with children
 		
-	// templatePath: string
-	//	our template to use
-	templatePath: dojo.moduleUrl("dojox.widget", "RollingList/RollingList.html"),
+	// templateString: String
+	//		The template to be used to construct the widget.
+	templateString: dojo.cache("dojox.widget", "RollingList/RollingList.html"),
 	widgetsInTemplate: true,
 	
 	// className: string
@@ -625,7 +596,7 @@ dojo.declare("dojox.widget.RollingList",
 	
 	// preloadItems: boolean or int
 	//		if set to true, then onItems will be called only *after* all items have
-	//		been loaded (ie store.isLoaded will return true for all of them).  If 
+	//		been loaded (ie store.isLoaded will return true for all of them).  If
 	//		false, then no preloading will occur.  If set to an integer, preloading
 	//		will occur if the number of items is less than or equal to the value
 	//		of the integer.  The onItems function will need to be aware of handling
@@ -642,7 +613,7 @@ dojo.declare("dojox.widget.RollingList",
 	okButtonLabel: "",
 	
 	// cancelButtonLabel: string
-	//		The string to use for the Cancel button - will use dijit's common 
+	//		The string to use for the Cancel button - will use dijit's common
 	//		"Cancel" string if not set
 	cancelButtonLabel: "",
 
@@ -680,12 +651,12 @@ dojo.declare("dojox.widget.RollingList",
 	_itemsMatch: function(/*item*/ item1, /*item*/ item2){
 		// Summary: returns whether or not the two items match - checks ID if
 		//  they aren't the exact same object
-		if(!item1 && !item2){ 
+		if(!item1 && !item2){
 			return true;
 		}else if(!item1 || !item2){
 			return false;
 		}
-		return (item1 == item2 || 
+		return (item1 == item2 ||
 			(this._isIdentity && this.store.getIdentity(item1) == this.store.getIdentity(item2)));
 	},
 	
@@ -716,7 +687,7 @@ dojo.declare("dojox.widget.RollingList",
 		}
 	},
 	
-	addChild: function(/*Widget*/ widget, /*int?*/ insertIndex){
+	addChild: function(/*dijit._Widget*/ widget, /*int?*/ insertIndex){
 		// summary: adds a child to this rolling list - if passed an insertIndex,
 		//  then all children from that index on will be removed and destroyed
 		//  before adding the child.
@@ -746,9 +717,9 @@ dojo.declare("dojox.widget.RollingList",
 	},
 	
 	_updateClass: function(/* Node */ node, /* String */ type, /* Object? */ options){
-		// summary: 
+		// summary:
 		//		sets the state of the given node with the given type and options
-		// options: 
+		// options:
 		//		an object with key-value-pairs.  The values are boolean, if true,
 		//		the key is added as a class, if false, it is removed.
 		if(!this._declaredClasses){
@@ -760,23 +731,23 @@ dojo.declare("dojox.widget.RollingList",
 				for(var k in options||{}){
 					dojo.toggleClass(node, c + type + k, options[k]);
 				}
-				dojo.toggleClass(node, c + type + "FocusSelected", 
+				dojo.toggleClass(node, c + type + "FocusSelected",
 					(dojo.hasClass(node, c + type + "Focus") && dojo.hasClass(node, c + type + "Selected")));
-				dojo.toggleClass(node, c + type + "HoverSelected", 
+				dojo.toggleClass(node, c + type + "HoverSelected",
 					(dojo.hasClass(node, c + type + "Hover") && dojo.hasClass(node, c + type + "Selected")));
 			}
 		});
 	},
 	
-	scrollIntoView: function(/* Widget */ childWidget){
+	scrollIntoView: function(/*dijit._Widget*/ childWidget){
 		// summary: scrolls the given widget into view
-		if(this._scrollingTimeout){ 
+		if(this._scrollingTimeout){
 			window.clearTimeout(this._scrollingTimeout);
 		}
 		delete this._scrollingTimeout;
 		this._scrollingTimeout = window.setTimeout(dojo.hitch(this, function(){
 			if(childWidget.domNode){
-				dijit.scrollIntoView(childWidget.domNode);
+				dojo.window.scrollIntoView(childWidget.domNode);
 			}
 			delete this._scrollingTimeout;
 			return;
@@ -862,7 +833,7 @@ dojo.declare("dojox.widget.RollingList",
 				dojo.forEach(this.childrenAttrs, function(attr){
 					var q = {};
 					q[attr] = item;
-					store.fetch({query: q, scope: this, 
+					store.fetch({query: q, scope: this,
 						onComplete: function(items){
 							if(this._setInProgress !== value){
 								return;
@@ -879,7 +850,7 @@ dojo.declare("dojox.widget.RollingList",
 		});
 		
 		var setFromChain = dojo.hitch(this, function(/*item[]*/itemChain, /*integer*/idx){
-			// Summary: Sets the value of the widget at the given index in the chain - onchanges are not 
+			// Summary: Sets the value of the widget at the given index in the chain - onchanges are not
 			// fired here
 			var set = itemChain[idx];
 			var child = this.getChildren()[idx];
@@ -915,7 +886,7 @@ dojo.declare("dojox.widget.RollingList",
 					fx();
 				}
 			}else if(idx === 0){
-				this.attr("value", null);
+				this.set("value", null);
 			}
 		});
 		
@@ -934,7 +905,7 @@ dojo.declare("dojox.widget.RollingList",
 			}
 		});
 		
-		// Only set the value in display if we are shown - if we are in a dropdown, 
+		// Only set the value in display if we are shown - if we are in a dropdown,
 		// and are hidden, don't actually do the scrolling in the display (it can
 		// mess up layouts)
 		var ns = this.domNode.style;
@@ -1004,13 +975,13 @@ dojo.declare("dojox.widget.RollingList",
 		var store = this.store;
 		if(!item || !store || !store.isItem(item)){
 			var i = new dijit.MenuItem({
-				label: dojo.i18n.getLocalization("dojox.widget", "RollingList", this.lang).empty,
+				label: "---",
 				disabled: true,
 				iconClass: "dojoxEmpty",
 				focus: function(){
 					// Do nothing on focus of this guy...
 				}
-			});	
+			});
 			this._updateClass(i.domNode, "Item");
 			return i;
 		}else{
@@ -1032,9 +1003,9 @@ dojo.declare("dojox.widget.RollingList",
 			}else{
 				widgetItem = this.getMenuItemForItem(item, parentPane, null);
 				if(itemLoaded){
-					this._updateClass(widgetItem.domNode, "Item", {"Single": true});				
+					this._updateClass(widgetItem.domNode, "Item", {"Single": true});
 				}else{
-					this._updateClass(widgetItem.domNode, "Item", {"Unloaded": true});				
+					this._updateClass(widgetItem.domNode, "Item", {"Unloaded": true});
 					widgetItem.attr("disabled", true);
 				}
 			}
@@ -1094,7 +1065,7 @@ dojo.declare("dojox.widget.RollingList",
 			try{dijit.focus(this._savedFocus);}catch(e){}
 			dojo.stopEvent(e);
 			return;
-		}else if(e.charOrCode == dojo.keys.LEFT_ARROW || 
+		}else if(e.charOrCode == dojo.keys.LEFT_ARROW ||
 			e.charOrCode == dojo.keys.RIGHT_ARROW){
 			dojo.stopEvent(e);
 			return;
@@ -1103,11 +1074,11 @@ dojo.declare("dojox.widget.RollingList",
 	
 	_resetValue: function(){
 		// Summary: function called when the value is reset.
-		this.attr("value", this._lastExecutedValue);
+		this.set("value", this._lastExecutedValue);
 	},
 	
 	_onCancel: function(){
-		// Summary: function called when the cancel button is clicked.  It 
+		// Summary: function called when the cancel button is clicked.  It
 		//		resets its value to whatever was last executed and then cancels
 		this._resetValue();
 		this.onCancel();
@@ -1116,7 +1087,7 @@ dojo.declare("dojox.widget.RollingList",
 	_onExecute: function(){
 		// Summary: function called when the OK button is clicked or when an
 		//		item is selected (double-clicked or "enter" pressed on it)
-		this._lastExecutedValue = this.attr("value");
+		this._lastExecutedValue = this.get("value");
 		this.onExecute();
 	},
 	
@@ -1157,7 +1128,7 @@ dojo.declare("dojox.widget.RollingList",
 	},
 	
 	_updateChildClasses: function(){
-		// summary: Called when a child is added or removed - so that we can 
+		// summary: Called when a child is added or removed - so that we can
 		//	update the classes for styling the "current" one differently than
 		//	the others
 		var children = this.getChildren();
@@ -1177,9 +1148,9 @@ dojo.declare("dojox.widget.RollingList",
 		this.connect(this, "addChild", "_updateChildClasses");
 		this.connect(this, "removeChild", "_updateChildClasses");
 		this._setStore(this.store);
-		this.attr("showButtons", this.showButtons);	
+		this.set("showButtons", this.showButtons);
 		this.inherited(arguments);
-		this._lastExecutedValue = this.attr("value");
+		this._lastExecutedValue = this.get("value");
 	},
 	
 	getChildItems: function(/*item*/ item){
@@ -1205,7 +1176,7 @@ dojo.declare("dojox.widget.RollingList",
 		//  to the given item in the store.  It can return null to not add a new pane
 		//  (ie, you are planning on doing something else with it in onItemClick)
 		//
-		//  Item is undefined for the root pane, children is undefined for non-group panes 
+		//  Item is undefined for the root pane, children is undefined for non-group panes
 		if(!item || children){
 			return new dojox.widget._RollingListGroupPane({});
 		}else{

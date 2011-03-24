@@ -8,6 +8,8 @@ import java.io.*;
 import java.lang.reflect.*;
 import java.net.URL;
 import java.awt.datatransfer.*;
+import javax.swing.JOptionPane;
+import javax.swing.JDialog;
 
 public final class DOHRobot extends Applet{
 	// order of execution:
@@ -51,6 +53,9 @@ public final class DOHRobot extends Applet{
 	private boolean altgraph = false;
 	private boolean ctrl = false;
 	private boolean alt = false;
+	private boolean meta = false;
+	private boolean numlockDisabled = false;
+	private long timingError = 0; // how much time the last robot call was off by
 	// shake hands with JavaScript the first keypess to wake up FF2/Mac
 	private boolean jsready = false;
 	private String keystring = "";
@@ -59,6 +64,9 @@ public final class DOHRobot extends Applet{
 	// setting firebugIgnore to true ensures Firebug doesn't break the applet
 	public boolean firebugIgnore = true;
 
+	private static String os=System.getProperty("os.name").toUpperCase();
+	private static Toolkit toolkit=Toolkit.getDefaultToolkit();
+	
 	private SecurityManager securitymanager;
 	private double key = -1;
 
@@ -69,11 +77,14 @@ public final class DOHRobot extends Applet{
 	private int docScreenY = -100;
 	private int docScreenXMax;
 	private int docScreenYMax;
+	private Point margin = null;
+	private boolean mouseSecurity = false;
 
 	// The last reported mouse x,y.
 	// If this is different from the real one, something's up.
 	private int lastMouseX;
 	private int lastMouseY;
+	public int dir=1;
 
 	// save a pointer to doh.robot for fast access
 	JSObject dohrobot = null;
@@ -103,63 +114,77 @@ public final class DOHRobot extends Applet{
 		public void componentShown(ComponentEvent evt){
 			// sets the security manager to fix a bug in liveconnect in Safari on Mac
 			if(key != -1){ return; }
-			window = (JSObject) JSObject.getWindow(applet());   
-
-			AccessController.doPrivileged(new PrivilegedAction(){
-				public Object run(){
-					log("> init Robot");
-					try{
-						SecurityManager oldsecurity = System.getSecurityManager();
-						boolean isOpera = false;
-						try{
-							isOpera = (System.getProperty("browser").equals("Opera.plugin"));
-						}catch(Exception e){}
-						try{
-							securitymanager = oldsecurity;
-							securitymanager.checkTopLevelWindow(null);
-							// xdomain
-							if(charMap == null){
-								if(!confirm("DOH has detected that the current Web page is attempting to access DOH, but belongs to a different domain than the one you agreed to let DOH automate. If you did not intend to start a new DOH test by visiting this Web page, press Cancel now and leave the Web page. Otherwise, press OK to trust this domain to automate DOH tests.")){
-									stop();
-									return null;
+			Thread thread = new Thread(){
+				public void run(){
+					window = (JSObject) JSObject.getWindow(applet());   
+					AccessController.doPrivileged(new PrivilegedAction(){
+						public Object run(){
+							log("> init Robot");
+							try{
+								SecurityManager oldsecurity = System.getSecurityManager();
+								boolean needsSecurityManager = applet().getParameter("needsSecurityManager").equals("true");
+								log("Socket connections managed? "+needsSecurityManager);
+								try{
+									securitymanager = oldsecurity;
+									securitymanager.checkTopLevelWindow(null);
+									// xdomain
+									if(charMap == null){
+										if(!confirm("DOH has detected that the current Web page is attempting to access DOH,\n"+
+													"but belongs to a different domain than the one you agreed to let DOH automate.\n"+
+													"If you did not intend to start a new DOH test by visiting this Web page,\n"+
+													"press Cancel now and leave the Web page.\n"+
+													"Otherwise, press OK to trust this domain to automate DOH tests.")){
+											stop();
+											return null;
+										}
+									}
+									log("Found old security manager");
+								}catch(Exception e){
+									e.printStackTrace();
+									log("Making new security manager");
+									securitymanager = new RobotSecurityManager(needsSecurityManager,
+											oldsecurity);
+									securitymanager.checkTopLevelWindow(null);
+									System.setSecurityManager(securitymanager);
 								}
+								// instantiate the Robot
+								robot = new Robot();
+								robot.setAutoWaitForIdle(true);
+							}catch(Exception e){
+								log("Error calling _init_: "+e.getMessage());
+								key = -2;
+								e.printStackTrace();
 							}
-							log("Found old security manager");
+							log("< init Robot");
+							return null;
+						}
+					});
+					if(key == -2){
+						// applet not trusted
+						// start the test without it
+						window.eval("doh.robot._appletDead=true;doh.run();");
+					}else{
+						// now that the applet has really started, let doh know it's ok to use it
+						log("_initRobot");
+						try{
+							dohrobot = (JSObject) window.eval("doh.robot");
+							dohrobot.call("_initRobot", new Object[]{ applet() });
 						}catch(Exception e){
 							e.printStackTrace();
-							log("Making new security manager");
-							securitymanager = new RobotSecurityManager(isOpera,
-									oldsecurity);
-							securitymanager.checkTopLevelWindow(null);
-							System.setSecurityManager(securitymanager);
 						}
-						// instantiate the Robot
-						robot = new Robot();
-					}catch(Exception e){
-						log("Error calling _init_: "+e.getMessage());
-						key = -2;
-						e.printStackTrace();
 					}
-					log("< init Robot");
-					return null;
 				}
-			});
-			if(key == -2){
-				// applet not trusted
-				// start the test without it
-				window.eval("doh.robot._appletDead=true;doh.run();");
-			}else{
-				// now that the applet has really started, let doh know it's ok to use it
-				log("_initRobot");
-				dohrobot = (JSObject) window.eval("doh.robot");
-				dohrobot.call("_initRobot", new Object[]{ applet() });
-			}
+			};
+			thread.start();
 		}
 	}
 
 	public void init(){
 		// ensure isShowing = true
 		addComponentListener(new onvisible());
+		ProfilingThread jitProfile=new ProfilingThread ();
+		jitProfile.startProfiling();
+		jitProfile.endProfiling();
 	}
 
 	// loading functions
@@ -171,19 +196,60 @@ public final class DOHRobot extends Applet{
 		}
 	}
 
+	private boolean mouseSecure() throws Exception{
+		// Use MouseInfo to ensure that mouse is inside browser.
+		// Only works in Java 1.5, but the DOHRobot must compile for 1.4.
+		if(!mouseSecurity){ return true; }
+		Class mouseInfoClass;
+		Class pointerInfoClass;
+		try{
+			mouseInfoClass = Class.forName("java.awt.MouseInfo");
+			pointerInfoClass = Class.forName("java.awt.PointerInfo");
+		}catch(ClassNotFoundException e){
+			// Java 1.4
+			e.printStackTrace();
+			return true;
+		}
+		Method getPointerInfo = mouseInfoClass.getMethod("getPointerInfo", new Class[0]);
+		Method getLocation = pointerInfoClass.getMethod("getLocation", new Class[0]);
+		Object pointer=null;
+		try{
+			pointer = getPointerInfo.invoke(pointerInfoClass,new Object[0]);
+		}catch(java.lang.reflect.InvocationTargetException e){
+			e.getTargetException().printStackTrace();
+		}
+		Point mousePosition = (Point)(getLocation.invoke(pointer,new Object[0]));
+		return mousePosition.x >= docScreenX
+			&& mousePosition.x <= docScreenXMax
+			&& mousePosition.y >= docScreenY
+			&& mousePosition.y <= docScreenYMax;
+	}
+
 	private boolean isSecure(double key){
-		boolean result = this.key != -1 && this.key == key;
+		boolean result = this.key != -1 && this.key != -2 && this.key == key;
+		try{
+			result=result&&mouseSecure();
+		}catch(Exception e){
+			e.printStackTrace();
+			result=false;
+		}
+		if(!result&&this.key!=-2){
+			this.key=-2;
+			window.eval("doh.robot._appletDead=true;");
+			log("User aborted test; mouse moved off of browser");
+			alert("User aborted test; mouse moved off of browser.");
+		}
 		log("Key secure: " + result);
 		return result;
 	}
 
-	public void _callLoaded(double sec){
+	public void _callLoaded(final double sec){
 		log("> _callLoaded Robot");
-		if(!isSecure(sec)){
-			return;
-		}
 		Thread thread = new Thread(){
 			public void run(){
+				if(!isSecure(sec)){
+					return;
+				}
 				AccessController.doPrivileged(new PrivilegedAction(){
 					public Object run(){
 						Point p = getLocationOnScreen();
@@ -239,29 +305,37 @@ public final class DOHRobot extends Applet{
 	}
 
 	private boolean confirm(final String s){
-		return ((Boolean) AccessController.doPrivileged(new PrivilegedAction(){
-			public Object run(){
-				return ((Boolean) window.eval("top.confirm(\"" + s + "\");"));
-			}
-		})).booleanValue();
+		// show a Java confirm dialog.
+		// Mac seems to lock up when showing a JS confirm from Java.
+		//return JOptionPane.showConfirmDialog(this, s, "doh.robot", JOptionPane.OK_CANCEL_OPTION)==JOptionPane.OK_OPTION);
+		JOptionPane pane = new JOptionPane(s, JOptionPane.DEFAULT_OPTION, JOptionPane.OK_CANCEL_OPTION);
+		JDialog dialog = pane.createDialog(this, "doh.robot");
+		dialog.setLocationRelativeTo(this);
+		dialog.show();
+		return ((Integer)pane.getValue()).intValue()==JOptionPane.OK_OPTION;
 	}
 
 	// mouse discovery code
-	public void setDocumentBounds(double sec, int x, int y, int w, int h){
-		log("> setDocumentBounds");
-		if(!isSecure(sec))
-			return;
+	public void setDocumentBounds(final double sec, int x, int y, int w, int h) throws Exception{
 		// call from JavaScript
 		// tells the Robot where the screen x,y of the upper left corner of the
 		// document are
 		// not screenX/Y of the window; really screenLeft/Top in IE, but not all
 		// browsers have this
+		log("> setDocumentBounds");
+		if(!isSecure(sec))
+			return;
 		if(!inited){
 			inited = true;
-			this.docScreenX = x;
-			this.docScreenY = y;
+			this.lastMouseX = this.docScreenX = x;
+			this.lastMouseY = this.docScreenY = y;
 			this.docScreenXMax = x + w;
 			this.docScreenYMax = y + h;
+			// compute difference between position and browser edge for future reference
+			this.margin = getLocationOnScreen();
+			this.margin.x -= x;
+			this.margin.y -= y;
+			mouseSecurity=true;
 		}
 		log("< setDocumentBounds");
 	}
@@ -295,12 +369,12 @@ public final class DOHRobot extends Applet{
 		}
 	}
 
-	public void _notified(double sec, final String chars){
-		if(!isSecure(sec))
-			return;
+	public void _notified(final double sec, final String chars){
 		// decouple from JavaScript; thread join could hang it
 		Thread thread = new Thread("_notified"){
 			public void run(){
+				if(!isSecure(sec))
+					return;
 				AccessController.doPrivileged(new PrivilegedAction(){
 					public Object run(){
 						try{
@@ -421,16 +495,46 @@ public final class DOHRobot extends Applet{
 		thread.start();
 	}
 
-	public void _initWheel(double sec){
+	public void _initWheel(final double sec){
 		log("> initWheel");
-		if(!isSecure(sec))
-			return;
 		Thread thread=new Thread(){
 			public void run(){
+				if(!isSecure(sec))
+					return;
+				Thread.yield();
 				// calibrate the mouse wheel now that textbox is focused
-				int dir=1;
-				if(System.getProperty("os.name").toUpperCase().indexOf("MAC") != -1){
-					dir=-1;
+				dir=1;
+				// fixed in 10.6.2 update 1 and 10.5.8 update 6:
+				// http://developer.apple.com/mac/library/releasenotes/CrossPlatform/JavaSnowLeopardUpdate1LeopardUpdate6RN/ResolvedIssues/ResolvedIssues.html
+				// Radar #6193836
+				if(os.indexOf("MAC") != -1){
+					// see if the version is greater than 10.5.8
+					String[] sfixedVersion = "10.5.8".split("\\.");
+					int[] fixedVersion = new int[3];
+					String[] sthisVersion = System.getProperty("os.version").split("\\.");
+					int[] thisVersion = new int[3];
+					for(int i=0; i<3; i++){
+						fixedVersion[i]=Integer.valueOf(sfixedVersion[i]).intValue();
+						thisVersion[i]=Integer.valueOf(sthisVersion[i]).intValue();
+					};
+					// 10.5.8, the fix level, should count as fixed
+					// on the other hand, 10.6.0 and 10.6.1 should not
+					boolean isFixed = !System.getProperty("os.version").equals("10.6.0")&&!System.getProperty("os.version").equals("10.6.1");
+					for(int i=0; i<fixedVersion.length&&isFixed; i++){
+						if(thisVersion[i]>fixedVersion[i]){
+							// definitely newer at this point
+							isFixed = true;
+							break;
+						}else if(thisVersion[i]<fixedVersion[i]){
+							// definitely older
+							isFixed = false;
+							break;
+						}
+						// equal; continue to next dot
+
+					}
+					// flip dir if not fixed
+					dir=isFixed?dir:-dir;
 				}
 				robot.mouseWheel(dir);
 				try{
@@ -442,72 +546,86 @@ public final class DOHRobot extends Applet{
 		thread.start();
 	}
 
-	public void _initKeyboard(double sec){
+	public void _initKeyboard(final double sec){
 		log("> initKeyboard");
 		// javascript entry point to discover the keyboard
-		if(!isSecure(sec))
-			return;
 		if(charMap != null){
 			dohrobot.call("_onKeyboard", new Object[]{});
 			return;
 		}
-
-		AccessController.doPrivileged(new PrivilegedAction(){
-			public Object run(){
-				charMap = new HashMap();
-				KeyEvent event = new KeyEvent(applet(), 0, 0, 0,
-						KeyEvent.VK_SPACE, ' ');
-				charMap.put(new Integer(32), event);
-				try{
-					// a-zA-Z0-9 + 29 others
-					vkKeys = new Vector();
-					for (char i = 'a'; i <= 'z'; i++){
-						vkKeys.add(new Integer(KeyEvent.class.getField(
-								"VK_" + Character.toUpperCase((char) i))
-								.getInt(null)));
-					}
-					for (char i = '0'; i <= '9'; i++){
-						vkKeys.add(new Integer(KeyEvent.class.getField(
-								"VK_" + Character.toUpperCase((char) i))
-								.getInt(null)));
-					}
-					int[] mykeys = new int[]{ KeyEvent.VK_COMMA,
-							KeyEvent.VK_MINUS, KeyEvent.VK_PERIOD,
-							KeyEvent.VK_SLASH, KeyEvent.VK_SEMICOLON,
-							KeyEvent.VK_LEFT_PARENTHESIS,
-							KeyEvent.VK_NUMBER_SIGN, KeyEvent.VK_PLUS,
-							KeyEvent.VK_RIGHT_PARENTHESIS,
-							KeyEvent.VK_UNDERSCORE,
-							KeyEvent.VK_EXCLAMATION_MARK, KeyEvent.VK_DOLLAR,
-							KeyEvent.VK_CIRCUMFLEX, KeyEvent.VK_AMPERSAND,
-							KeyEvent.VK_ASTERISK, KeyEvent.VK_QUOTEDBL,
-							KeyEvent.VK_LESS, KeyEvent.VK_GREATER,
-							KeyEvent.VK_BRACELEFT, KeyEvent.VK_BRACERIGHT,
-							KeyEvent.VK_COLON, KeyEvent.VK_BACK_QUOTE,
-							KeyEvent.VK_QUOTE, KeyEvent.VK_OPEN_BRACKET,
-							KeyEvent.VK_BACK_SLASH, KeyEvent.VK_CLOSE_BRACKET,
-							KeyEvent.VK_EQUALS };
-					for (int i = 0; i < mykeys.length; i++){
-						vkKeys.add(new Integer(mykeys[i]));
-					}
-				}catch(Exception e){
-					e.printStackTrace();
-				}
-				Thread thread = new Thread(){
-					public void run(){
+		Thread thread = new Thread(){
+			public void run(){
+				if(!isSecure(sec))
+					return;
+				AccessController.doPrivileged(new PrivilegedAction(){
+					public Object run(){
+						charMap = new HashMap();
+						KeyEvent event = new KeyEvent(applet(), 0, 0, 0,
+								KeyEvent.VK_SPACE, ' ');
+						charMap.put(new Integer(32), event);
+						try{
+							// a-zA-Z0-9 + 29 others
+							vkKeys = new Vector();
+							for (char i = 'a'; i <= 'z'; i++){
+								vkKeys.add(new Integer(KeyEvent.class.getField(
+										"VK_" + Character.toUpperCase((char) i))
+										.getInt(null)));
+							}
+							for (char i = '0'; i <= '9'; i++){
+								vkKeys.add(new Integer(KeyEvent.class.getField(
+										"VK_" + Character.toUpperCase((char) i))
+										.getInt(null)));
+							}
+							int[] mykeys = new int[]{ KeyEvent.VK_COMMA,
+									KeyEvent.VK_MINUS, KeyEvent.VK_PERIOD,
+									KeyEvent.VK_SLASH, KeyEvent.VK_SEMICOLON,
+									KeyEvent.VK_LEFT_PARENTHESIS,
+									KeyEvent.VK_NUMBER_SIGN, KeyEvent.VK_PLUS,
+									KeyEvent.VK_RIGHT_PARENTHESIS,
+									KeyEvent.VK_UNDERSCORE,
+									KeyEvent.VK_EXCLAMATION_MARK, KeyEvent.VK_DOLLAR,
+									KeyEvent.VK_CIRCUMFLEX, KeyEvent.VK_AMPERSAND,
+									KeyEvent.VK_ASTERISK, KeyEvent.VK_QUOTEDBL,
+									KeyEvent.VK_LESS, KeyEvent.VK_GREATER,
+									KeyEvent.VK_BRACELEFT, KeyEvent.VK_BRACERIGHT,
+									KeyEvent.VK_COLON, KeyEvent.VK_BACK_QUOTE,
+									KeyEvent.VK_QUOTE, KeyEvent.VK_OPEN_BRACKET,
+									KeyEvent.VK_BACK_SLASH, KeyEvent.VK_CLOSE_BRACKET,
+									KeyEvent.VK_EQUALS };
+							for (int i = 0; i < mykeys.length; i++){
+								vkKeys.add(new Integer(mykeys[i]));
+							}
+						}catch(Exception e){
+							e.printStackTrace();
+						}
+						robot.setAutoDelay(1);
+						// prime the event pump for Google Chome - so fast it doesn't even stop to listen for key events!
+						// send spaces until JS says to stop
+						int count=0;
+						boolean waitingOnSpace = true;
+						do{
+							log("Pressed space");
+							robot.keyPress(KeyEvent.VK_SPACE);
+							robot.keyRelease(KeyEvent.VK_SPACE);
+							count++;
+							waitingOnSpace = ((Boolean)window.eval("doh.robot._spaceReceived")).equals(Boolean.FALSE);
+							log("JS still waiting on a space? "+waitingOnSpace);
+						}while(count<500&&waitingOnSpace);
+						robot.keyPress(KeyEvent.VK_ENTER);
+						robot.keyRelease(KeyEvent.VK_ENTER);
 						robot.setAutoDelay(0);
 						log("< initKeyboard");
 						pressNext();
+						return null;
 					}
-				};
-				thread.start();
-				return null;
+				});
 			}
-		});
+		};
+		thread.start();
 	}
 
 	public void typeKey(double sec, final int charCode, final int keyCode,
-			final boolean alt, final boolean ctrl, final boolean shift,
+			final boolean alt, final boolean ctrl, final boolean shift, final boolean meta,
 			final int delay, final boolean async){
 		if(!isSecure(sec))
 			return;
@@ -518,7 +636,7 @@ public final class DOHRobot extends Applet{
 				try{
 					log("> typeKey Robot " + charCode + ", " + keyCode + ", " + async);
 					KeyPressThread thread = new KeyPressThread(charCode,
-							keyCode, alt, ctrl, shift, delay, async?null:previousThread);
+							keyCode, alt, ctrl, shift, meta, delay, async?null:previousThread);
 					previousThread = async?previousThread:thread;
 					thread.start();
 					log("< typeKey Robot");
@@ -624,7 +742,7 @@ public final class DOHRobot extends Applet{
 			public Object run(){
 				int x = x1 + docScreenX;
 				int y = y1 + docScreenY;
-				if(x > docScreenXMax || y > docScreenYMax){
+				if(x > docScreenXMax || y > docScreenYMax || x < docScreenX || y < docScreenY){
 					// TODO: try to scroll view
 					log("Request to mouseMove denied");
 					return null;
@@ -754,6 +872,10 @@ public final class DOHRobot extends Applet{
 				case 46:
 					keyboardCode = KeyEvent.VK_DELETE;
 					break;
+				case 224:
+				case 91:
+					keyboardCode = KeyEvent.VK_META;
+					break;
 				case 63289:
 				case 144:
 					keyboardCode = KeyEvent.VK_NUM_LOCK;
@@ -873,6 +995,8 @@ public final class DOHRobot extends Applet{
 				case 47:
 					keyboardCode = KeyEvent.VK_HELP;
 					break;
+				default:
+					keyboardCode = keyCode;
 
 			}
 		}
@@ -890,14 +1014,34 @@ public final class DOHRobot extends Applet{
 							|| (ctrl && alt && keyboardCode == KeyEvent.VK_DELETE)){
 			log("You are not allowed to press this key combination!");
 			return true;
+		// bugged keys cases go next
 		}else{
 			log("Safe to press.");
 			return false;
 		}
 	}
 
+	private boolean disableNumlock(int vk, boolean shift){
+		boolean result = !numlockDisabled&&shift
+			&&os.indexOf("WINDOWS")!=-1
+			&&toolkit.getLockingKeyState(KeyEvent.VK_NUM_LOCK) // only works on Windows
+			&&(
+				// any numpad buttons are suspect
+				vk==KeyEvent.VK_LEFT
+				||vk==KeyEvent.VK_UP
+				||vk==KeyEvent.VK_RIGHT
+				||vk==KeyEvent.VK_DOWN
+				||vk==KeyEvent.VK_HOME
+				||vk==KeyEvent.VK_END
+				||vk==KeyEvent.VK_PAGE_UP
+				||vk==KeyEvent.VK_PAGE_DOWN
+		);
+		log("disable numlock: "+result);
+		return result;
+	}
+
 	private void _typeKey(final int cCode, final int kCode, final boolean a,
-			final boolean c, final boolean s){
+			final boolean c, final boolean s, final boolean m){
 		AccessController.doPrivileged(new PrivilegedAction(){
 			public Object run(){
 				int charCode = cCode;
@@ -905,6 +1049,7 @@ public final class DOHRobot extends Applet{
 				boolean alt = a;
 				boolean ctrl = c;
 				boolean shift = s;
+				boolean meta = m;
 				boolean altgraph = false;
 				log("> _typeKey Robot " + charCode + ", " + keyCode);
 				try{
@@ -921,6 +1066,9 @@ public final class DOHRobot extends Applet{
 						keyboardCode = event.getKeyCode();
 					}
 
+					// Java bug: on Windows, shift+arrow key unpresses shift when numlock is on.
+					// See: http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=4838497
+					boolean disableNumlock=disableNumlock(keyboardCode,shift||applet().shift);
 					// run through exemption list
 					if(!isUnsafe(keyboardCode)){
 						if(shift){
@@ -939,9 +1087,25 @@ public final class DOHRobot extends Applet{
 							log("Pressing ctrl");
 							robot.keyPress(KeyEvent.VK_CONTROL);
 						}
+						if(meta){
+							log("Pressing meta");
+							robot.keyPress(KeyEvent.VK_META);
+						}
+						if(disableNumlock){
+							robot.keyPress(KeyEvent.VK_NUM_LOCK);
+							robot.keyRelease(KeyEvent.VK_NUM_LOCK);
+							numlockDisabled=true;
+						}else if(numlockDisabled&&!(applet().shift||shift)){
+							// only turn it back on when the user is finished pressing shifted arrow keys
+							robot.keyPress(KeyEvent.VK_NUM_LOCK);
+							robot.keyRelease(KeyEvent.VK_NUM_LOCK);
+							numlockDisabled=false;
+						}
 						if(keyboardCode != KeyEvent.VK_SHIFT
 								&& keyboardCode != KeyEvent.VK_ALT
-								&& keyboardCode != KeyEvent.VK_CONTROL){
+								&& keyboardCode != KeyEvent.VK_ALT_GRAPH
+								&& keyboardCode != KeyEvent.VK_CONTROL
+								&& keyboardCode != KeyEvent.VK_META){
 							try{
 								robot.keyPress(keyboardCode);
 								robot.keyRelease(keyboardCode);
@@ -968,6 +1132,11 @@ public final class DOHRobot extends Applet{
 							robot.keyRelease(KeyEvent.VK_SHIFT);
 							shift = false;
 						}
+						if(meta){
+							log("Releasing meta");
+							robot.keyRelease(KeyEvent.VK_META);
+							meta = false;
+						}
 					}
 				}catch(Exception e){
 					log("Error in _typeKey");
@@ -980,10 +1149,31 @@ public final class DOHRobot extends Applet{
 	}
 
 	public boolean hasFocus(){
+		// sanity check to make sure the robot isn't clicking outside the window when the browser is minimized for instance
 		try{
-			return ((Boolean) window
+			boolean result= ((Boolean) window
 					.eval("var result=false;if(window.parent.document.hasFocus){result=window.parent.document.hasFocus();}else{result=true;}result;"))
 					.booleanValue();
+			if(!result){
+				// can happen for instance if the browser minimized itself, or if there is another applet on the page.
+				// recompute window,mouse positions to see if it is still safe to continue.
+				log("Document focus lost. Recomputing window position");
+				Point p = getLocationOnScreen();
+				log("Old root: "+docScreenX+" "+docScreenY);
+				docScreenX=p.x-margin.x;
+				docScreenY=p.y-margin.y;
+				log("New root: "+docScreenX+" "+docScreenY);
+				docScreenXMax=docScreenX+((Integer)window.eval("window.parent.document.getElementById('dohrobotview').offsetLeft")).intValue();
+				docScreenYMax=docScreenY+((Integer)window.eval("window.parent.document.getElementById('dohrobotview').offsetTop")).intValue();
+				// bring browser to the front again.
+				// if the window just blurred and moved, key events will again be directed to the window.
+				// if an applet stole focus, focus will still be directed to the applet; the test script will ultimately have to click something to get back to a normal state.
+				window.eval("window.parent.focus();");
+				// recompute mouse position
+				return isSecure(this.key);
+			}else{
+				return result;
+			}
 		}catch(Exception e){
 			// runs even after you close the window!
 			return false;
@@ -994,23 +1184,54 @@ public final class DOHRobot extends Applet{
 	// (so as not to tie up the browser rendering thread!)
 	// declared inside so they have private access to the robot
 	// we do *not* want to expose that guy!
-	final private class KeyPressThread extends Thread{
+	private class ProfilingThread extends Thread{
+		protected long delay=0;
+		protected long duration=0;
+		private long start;
+		private long oldDelay;
+		protected void startProfiling(){
+			// error correct
+			if(delay>0){
+				oldDelay=delay;
+				delay-=timingError+(duration>0?timingError:0);
+				log("Timing error: "+timingError);
+				if(delay<1){
+					if(duration>0){ duration=Math.max(duration+delay,1); }
+					delay=1;
+				}
+				start=System.currentTimeMillis();
+			}else{
+				// assumption is that only doh.robot.typeKeys actually uses delay/needs this level of error correcting
+				timingError=0;
+			}
+		}
+		protected void endProfiling(){
+			// adaptively correct timingError
+			if(delay>0){
+				long end=System.currentTimeMillis();
+				timingError+=(end-start)-oldDelay;
+			}
+		}
+	}
+	
+	final private class KeyPressThread extends ProfilingThread{
 		private int charCode;
 		private int keyCode;
 		private boolean alt;
 		private boolean ctrl;
 		private boolean shift;
-		private int delay;
+		private boolean meta;
 		private Thread myPreviousThread = null;
 
 		public KeyPressThread(int charCode, int keyCode, boolean alt,
-				boolean ctrl, boolean shift, int delay, Thread myPreviousThread){
+				boolean ctrl, boolean shift, boolean meta, int delay, Thread myPreviousThread){
 			log("KeyPressThread constructor " + charCode + ", " + keyCode);
 			this.charCode = charCode;
 			this.keyCode = keyCode;
 			this.alt = alt;
 			this.ctrl = ctrl;
 			this.shift = shift;
+			this.meta = meta;
 			this.delay = delay;
 			this.myPreviousThread = myPreviousThread;
 		}
@@ -1019,6 +1240,7 @@ public final class DOHRobot extends Applet{
 			try{
 				if(myPreviousThread != null)
 					myPreviousThread.join();
+				startProfiling();
 				// in different order so async works
 				while(!hasFocus()){
 					Thread.sleep(1000);
@@ -1026,7 +1248,9 @@ public final class DOHRobot extends Applet{
 				Thread.sleep(delay);
 				log("> run KeyPressThread");
 
-				_typeKey(charCode, keyCode, alt, ctrl, shift);
+				_typeKey(charCode, keyCode, alt, ctrl, shift, meta);
+
+				endProfiling();
 			}catch(Exception e){
 				log("Bad parameters passed to _typeKey");
 				e.printStackTrace();
@@ -1036,10 +1260,9 @@ public final class DOHRobot extends Applet{
 		}
 	}
 
-	final private class KeyDownThread extends Thread{
+	final private class KeyDownThread extends ProfilingThread{
 		private int charCode;
 		private int keyCode;
-		private int delay;
 		private Thread myPreviousThread = null;
 
 		public KeyDownThread(int charCode, int keyCode, int delay, Thread myPreviousThread){
@@ -1082,6 +1305,12 @@ public final class DOHRobot extends Applet{
 						shift=true;
 					}else if(vkCode==KeyEvent.VK_ALT_GRAPH){
 						altgraph=true;
+					}else if(vkCode==KeyEvent.VK_META){
+						meta=true;
+					}else if(disableNumlock(vkCode,shift)){
+						robot.keyPress(KeyEvent.VK_NUM_LOCK);
+						robot.keyRelease(KeyEvent.VK_NUM_LOCK);
+						numlockDisabled=true;
 					}
 				}
 				if(!isUnsafe(vkCode)){
@@ -1096,10 +1325,9 @@ public final class DOHRobot extends Applet{
 		}
 	}
 
-	final private class KeyUpThread extends Thread{
+	final private class KeyUpThread extends ProfilingThread{
 		private int charCode;
 		private int keyCode;
-		private int delay;
 		private Thread myPreviousThread = null;
 
 		public KeyUpThread(int charCode, int keyCode, int delay, Thread myPreviousThread){
@@ -1140,8 +1368,15 @@ public final class DOHRobot extends Applet{
 						ctrl=false;
 					}else if(vkCode==KeyEvent.VK_SHIFT){
 						shift=false;
+						if(numlockDisabled){
+							robot.keyPress(KeyEvent.VK_NUM_LOCK);
+							robot.keyRelease(KeyEvent.VK_NUM_LOCK);
+							numlockDisabled=false;
+						}
 					}else if(vkCode==KeyEvent.VK_ALT_GRAPH){
 						altgraph=false;
+					}else if(vkCode==KeyEvent.VK_META){
+						meta=false;
 					}
 				}
 				robot.keyRelease(vkCode);
@@ -1154,9 +1389,8 @@ public final class DOHRobot extends Applet{
 		}
 	}
 
-	final private class MousePressThread extends Thread{
+	final private class MousePressThread extends ProfilingThread{
 		private int mask;
-		private int delay;
 		private Thread myPreviousThread = null;
 
 		public MousePressThread(int mask, int delay, Thread myPreviousThread){
@@ -1185,9 +1419,8 @@ public final class DOHRobot extends Applet{
 		}
 	}
 
-	final private class MouseReleaseThread extends Thread{
+	final private class MouseReleaseThread extends ProfilingThread{
 		private int mask;
-		private int delay;
 		private Thread myPreviousThread = null;
 
 		public MouseReleaseThread(int mask, int delay, Thread myPreviousThread){
@@ -1217,11 +1450,9 @@ public final class DOHRobot extends Applet{
 		}
 	}
 
-	final private class MouseMoveThread extends Thread{
+	final private class MouseMoveThread extends ProfilingThread{
 		private int x;
 		private int y;
-		private int delay;
-		private int duration;
 		private Thread myPreviousThread = null;
 
 		public MouseMoveThread(int x, int y, int delay, int duration, Thread myPreviousThread){
@@ -1276,21 +1507,52 @@ public final class DOHRobot extends Applet{
 					}
 
 				}
-				robot.setAutoDelay(Math.max(duration/100,1));
-				robot.mouseMove(x1, y1);
-				int d = 100;
-				for (int t = 0; t <= d; t++){
+				// manual precision
+				robot.setAutoWaitForIdle(false);
+				int intermediateSteps = duration==1?0: // duration==1 -> user wants to jump the mouse
+					((((int)Math.ceil(Math.log(duration+1)))|1)); // |1 to ensure an odd # of intermediate steps for sensible interpolation
+				// assumption: intermediateSteps will always be >=0
+				int delay = (int)duration/(intermediateSteps+1); // +1 to include last move
+				// First mouse movement fires at t=0 to official last know position of the mouse.
+				robot.mouseMove(lastMouseX, lastMouseY);
+				long start,end;
+				
+				// Shift lastMouseX/Y in the direction of the movement for interpolating over the smaller interval.
+				lastMouseX=x1;
+				lastMouseY=y1;
+				// Now interpolate mouse movement from (lastMouseX=x1,lastMouseY=y1) to (x2,y2)
+				// precondition: the amount of time that has passed since the first mousemove is 0*delay.
+				// invariant: each time you end an iteration, after you increment t, the amount of time that has passed is t*delay
+				int timingError=0;
+				for (int t = 0; t < intermediateSteps; t++){
+					start=new Date().getTime();
+					Thread.sleep(delay);
 					x1 = (int) easeInOutQuad((double) t, (double) lastMouseX,
-							(double) x2 - lastMouseX, (double) d);
+							(double) x2 - lastMouseX, (double) intermediateSteps-1);
 					y1 = (int) easeInOutQuad((double) t, (double) lastMouseY,
-							(double) y2 - lastMouseY, (double) d);
+							(double) y2 - lastMouseY, (double) intermediateSteps-1);
+					//log("("+x1+","+y1+")");
 					robot.mouseMove(x1, y1);
+					end=new Date().getTime();
+					// distribute error among remaining steps
+					timingError=(((int)(end-start))-delay)/(intermediateSteps-t);
+					log("mouseMove timing error: "+timingError);
+					delay=Math.max(delay-(int)timingError,1);
 				}
+				// postconditions:
+				//	t=intermediateSteps
+				// 	intermediateSteps*delay time has passed,
+				// 	time remaining = duration-intermediateSteps*delay = (steps+1)*delay-intermediateSteps*delay = delay
+				// You theoretically need 1 more delay for the whole duration to have passed.
+				// In practice, you want less than that due to roundoff errors in Java's clock granularity.
+				Thread.sleep(delay);
 				robot.mouseMove(x, y);
+				robot.setAutoWaitForIdle(true);
+				
+				//log("mouseMove statistics: duration= "+duration+" steps="+intermediateSteps+" delay="+delay);
+				//log("mouseMove discrepency: "+(date2-date-duration)+"ms");
 				lastMouseX = x;
 				lastMouseY = y;
-				robot.waitForIdle();
-				robot.setAutoDelay(1);
 			}catch(Exception e){
 				log("Bad parameters passed to mouseMove");
 				e.printStackTrace();
@@ -1301,10 +1563,8 @@ public final class DOHRobot extends Applet{
 		}
 	}
 
-	final private class MouseWheelThread extends Thread{
+	final private class MouseWheelThread extends ProfilingThread{
 		private int amount;
-		private int delay;
-		private int duration;
 		private Thread myPreviousThread = null;
 
 		public MouseWheelThread(int amount, int delay, int duration, Thread myPreviousThread){
@@ -1323,12 +1583,7 @@ public final class DOHRobot extends Applet{
 				while(!hasFocus()){
 					Thread.sleep(1000);
 				}
-				int dir = 1;
-				if(System.getProperty("os.name").toUpperCase().indexOf("MAC") != -1){
-					// yay for Apple
-					dir = -1;
-				}
-				robot.setAutoDelay(Math.max(duration/Math.abs(amount),1));
+				robot.setAutoDelay(Math.max((int)duration/Math.abs(amount),1));
 				for(int i=0; i<Math.abs(amount); i++){
 					robot.mouseWheel(amount>0?dir:-dir);
 				}
@@ -1348,11 +1603,11 @@ public final class DOHRobot extends Applet{
 		// Our security manager fixes it.
 
 		private boolean isActive = false;
-		private boolean isOpera = false;
+		private boolean needsSecurityManager = false;
 		private SecurityManager oldsecurity = null;
 
-		public RobotSecurityManager(boolean isOpera, SecurityManager oldsecurity){
-			this.isOpera = isOpera;
+		public RobotSecurityManager(boolean needsSecurityManager, SecurityManager oldsecurity){
+			this.needsSecurityManager = needsSecurityManager;
 			this.oldsecurity = oldsecurity;
 		}
 
@@ -1376,15 +1631,16 @@ public final class DOHRobot extends Applet{
 
 		public void checkPermission(Permission p){
 			// liveconnect SocketPermission resolve takes
-			// FOREVER (like 6 seconds) in Safari
+			// FOREVER (like 6 seconds) in Safari 3
 			// Java does like 50 of these on the first JS call
 			// 6*50=300 seconds!
-			// Opera freaks out though if we deny resolve
-			if(isActive && !isOpera
+			if(isActive && needsSecurityManager
 					&& java.net.SocketPermission.class.isInstance(p)
 					&& p.getActions().matches(".*resolve.*")){
 				throw new SecurityException(
-						"DOH: liveconnect resolve locks up Safari. Denying resolve request.");
+						"DOH: liveconnect resolve locks up Safari 3. Denying resolve request.");
+			}else if(p.equals(new java.awt.AWTPermission("watchMousePointer"))){
+				// enable robot to watch mouse
 			}else{
 				oldsecurity.checkPermission(p);
 			}
@@ -1424,7 +1680,7 @@ public final class DOHRobot extends Applet{
 		});
 	}
 	private static java.awt.datatransfer.Clipboard getSystemClipboard() {
-		return Toolkit.getDefaultToolkit().getSystemClipboard();
+		return toolkit.getSystemClipboard();
 	}
 	
 	private static class TextTransferable implements Transferable, ClipboardOwner {

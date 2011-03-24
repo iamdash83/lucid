@@ -8,10 +8,10 @@ i18nUtil.setup = function(/*Object*/kwArgs){
 		djConfig={
 			locale: 'xx',
 			extraLocale: kwArgs.localeList,
-			baseUrl: "../../dojo/"
+			baseUrl: buildScriptsPath + "../../dojo/"
 		};
 
-		load('../../dojo/dojo.js');
+		load(buildScriptsPath + '../../dojo/dojo.js');
 
 		//Now set baseUrl so it is current directory, since all the prefixes
 		//will be relative to the release dir from this directory.
@@ -53,14 +53,18 @@ i18nUtil.flattenLayerFileBundles = function(/*String*/fileName, /*String*/fileCo
 	
 	//TODO: register plain function handler (output source) in jsonRegistry?
 	var drl = dojo.requireLocalization;
+	var dupes = {};
 	dojo.requireLocalization = function(modulename, bundlename, locale){
-		drl(modulename, bundlename, locale);
-	//TODO: avoid dups?
-		djLoadedBundles.push({modulename: modulename, module: eval(modulename), bundlename: bundlename});
+		var dupName = [modulename, bundlename, locale].join(":");
+		if(!dupes[dupName]){
+			drl(modulename, bundlename, locale);
+			djLoadedBundles.push({modulename: modulename, module: eval(modulename), bundlename: bundlename});
+			dupes[dupName] = 1;
+		}
 	};
 	
 	var requireStatements = fileContents.match(/dojo\.requireLocalization\(.*\)\;/g);
-	if(requireStatements){	
+	if(requireStatements){
 		eval(requireStatements.join(";"));
 
 		//print("loaded bundles: "+djLoadedBundles.length);
@@ -166,7 +170,7 @@ i18nUtil.flattenDirBundles = function(/*String*/prefixName, /*String*/prefixDir,
 		
 		//Files in nls directories, except for layer bundles that already have been processed.
 		if(jsFileName.match(/\/nls\//) && !jsFileName.match(nlsIgnoreRegExp)){
-			fileContents = "(" + i18nUtil.makeFlatBundleContents(prefixName, prefixDir, jsFileName) + ")";			
+			fileContents = "(" + i18nUtil.makeFlatBundleContents(prefixName, prefixDir, jsFileName) + ")";
 		}else{
 			fileContents = i18nUtil.modifyRequireLocalization(readText(jsFileName), prefixes);
 		}
@@ -213,9 +217,9 @@ i18nUtil.modifyRequireLocalization = function(/*String*/fileContents, /*Array*/p
 					replacement = "dojo." + depCall + "(" + depArgs + ")";
 				}
 			}
-			return replacement;		
+			return replacement;
 		});
-	}	
+	}
 	return modifiedContents;
 }
 
@@ -316,7 +320,7 @@ i18nUtil.getBundlePartsFromFileName = function(prefix, prefixPath, srcFileName){
 		var bundleName = parts[i+1];
 	}else{
 		var localeName = parts[i+1];
-		var bundleName = parts[i+2];	
+		var bundleName = parts[i+2];
 	}
 
 	if(!bundleName || bundleName.indexOf(".js") == -1){

@@ -1,17 +1,19 @@
+define(
+//begin v1.x content
 ({
 	'bold': 'Negreta',
 	'copy': 'Copia',
 	'cut': 'Retalla',
 	'delete': 'Suprimeix',
-	'indent': 'Sagna',
+	'indent': 'Sagnat',
 	'insertHorizontalRule': 'Regla horitzontal',
 	'insertOrderedList': 'Llista numerada',
-	'insertUnorderedList': 'Llista de pics',
+	'insertUnorderedList': 'Llista de vinyetes',
 	'italic': 'Cursiva',
-	'justifyCenter': 'Alineació centrada',
-	'justifyFull': 'Justificació',
-	'justifyLeft': 'Alineació esquerra',
-	'justifyRight': 'Alineació dreta',
+	'justifyCenter': 'Centra',
+	'justifyFull': 'Justifica',
+	'justifyLeft': 'Alinea a l\'esquerra',
+	'justifyRight': 'Alinea a la dreta',
 	'outdent': 'Sagna a l\'esquerra',
 	'paste': 'Enganxa',
 	'redo': 'Refés',
@@ -25,19 +27,26 @@
 	'unlink': 'Elimina l\'enllaç',
 	'createLink': 'Crea un enllaç',
 	'toggleDir': 'Inverteix la direcció',
-	'insertImage': 'Insereix una imatge',
+	'insertImage': 'Insereix imatge',
 	'insertTable': 'Insereix/edita la taula',
 	'toggleTableBorder': 'Inverteix els contorns de taula',
 	'deleteTable': 'Suprimeix la taula',
-	'tableProp': 'Propietats de la taula',
+	'tableProp': 'Propietat de taula',
 	'htmlToggle': 'Font HTML',
 	'foreColor': 'Color de primer pla',
 	'hiliteColor': 'Color de fons',
 	'plainFormatBlock': 'Estil de paràgraf',
 	'formatBlock': 'Estil de paràgraf',
-	'fontSize': 'Mida de la lletra',
+	'fontSize': 'Cos de la lletra',
 	'fontName': 'Nom del tipus de lletra',
+	'tabIndent': 'Sagnat',
+	"fullScreen": "Commuta pantalla completa",
+	"viewSource": "Visualitza font HTML",
+	"print": "Imprimeix",
+	"newPage": "Pàgina nova",
 	/* Error messages */
-	'systemShortcutFF': 'L\'acció "${0}" només està disponible per a Mozilla Firefox amb la drecera del teclat. Feu servir ${1}.'
+	'systemShortcut': 'L\'acció "${0}" és l\'única disponible al navegador utilitzant una drecera del teclat. Utilitzeu ${1}.',
+	'ctrlKey':'control+${0}'
 })
-
+//end v1.x content
+);

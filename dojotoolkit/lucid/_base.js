@@ -1,9 +1,5 @@
-dojo.provide("lucid._base");
+define("lucid/_base", ["dojo", "lucid", "lucid/user", "lucid/widget/GlobalToolbar"], function(dojo, lucid){
 
+    return lucid;
 
-lucid = {
-    startup: function(){
-    }
-};
-
-dojo.addOnLoad(dojo.hitch(lucid, "startup"));
+});

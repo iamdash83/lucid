@@ -8,7 +8,7 @@ dojo.declare("dojox.widget.FisheyeLite",
 	dijit._Widget,
 	{
 	// summary:  A Light-weight Fisheye Component, or an exhanced version
-	//		of dojo.fx.Toggler ... 
+	//		of dojo.fx.Toggler ...
 	//
 	// description:
 	//		A Simple FisheyeList-like widget which (in the interest of
@@ -33,7 +33,7 @@ dojo.declare("dojox.widget.FisheyeLite",
 	//
 	//
 	// example:
-	//	|	new dojox.widget.FisheyeLite({ 
+	//	|	new dojox.widget.FisheyeLite({
 	//	|		properties:{
 	//	|			// height is literal, width is multiplied
 	//	|			height:{ end: 200 }, width:2.3
@@ -52,7 +52,7 @@ dojo.declare("dojox.widget.FisheyeLite",
 	//		The Time (in ms) to run the hide animation
 	durationOut: 1420,
 	
-	// easeOut: Function	
+	// easeOut: Function
 	// 		An easing function to use for the hide animation
 	easeOut: dojo.fx.easing.elasticOut,
 
@@ -61,13 +61,13 @@ dojo.declare("dojox.widget.FisheyeLite",
 	//			defaults to font-size with a scale of 2.75
 	//			If a named property is an integer or float, the "scale multiplier"
 	//			is used. If the named property is an object, that object is mixed
-	//			into the animation directly. eg: height:{ end:20, unit:"em" }
+	//			into the animation directly. eg: height:{ end:20, units:"em" }
 	properties: null,
 	
-	// unit: String
+	// units: String
 	//		Sometimes, you need to specify a unit. Should be part of
 	//		properties attrib, but was trying to shorthand the logic there
-	unit:"px",
+	units:"px",
 	
 	constructor: function(props, node){
 		this.properties = props.properties || {
@@ -89,7 +89,7 @@ dojo.declare("dojox.widget.FisheyeLite",
 	
 	show: function(){
 		// summary:
-		//		Show this Fisheye item. 
+		//		Show this Fisheye item.
 		this._runningOut.stop();
 		this._runningIn.play();
 	},
@@ -115,8 +115,8 @@ dojo.declare("dojox.widget.FisheyeLite",
 			// note: do not set negative scale for [a list of properties] for IE support
 			// note: filter:'s are your own issue, too ;)
 			// FIXME: this.unit here is bad, likely. d._toPixelValue ?
-			_out[p] = { end: v, unit:this.unit };
-			_in[p] = deep ? prop : { end: prop * v, unit:this.unit };
+			_out[p] = { end: v, units:this.units };
+			_in[p] = deep ? prop : { end: prop * v, units:this.units };
 		}
 		
 		this._runningIn = dojo.animateProperty({

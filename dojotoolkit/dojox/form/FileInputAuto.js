@@ -1,7 +1,7 @@
 dojo.provide("dojox.form.FileInputAuto");
 
 dojo.require("dojox.form.FileInput");
-dojo.require("dojo.io.iframe"); 
+dojo.require("dojo.io.iframe");
 
 dojo.declare("dojox.form.FileInputAuto",
 	dojox.form.FileInput,
@@ -11,12 +11,12 @@ dojo.declare("dojox.form.FileInputAuto",
 	// description: An extended version of FileInput - when the user focuses away from the input
 	//	the selected file is posted via dojo.io.iframe to the url. example implementation
 	//	comes with PHP solution for handling upload, and returning required data.
-	//	
-	// notes: the return data from the io.iframe is used to populate the input element with 
+	//
+	// notes: the return data from the io.iframe is used to populate the input element with
 	//	data regarding the results. it will be a JSON object, like:
-	//	
+	//
 	//	results = { size: "1024", filename: "file.txt" }
-	//	
+	//
 	//	all the parameters allowed to dojox.form.FileInput apply
 
 	// url: String
@@ -34,9 +34,9 @@ dojo.declare("dojox.form.FileInputAuto",
 	duration: 500,
 
 	// uploadMessage: String
-	//	
+	//
 	//	FIXME: i18n somehow?
-	uploadMessage: "Uploading ...", 
+	uploadMessage: "Uploading ...",
 	
 	// triggerEvent: String
 	//		Event which triggers the upload. Defaults to onblur, sending the file selected
@@ -45,14 +45,21 @@ dojo.declare("dojox.form.FileInputAuto",
 	triggerEvent: "onblur",
 	
 	_sent: false,
-
+	
 	// small template changes, new attachpoint: overlay
-	templatePath: dojo.moduleUrl("dojox.form","resources/FileInputAuto.html"),
-
+	templateString: dojo.cache("dojox.form","resources/FileInputAuto.html"),
+	
+	onBeforeSend: function(){
+		// summary: Called immediately before a FileInput sends it's file via io.iframe.send.
+		//		The return of this function is passed as the `content` member in the io.iframe IOArgs
+		//		object.
+		return {};
+	},
+	
 	startup: function(){
 		// summary: add our extra blur listeners
 		this._blurListener = this.connect(this.fileInput, this.triggerEvent, "_onBlur");
-		this._focusListener = this.connect(this.fileInput, "onfocus", "_onFocus"); 
+		this._focusListener = this.connect(this.fileInput, "onfocus", "_onFocus");
 		this.inherited(arguments);
 	},
 
@@ -65,7 +72,7 @@ dojo.declare("dojox.form.FileInputAuto",
 		// summary: start the upload timer
 		if(this._blurTimer){ clearTimeout(this._blurTimer); }
 		if(!this._sent){
-			this._blurTimer = setTimeout(dojo.hitch(this,"_sendFile"),this.blurDelay);		
+			this._blurTimer = setTimeout(dojo.hitch(this,"_sendFile"),this.blurDelay);
 		}
 	},
 
@@ -94,9 +101,9 @@ dojo.declare("dojox.form.FileInputAuto",
 
 		dojo.fadeIn({ node: this.overlay, duration:this.duration }).play();
 
-		var _newForm; 
-		if(dojo.isIE){
-			// just to reiterate, IE is a steaming pile of code. 
+		var _newForm;
+		if(dojo.isIE < 9 || (dojo.isIE && dojo.isQuirks)){
+			// just to reiterate, IE is a steaming pile of code.
 			_newForm = document.createElement('<form enctype="multipart/form-data" method="post">');
 			_newForm.encoding = "multipart/form-data";
 			
@@ -112,10 +119,11 @@ dojo.declare("dojox.form.FileInputAuto",
 			url: this.url,
 			form: _newForm,
 			handleAs: "json",
-			handle: dojo.hitch(this,"_handleSend")
+			handle: dojo.hitch(this,"_handleSend"),
+			content: this.onBeforeSend()
 		});
 	},
-
+	
 	_handleSend: function(data,ioArgs){
 		// summary: The callback to toggle the progressbar, and fire the user-defined callback
 
@@ -128,7 +136,7 @@ dojo.declare("dojox.form.FileInputAuto",
 			opacity:0,
 			border:"none",
 			background:"none"
-		}); 
+		});
 
 		this.overlay.style.backgroundImage = "none";
 		this.fileInput.style.display = "none";
@@ -158,11 +166,11 @@ dojo.declare("dojox.form.FileInputAuto",
 		this._sent = false;
 		this._sending = false;
 		this._blurListener = this.connect(this.fileInput, this.triggerEvent,"_onBlur");
-		this._focusListener = this.connect(this.fileInput,"onfocus","_onFocus"); 
+		this._focusListener = this.connect(this.fileInput,"onfocus","_onFocus");
 	},
 
 	onComplete: function(data,ioArgs,widgetRef){
-		// summary: stub function fired when an upload has finished. 
+		// summary: stub function fired when an upload has finished.
 		// data: the raw data found in the first [TEXTAREA] tag of the post url
 		// ioArgs: the dojo.Deferred data being passed from the handle: callback
 		// widgetRef: this widget pointer, so you can set this.overlay to a completed/error message easily
@@ -184,8 +192,8 @@ dojo.declare("dojox.form.FileInputBlind",
 		this._fixPosition();
 	},
 	
-	_fixPosition: function(){		
-		// summary: in this case, set the button under where the visible button is 
+	_fixPosition: function(){
+		// summary: in this case, set the button under where the visible button is
 		if(dojo.isIE){
 			dojo.style(this.fileInput,"width","1px");
 		}else{
@@ -196,6 +204,6 @@ dojo.declare("dojox.form.FileInputBlind",
 	reset: function(e){
 		// summary: onclick, we need to reposition our newly created input type="file"
 		this.inherited(arguments);
-		this._fixPosition(); 
+		this._fixPosition();
 	}
 });

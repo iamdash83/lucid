@@ -1,3 +1,5 @@
+define(
+//begin v1.x content
 ({
 	'bold': 'Negrito',
 	'copy': 'Copiar',
@@ -30,7 +32,7 @@
 	'toggleTableBorder': 'Alternar contorno da tabela',
 	'deleteTable': 'Eliminar tabela',
 	'tableProp': 'Propriedades da tabela',
-	'htmlToggle': 'Origem HTML',
+	'htmlToggle': 'Código-fonte de HTML',
 	'foreColor': 'Cor de primeiro plano',
 	'hiliteColor': 'Cor de segundo plano',
 	'plainFormatBlock': 'Estilo de parágrafo',
@@ -38,6 +40,13 @@
 	'fontSize': 'Tamanho do tipo de letra',
 	'fontName': 'Nome do tipo de letra',
 	'tabIndent': 'Indentar com a tecla Tab',
+	"fullScreen": "Alternar ecrã completo",
+	"viewSource": "Ver origem HTML",
+	"print": "Imprimir",
+	"newPage": "Nova página",
 	/* Error messages */
 	'systemShortcut': 'A acção "${0}" apenas está disponível no navegador utilizando um atalho de teclado. Utilize ${1}.'
 })
+
+//end v1.x content
+);
