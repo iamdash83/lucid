@@ -1,4 +1,4 @@
-define("lucid/user", ["dojo", "lucid"], function(dojo, lucid){
+define("lucid/_base/user", ["dojo", "lucid"], function(dojo, lucid){
 
     lucid.user = {
         isLoggedIn: function(options) {

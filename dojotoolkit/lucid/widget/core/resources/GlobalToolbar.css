@@ -1,0 +1,49 @@
+.lucidGlobalToolbar {
+    margin: 0 auto;
+    padding: 0 15px;
+    width: 700px;
+    background: #eee;
+    -moz-border-bottom-left-radius: 15px;
+    border-bottom-left-radius: 15px;
+    -moz-border-bottom-right-radius: 15px;
+    border-bottom-right-radius: 15px;
+}
+
+.lucidGlobalToolbar h1 {
+    float: left;
+    margin: 0.83em;
+}
+
+.lucidGlobalToolbar ul {
+    float: right;
+    margin: 0;
+    list-style: none;
+    padding: 0;
+}
+
+.lucidGlobalToolbar ul li {
+    float: left;
+}
+
+.lucidGlobalToolbar ul li a {
+    display: block;
+    padding: 1.2em;
+    color: #444;
+    text-decoration: none;
+}
+
+.lucidGlobalToolbar ul li a:hover  {
+    background: #ccc;
+}
+
+.lucidGlobalToolbar .lucidGlobalToolbarSearchbox {
+    margin: 0 85px;
+    width: 200px;
+    padding: 1em;
+}
+
+/* dropdowns */
+
+.lucidDropDown {
+    background: #555;
+}
