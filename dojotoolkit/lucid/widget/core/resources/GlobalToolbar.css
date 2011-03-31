@@ -32,7 +32,8 @@
     text-decoration: none;
 }
 
-.lucidGlobalToolbar ul li a:hover  {
+.lucidGlobalToolbar ul li a:hover,
+.lucidGlobalToolbar ul li a.dijitHasDropDownOpen  {
     background: #ccc;
     transition: all .1s linear;
     -o-transition: all .1s linear;

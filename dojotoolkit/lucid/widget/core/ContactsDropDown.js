@@ -9,6 +9,12 @@ define("lucid/widget/core/ContactsDropDown", ["dojo", "dijit", "lucid", "dijit/_
         },
         focus: function(){
             this.domNode.focus();
+        },
+        onExecute: function(){
+            
+        },
+        onCancel: function(){
+            
         }
     });
 
