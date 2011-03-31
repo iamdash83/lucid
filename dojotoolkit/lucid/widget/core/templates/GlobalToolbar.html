@@ -6,11 +6,17 @@
                 Applications
             </a>
         </li>
-        <li>
+        <!--<li>
             <a href="javascript://" dojoAttachPoint="contactsButtonNode">
                 Contacts
 			    <span class="dijitReset dijitInline dijitArrowButtonInner"></span>
 			    <span class="dijitReset dijitInline dijitArrowButtonChar">&#9660;</span>
+            </a>
+        </li>-->
+        <li>
+            <a data-dojo-type="lucid.widget.core.GlobalToolbarDropDownButton" label="Cont">
+                <span>Contacts</span>
+                <div data-dojo-type="lucid.widget.core.ContactsDropDown"></div>
             </a>
         </li>
         <li>

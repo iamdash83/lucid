@@ -6,6 +6,9 @@ define("lucid/widget/core/ContactsDropDown", ["dojo", "dijit", "lucid", "dijit/_
 
         postCreate: function(){
             this.inherited(arguments);
+        },
+        focus: function(){
+            this.domNode.focus();
         }
     });
 
