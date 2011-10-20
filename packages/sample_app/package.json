@@ -1,0 +1,60 @@
+{
+    //this works just like any other package.json file, except for lucid-permissions
+    "name": "sample-app",
+    "author": "Will Riley",
+    "version": "1.2.3",
+    "dependencies": [],
+    "keywords": [
+        "foo",
+        "bar"
+    ],
+    "githubName": "my-app",
+    "mappings":{
+        "some-module": "http://www.github.com/some-user/some-repo/zipball/v1.2.3"
+    },
+    "licenses": [
+        {
+            "type": "AFLv2.1",
+            "url": "http://trac.dojotoolkit.org/browser/dojo/trunk/LICENSE#L43"
+        },
+        {
+            "type": "BSD",
+            "url": "http://trac.dojotoolkit.org/browser/dojo/trunk/LICENSE#L13"
+        }
+    ],
+    "repository": {
+        "type":"git",
+        "url":"http://github.com/some-user/some-app"
+    },
+    "contributors": [
+    ],
+    "directories": {
+        "lib": "./lib"
+    },
+    "dependencies":{
+        "some-module": ">=1.2.3"
+    },
+    "lucid-permissions":{
+        "public": [
+            "lucid.user.ReadOnlyFacet"
+        ],
+        "private": [
+            "lucid.user.ReadWriteFacet",
+            "lucid.user.ReadAllFacet",
+
+            {"name": "some_app.some_class", "version": "0.9.4"}
+        ],
+        "background": [
+            "request",
+            "lucid.user.ReadAllFacet"
+        ]
+    },
+    "lucid-exposed-classes": [
+        "some_class",
+        {
+            "name": "some_class",
+            "version": "0.9.4",
+            "real_name": "compat.some_class_0_9_4"
+        }
+    ]
+}
