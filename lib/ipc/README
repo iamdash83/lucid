@@ -4,5 +4,6 @@ This is pretty quick and dirty, if we need to optimize anything, it's this.
 
 Part of this is due to the fact that node is kinda iffy when it comes to IPC.
 
-We might be able to use this in the future:
+We might be able to use one of these in the future:
 https://github.com/pgriess/node-msgpack
+https://code.google.com/p/protobuf-for-node/
