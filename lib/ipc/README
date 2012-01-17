@@ -1,0 +1,8 @@
+This is an IPC library for node.
+
+This is pretty quick and dirty, if we need to optimize anything, it's this.
+
+Part of this is due to the fact that node is kinda iffy when it comes to IPC.
+
+We might be able to use this in the future:
+https://github.com/pgriess/node-msgpack
