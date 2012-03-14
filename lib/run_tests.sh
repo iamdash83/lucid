@@ -6,7 +6,7 @@ if [ "$file" == "" ]; then
   file="*"
 fi
 
-files=$(find ./tests -name "$file.js")
+files=$(find ./test -name "$file.js")
 count=$(echo $files | wc -l)
 count=$(($count+1))
 j=1
