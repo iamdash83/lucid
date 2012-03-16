@@ -1,2 +1,2 @@
---ui exports
+--ui tdd
 --reporter spec
