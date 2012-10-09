@@ -16,8 +16,8 @@
       "mocha": ">= 1.5.0"
   },
   "scripts": {
-      "test": "cd lib/; mocha; cd ..;"
+      "test": "cd lib/; mocha $(find test -name '*.js'); cd ..;"
   },
   "main": "index",
-  "engines": { "node": ">= 0.6.0" }
+  "engines": { "node": ">= 0.8.0" }
 }
