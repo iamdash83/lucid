@@ -9,9 +9,6 @@
         "bar"
     ],
     "githubName": "my-app",
-    "mappings":{
-        "some-module": "http://www.github.com/some-user/some-repo/zipball/v1.2.3"
-    },
     "licenses": [
         {
             "type": "AFLv2.1",
@@ -34,27 +31,19 @@
     "dependencies":{
         "some-module": ">=1.2.3"
     },
-    "lucid-permissions":{
-        "public": [
-            "lucid.user.ReadOnlyFacet"
-        ],
-        "private": [
-            "lucid.user.ReadWriteFacet",
-            "lucid.user.ReadAllFacet",
-
-            {"name": "some_app.some_class", "version": "0.9.4"}
-        ],
-        "background": [
-            "request",
-            "lucid.user.ReadAllFacet"
-        ]
-    },
-    "lucid-exposed-classes": [
-        "some_class",
-        {
-            "name": "some_class",
-            "version": "0.9.4",
-            "real_name": "compat.some_class_0_9_4"
+    "lucid-containers":{
+        "main": {
+            "file": "main/main.js",
+            "permissions":{
+                "web": {
+                    //TODO: figure out args
+                }
+            },
+            "messages": {
+                "web": {
+                    "requests": true
+                }
+            }
         }
-    ]
+    }
 }
