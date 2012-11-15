@@ -1,4 +1,12 @@
 {
-    "useHttps": false,
-    "port": 3000
+    "components": {
+        "whitelist": ["*"],
+        "blacklist": []
+    },
+    "options": {
+        "web": {
+            "useHttps": false,
+            "port": 3000
+        }
+    }
 }

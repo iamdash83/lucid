@@ -39,7 +39,7 @@
                     //TODO: figure out args
                 }
             },
-            "messages": {
+            "events": {
                 "web": {
                     "requests": true
                 }
