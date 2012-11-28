@@ -1,5 +1,4 @@
 {
-    //this works just like any other package.json file, except for lucid-permissions
     "name": "sample-app",
     "author": "Will Riley",
     "version": "1.2.3",
@@ -36,7 +35,7 @@
             "file": "main/main.js",
             "permissions":{
                 "web": {
-                    //TODO: figure out args
+                    
                 }
             },
             "events": {
