@@ -1,2 +1,5 @@
-var test = require("./test");
+//var test = require("./test");
 //test.foo == "bar"
+setInterval(function(){
+    var foo = bar;
+});
