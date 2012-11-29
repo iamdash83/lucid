@@ -3,6 +3,9 @@
         "whitelist": ["*"],
         "blacklist": []
     },
+    "applications": {
+        
+    },
     "options": {
         "web": {
             "useHttps": false,
