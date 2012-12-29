@@ -1,6 +1,8 @@
 //var test = require("./test");
 //test.foo == "bar"
+var n = 1;
 setInterval(function(){
     var foo = "bar";
-    console.error("this is still running");
+    console.error("sample_app (main container) is still running after "+(n*10)+" seconds!");
+    n++;
 }, 10000);
