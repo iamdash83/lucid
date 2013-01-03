@@ -1,0 +1,25 @@
+{
+    "components": {
+        "whitelist": ["*"],
+        "blacklist": []
+    },
+    "applications": {
+        "whitelist": ["*"],
+        "blacklist": [],
+        "sandbox": {
+            "node_command": "node",
+            "lockup_timeout": 10000,
+            "kill_with_fire_timeout": 10000,
+            "ping_interval": 10000,
+            "startup_timeout": 10000,
+            "call_timeout": -1,
+            "overrideAppOptions": true
+        }
+    },
+    "options": {
+        "web": {
+            "useHttps": false,
+            "port": 3000
+        }
+    }
+}

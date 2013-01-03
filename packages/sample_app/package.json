@@ -45,7 +45,14 @@
             }
         },
         "test": {
-            "file": "test/main.js"
+            "file": "test/main.js",
+            "sandbox": {
+                "lockup_timeout": 500,
+                "kill_with_fire_timeout": 500,
+                "ping_interval": 1000,
+                "startup_timeout": 500,
+                "call_timeout": -1
+            }
         }
     }
 }
