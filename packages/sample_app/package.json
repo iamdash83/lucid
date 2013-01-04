@@ -40,7 +40,7 @@
             },
             "events": {
                 "web": {
-                    "requests": true
+                    "isRoot": true
                 }
             }
         },
